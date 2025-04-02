@@ -12,7 +12,7 @@ export default tseslint.config(
     extends: [
       js.configs.recommended,
       ...tseslint.configs.recommended,
-      prettierConfig // Estendi la configurazione Prettier
+      prettierConfig, // Estendi la configurazione Prettier
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
@@ -22,15 +22,12 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      'prettier': pluginPrettier // Aggiungi il plugin
+      prettier: pluginPrettier, // Aggiungi il plugin
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-      'prettier/prettier': 'error' // Abilita regola Prettier
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'prettier/prettier': 'error', // Abilita regola Prettier
     },
-  },
+  }
 )
