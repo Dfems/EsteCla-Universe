@@ -6,7 +6,7 @@ export default function Home() {
 
   return (
     <Box p={4}>
-      <Text fontSize="2xl">Welcome {user?.displayName || 'Guest'}!</Text>
+      <Text fontSize="2xl">Welcome {user?.fullName || 'Guest'}!</Text>
       <Text mt={4}>Posts will appear here...</Text>
     </Box>
   )
