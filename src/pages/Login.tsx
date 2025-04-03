@@ -1,68 +1,86 @@
 // src/pages/Login.tsx
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  AbsoluteCenter,
-  Box,
-  Button,
-  Center,
-  Divider,
-  Flex,
-  FormControl,
-  FormLabel,
-  Heading,
-  Input,
-  Link,
-  VStack,
-} from '@chakra-ui/react'
-import { auth, googleProvider } from '../services/firebase'
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from 'firebase/auth'
+import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
+import { signInWithEmailAndPassword, signOut, signInWithPopup } from 'firebase/auth'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { auth, db, googleProvider } from '../services/firebase'
 import GoogleLoginButton from '../components/GoogleLoginButton'
 
-const Login = () => {
+const Login: React.FC = () => {
   const navigate = useNavigate()
-  const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError('')
     setLoading(true)
 
     try {
-      if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password)
+      // 1) Login con email/password
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const firebaseUser = userCredential.user
+
+      // 2) Verifica documento utente su Firestore
+      const userDocRef = doc(db, 'users', firebaseUser.uid)
+      const snap = await getDoc(userDocRef)
+
+      if (snap.exists()) {
+        navigate('/')
       } else {
-        await createUserWithEmailAndPassword(auth, email, password)
+        await signOut(auth)
+        setError('Account non registrato. Registrati prima di accedere.')
       }
-      navigate('/')
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Authentication failed')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
       setLoading(false)
     }
   }
 
   const handleGoogleLogin = async () => {
+    setError('')
+    setLoading(true)
+
     try {
-      await signInWithPopup(auth, googleProvider)
+      // 1) Login con Google
+      const userCredential = await signInWithPopup(auth, googleProvider)
+      const firebaseUser = userCredential.user
+
+      // 2) Verifica documento utente su Firestore
+      const userDocRef = doc(db, 'users', firebaseUser.uid)
+      const snap = await getDoc(userDocRef)
+
+      if (!snap.exists()) {
+        // Se non esiste, creiamo automaticamente il documento utente
+        const newUser = {
+          uid: firebaseUser.uid,
+          // Utilizziamo displayName o, in mancanza, una username derivata dall'email
+          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+          fullName: firebaseUser.displayName || '',
+          profilePic: firebaseUser.photoURL || '',
+          bio: '',
+          followers: [],
+          following: [],
+        }
+        await setDoc(userDocRef, newUser)
+      }
       navigate('/')
-    } catch (error) {
-      alert(error instanceof Error ? error.message : 'Google login failed')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google login failed')
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <Center minH="100vh" bg="gray.50">
-      <VStack
+      <Box
         as="form"
-        onSubmit={handleSubmit}
-        spacing={4}
+        onSubmit={handleEmailLogin}
         bg="white"
         p={8}
         borderRadius="lg"
@@ -70,9 +88,17 @@ const Login = () => {
         w="100%"
         maxW="400px"
       >
-        <Heading size="lg">{isLogin ? 'Login' : 'Sign Up'}</Heading>
+        <Heading size="lg" mb={6}>
+          Login
+        </Heading>
 
-        <FormControl isRequired>
+        {error && (
+          <Box color="red.500" mb={4}>
+            {error}
+          </Box>
+        )}
+
+        <FormControl isRequired mb={4}>
           <FormLabel>Email</FormLabel>
           <Input
             type="email"
@@ -82,44 +108,33 @@ const Login = () => {
           />
         </FormControl>
 
-        <FormControl isRequired>
+        <FormControl isRequired mb={6}>
           <FormLabel>Password</FormLabel>
           <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="current-password"
-            minLength={6}
           />
         </FormControl>
 
         <Button
           type="submit"
           colorScheme="blue"
-          w="100%"
           isLoading={loading}
-          loadingText={isLogin ? 'Logging in...' : 'Signing up...'}
+          loadingText="Logging in..."
+          w="100%"
+          mb={4}
         >
-          {isLogin ? 'Login' : 'Sign Up'}
+          Login
         </Button>
 
-        <Flex align="center" w="100%" gap={2}>
-          <Box position="relative" padding="10">
-            <Divider />
-            <AbsoluteCenter bg="white" px="4">
-              OR
-            </AbsoluteCenter>
-          </Box>
-        </Flex>
+        <GoogleLoginButton onClick={handleGoogleLogin} isLoading={loading}></GoogleLoginButton>
 
-        <GoogleLoginButton onClick={handleGoogleLogin} />
-        <div>
-          {isLogin ? "Don't have an account? " : 'Already have an account? '}
-          <Link color="blue.500" onClick={() => setIsLogin(!isLogin)} textDecoration="underline">
-            {isLogin ? 'Sign Up' : 'Login'}
-          </Link>
-        </div>
-      </VStack>
+        <Button variant="outline" w="100%" onClick={() => navigate('/register')}>
+          Non hai un account? Registrati
+        </Button>
+      </Box>
     </Center>
   )
 }

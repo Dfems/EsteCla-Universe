@@ -1,28 +1,20 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@firebase/auth'
-import { auth } from '../services/firebase'
+// src/context/AuthContext.ts
+import { createContext, useContext } from 'react'
+import { UserInfo } from '../types/interfaces'
 
-type AuthContextType = {
-  user: User | null
+interface AuthContextValue {
+  user: UserInfo | null
   loading: boolean
+  logout: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true })
+export const AuthContext = createContext<AuthContextValue>({
+  user: null,
+  loading: true,
+  logout: async () => {},
+})
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user)
-      setLoading(false)
-    })
-
-    return unsubscribe
-  }, [])
-
-  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>
+// Custom hook per usare il contesto
+export const useAuth = () => {
+  return useContext(AuthContext)
 }
-
-export const useAuth = () => useContext(AuthContext)

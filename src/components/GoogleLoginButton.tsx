@@ -1,13 +1,15 @@
 // src/components/GoogleLoginButton.tsx
 import { Button } from '@chakra-ui/react'
 
-const GoogleLoginButton = ({ onClick }: { onClick: () => void }) => {
+const GoogleLoginButton = ({ onClick, isLoading }: { onClick: () => void; isLoading: boolean }) => {
   return (
     <Button
       onClick={onClick}
       variant="outline"
       colorScheme="red"
       w="100%"
+      mb={4}
+      isLoading={isLoading}
       leftIcon={
         <svg
           xmlns="http://www.w3.org/2000/svg"

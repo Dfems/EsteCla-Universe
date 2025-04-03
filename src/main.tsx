@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './routes/Routes'
-import { AuthProvider } from './context/AuthContext'
+import { AuthProvider } from './context/AuthProvider'
 
 const theme = extendTheme({
   fonts: {

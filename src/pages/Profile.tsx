@@ -1,3 +1,4 @@
+// src/pages/Profile.tsx
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
@@ -16,7 +17,6 @@ import {
   Input,
   Textarea,
 } from '@chakra-ui/react'
-import { db, storage } from '../services/firebase'
 import {
   doc,
   getDoc,
@@ -31,30 +31,15 @@ import {
   orderBy,
 } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { db, storage } from '../services/firebase'
 import { useAuth } from '../context/AuthContext'
+import { Post, UserInfo } from '../types/interfaces'
 import PostCard from '../components/PostCard'
-
-interface User {
-  uid: string
-  username: string
-  fullName: string
-  profilePic: string
-  bio: string
-  followers: string[]
-  following: string[]
-}
-
-interface Post {
-  id: string
-  imageUrl: string
-  caption: string
-  timestamp: Date
-}
 
 export default function Profile() {
   const { username } = useParams<{ username: string }>()
-  const { user: currentUser } = useAuth()
-  const [profileUser, setProfileUser] = useState<User | null>(null)
+  const { user: currentUser } = useAuth() // user è UserInfo | null
+  const [profileUser, setProfileUser] = useState<UserInfo | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [editedBio, setEditedBio] = useState('')
@@ -65,28 +50,33 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const userQuery = await getDoc(doc(db, 'users', username!))
-        if (!userQuery.exists()) {
+        // Prendiamo il doc dell'utente da Firestore (users/<username>)
+        // Dove "username" è l'ID del doc utente, nel tuo schema
+        const userDoc = doc(db, 'users', username!)
+        const userSnap = await getDoc(userDoc)
+
+        if (!userSnap.exists()) {
           navigate('/')
           return
         }
-        setProfileUser(userQuery.data() as User)
-        setEditedBio(userQuery.data().bio || '')
 
-        // Fetch user's posts
+        const data = userSnap.data() as UserInfo
+        setProfileUser(data)
+        setEditedBio(data.bio ?? '')
+
+        // Recuperiamo i post di questo utente
         const postsSnapshot = await getDocs(
           query(
             collection(db, 'posts'),
-            where('userId', '==', userQuery.data().uid),
+            where('userId', '==', data.uid),
             orderBy('timestamp', 'desc')
           )
         )
-        setPosts(
-          postsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as Post[]
-        )
+        const userPosts = postsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Post[]
+        setPosts(userPosts)
       } catch (error) {
         toast({ title: 'Error loading profile', status: 'error' })
         console.log(error)
@@ -94,7 +84,7 @@ export default function Profile() {
     }
 
     if (username) fetchProfile()
-  }, [username])
+  }, [username, navigate, toast])
 
   // Handle follow/unfollow
   const handleFollow = async () => {
@@ -105,26 +95,31 @@ export default function Profile() {
         const currentUserRef = doc(db, 'users', currentUser.uid)
         const profileUserRef = doc(db, 'users', profileUser.uid)
 
+        const isAlreadyFollowing = profileUser.followers?.includes(currentUser.uid)
+
+        // Aggiorniamo la lista following dell'utente loggato
         transaction.update(currentUserRef, {
-          following: profileUser.followers.includes(currentUser.uid)
+          following: isAlreadyFollowing
             ? arrayRemove(profileUser.uid)
             : arrayUnion(profileUser.uid),
         })
 
+        // Aggiorniamo la lista followers dell'utente del profilo
         transaction.update(profileUserRef, {
-          followers: profileUser.followers.includes(currentUser.uid)
+          followers: isAlreadyFollowing
             ? arrayRemove(currentUser.uid)
             : arrayUnion(currentUser.uid),
         })
       })
 
+      // Aggiorniamo subito lo stato per non dover ricaricare
       setProfileUser((prev) =>
         prev
           ? {
               ...prev,
-              followers: prev.followers.includes(currentUser.uid)
+              followers: prev.followers?.includes(currentUser.uid)
                 ? prev.followers.filter((id) => id !== currentUser.uid)
-                : [...prev.followers, currentUser.uid],
+                : [...(prev.followers || []), currentUser.uid],
             }
           : null
       )
@@ -147,6 +142,7 @@ export default function Profile() {
         profilePic: downloadURL,
       })
 
+      // Aggiorniamo localmente l'avatar
       setProfileUser((prev) => (prev ? { ...prev, profilePic: downloadURL } : null))
     } catch (error) {
       toast({ title: 'Error updating profile picture', status: 'error' })
@@ -159,7 +155,9 @@ export default function Profile() {
     if (!currentUser || !profileUser) return
 
     try {
-      await updateDoc(doc(db, 'users', currentUser.uid), { bio: editedBio })
+      await updateDoc(doc(db, 'users', currentUser.uid), {
+        bio: editedBio,
+      })
       setIsEditing(false)
       toast({ title: 'Bio updated', status: 'success' })
     } catch (error) {
@@ -168,10 +166,12 @@ export default function Profile() {
     }
   }
 
-  if (!profileUser) return <div>Loading...</div>
+  if (!profileUser) {
+    return <div>Loading...</div>
+  }
 
   const isCurrentUser = currentUser?.uid === profileUser.uid
-  const isFollowing = profileUser.followers.includes(currentUser?.uid || '')
+  const isFollowing = profileUser.followers?.includes(currentUser?.uid || '')
 
   return (
     <Box maxW="935px" mx="auto" p={4}>
@@ -196,10 +196,10 @@ export default function Profile() {
               <strong>{posts.length}</strong> posts
             </Text>
             <Text>
-              <strong>{profileUser.followers.length}</strong> followers
+              <strong>{profileUser.followers?.length ?? 0}</strong> followers
             </Text>
             <Text>
-              <strong>{profileUser.following.length}</strong> following
+              <strong>{profileUser.following?.length ?? 0}</strong> following
             </Text>
           </Flex>
 
@@ -244,6 +244,7 @@ export default function Profile() {
               ))}
             </Grid>
           </TabPanel>
+          <TabPanel>{/* Qui potresti gestire i "post salvati", se lo desideri */}</TabPanel>
         </TabPanels>
       </Tabs>
     </Box>
