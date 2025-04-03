@@ -12,7 +12,8 @@
     "prepare": "husky install",
     "deploy": "npm run build && firebase deploy",
     "server-test": "npm run build && serve -s dist",
-    "unused deps": "depcheck --ignore-path .gitignore"
+    "unused deps": "depcheck --ignore-path .gitignore",
+    "type-check": "tsc --noEmit"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
