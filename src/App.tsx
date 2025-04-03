@@ -7,6 +7,8 @@ export default function App() {
 
   if (!user) return null
 
+  console.log('Firebase Config:', import.meta.env)
+
   return (
     <>
       <Navbar />
