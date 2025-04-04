@@ -1,9 +1,6 @@
 import {
   Flex,
   IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
   useDisclosure,
   Drawer,
   DrawerOverlay,
@@ -18,15 +15,7 @@ import {
   Heading,
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  SearchIcon,
-  HamburgerIcon,
-  AddIcon,
-  BellIcon,
-  MoonIcon,
-  DownloadIcon,
-  ArrowForwardIcon, // Importato per il logout
-} from '@chakra-ui/icons'
+import { FaHome, FaPlus, FaBell, FaDownload, FaBars, FaSignOutAlt, FaApple } from 'react-icons/fa'
 import { useAuth } from '../context/AuthContext'
 import { usePWA } from '../hooks/usePWA'
 
@@ -35,12 +24,25 @@ const Navbar = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
-  usePWA()
+  const { isInstallable, handleInstall, isIOS, showIOSInstallPrompt } = usePWA()
 
-  const navItems = [
-    { icon: <MoonIcon boxSize={6} />, path: '/', label: 'Home' },
-    { icon: <AddIcon boxSize={6} />, path: '/create', label: 'Create' },
-    { icon: <BellIcon boxSize={6} />, path: '/activity', label: 'Notifications' },
+  // Elementi per la navbar desktop
+  const navItemsDesktop = [
+    { icon: <FaHome size={24} />, path: '/', label: 'Home' },
+    { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
+    { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
+  ]
+
+  // Elementi per il Drawer mobile (sidebar)
+  const navItemsMobileSidebar = [
+    { icon: <FaHome size={24} />, path: '/', label: 'Home' },
+    { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
+  ]
+
+  // Elementi per la navbar mobile (parte superiore)
+  const navItemsMobileNavbar = [
+    { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
+    { icon: <FaBars size={18} />, path: 'menu', label: 'Menu' },
   ]
 
   const handleLogout = () => {
@@ -62,11 +64,19 @@ const Navbar = () => {
         zIndex="sticky"
         alignItems="center"
         height="60px"
-        boxShadow="sm" // Aggiunta una leggera ombra per maggiore eleganza
+        boxShadow="sm"
       >
+        <Text color="gray.500" fontSize="sm">
+          PWA Status: {isInstallable ? 'Ins' : 'Not Ins'}
+        </Text>
+
         {/* Logo Section */}
         <Link to="/">
-          <Flex align="center" gap={2}>
+          <Flex
+            align="center"
+            gap={2}
+            _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s' }}
+          >
             {!isMobile && (
               <Heading size="md" fontFamily="cursive">
                 EsteCla
@@ -75,73 +85,107 @@ const Navbar = () => {
           </Flex>
         </Link>
 
-        {/* Search Bar (Desktop) */}
-        {!isMobile && (
+        {/* Search Bar (solo desktop) */}
+        {/* {!isMobile && (
           <InputGroup maxW="600px" mx={4} flex={2}>
             <InputLeftElement pointerEvents="none">
-              <SearchIcon color="gray.400" />
+              <FaSearch color="gray" />
             </InputLeftElement>
             <Input
               placeholder="Search users and posts..."
               borderRadius="full"
               onClick={() => navigate('/search')}
-              _focus={{ boxShadow: 'none' }}
+              _focus={{ boxShadow: 'outline' }}
             />
           </InputGroup>
-        )}
+        )} */}
 
-        <Flex flex={1} justifyContent="flex-end" gap={{ base: 1, md: 4 }}>
-          {isMobile ? (
-            <IconButton
-              aria-label="Open menu"
-              icon={<HamburgerIcon />}
-              variant="ghost"
-              onClick={onOpen}
-              size="sm"
-            />
-          ) : (
-            <>
-              {navItems.map((item, index) => (
-                <IconButton
-                  key={index}
-                  aria-label={item.label}
-                  icon={item.icon}
-                  variant="ghost"
-                  onClick={() => navigate(item.path)}
-                  fontSize="xl"
-                />
-              ))}
+        {/* Navbar Desktop */}
+        {!isMobile && (
+          <Flex flex={1} justifyContent="flex-end" gap={4}>
+            {navItemsDesktop.map((item, index) => (
+              <IconButton
+                key={index}
+                aria-label={item.label}
+                icon={item.icon}
+                variant="ghost"
+                onClick={() => navigate(item.path)}
+                fontSize="xl"
+                _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
+              />
+            ))}
 
+            {/* Bottone Install App visibile solo se l'app è installabile */}
+            {isInstallable && (
               <IconButton
                 id="install-button"
                 aria-label="Install app"
-                icon={<DownloadIcon />}
+                icon={<FaDownload size={18} />}
                 variant="ghost"
-                display="none"
+                onClick={handleInstall}
+                _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
               />
+            )}
 
-              {user && (
-                <Flex align="center" gap={3}>
-                  <Link to={`/profile/${user.username}`}>
-                    <Avatar
-                      size="sm"
-                      src={user.profilePic}
-                      name={user.username}
-                      _hover={{ transform: 'scale(1.1)' }}
-                      transition="transform 0.2s"
-                    />
-                  </Link>
-                  <Button variant="outline" size="sm" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </Flex>
-              )}
-            </>
-          )}
-        </Flex>
+            {/* Pulsante specifico per iOS */}
+            {isIOS && (
+              <IconButton
+                aria-label="Installa su iOS"
+                icon={<FaApple />}
+                onClick={showIOSInstallPrompt}
+                variant="ghost"
+              />
+            )}
+
+            {user && (
+              <Flex align="center" gap={3}>
+                <Link to={`/profile/${user.username}`}>
+                  <Avatar
+                    size="sm"
+                    src={user.profilePic}
+                    name={user.username}
+                    _hover={{ transform: 'scale(1.1)' }}
+                    transition="transform 0.2s"
+                  />
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleLogout}
+                  _hover={{ bg: 'gray.100' }}
+                >
+                  Logout
+                </Button>
+              </Flex>
+            )}
+          </Flex>
+        )}
+
+        {/* Navbar Mobile */}
+        {isMobile && (
+          <Flex flex={1} justifyContent="flex-end" gap={2}>
+            {navItemsMobileNavbar.map((item, index) => (
+              <IconButton
+                key={index}
+                aria-label={item.label}
+                icon={item.icon}
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (item.label === 'Menu') {
+                    onOpen()
+                  } else {
+                    navigate(item.path)
+                  }
+                }}
+                _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
+              />
+            ))}
+          </Flex>
+        )}
       </Flex>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer Sidebar */}
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
@@ -162,48 +206,66 @@ const Navbar = () => {
               )}
 
               <VStack spacing={1} align="stretch">
-                {navItems.map((item, index) => (
+                {navItemsMobileSidebar.map((item, index) => (
                   <Button
                     key={index}
                     variant="ghost"
                     justifyContent="flex-start"
-                    leftIcon={item.icon}
                     onClick={() => {
                       navigate(item.path)
                       onClose()
                     }}
                     height="48px"
                     borderRadius="md"
+                    _hover={{ bg: 'gray.100' }}
                   >
-                    {item.label}
+                    <Flex align="center" gap={3}>
+                      <Box w="24px" display="flex" justifyContent="center">
+                        {item.icon}
+                      </Box>
+                      <Text>{item.label}</Text>
+                    </Flex>
                   </Button>
                 ))}
 
-                <Button
-                  id="install-button-mobile"
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  leftIcon={<DownloadIcon />}
-                  display="none"
-                  height="48px"
-                  borderRadius="md"
-                >
-                  Install App
-                </Button>
+                {/* Bottone Install App per mobile */}
+                {isInstallable && (
+                  <Button
+                    id="install-button-mobile"
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    onClick={handleInstall}
+                    height="48px"
+                    borderRadius="md"
+                    _hover={{ bg: 'gray.100' }}
+                  >
+                    <Flex align="center" gap={3}>
+                      <Box w="24px" display="flex" justifyContent="center">
+                        <FaDownload size={18} />
+                      </Box>
+                      <Text>Install App</Text>
+                    </Flex>
+                  </Button>
+                )}
 
                 {user && (
                   <Button
                     variant="ghost"
                     justifyContent="flex-start"
-                    leftIcon={<ArrowForwardIcon />}
                     onClick={() => {
                       handleLogout()
                       onClose()
                     }}
                     height="48px"
                     borderRadius="md"
+                    _hover={{ bg: 'gray.100' }}
                   >
-                    Logout
+                    <Flex align="center" gap={3}>
+                      <Box w="24px" display="flex" justifyContent="center">
+                        <FaSignOutAlt size={18} />
+                      </Box>
+                      <Text>Logout</Text>
+                    </Flex>
                   </Button>
                 )}
               </VStack>
