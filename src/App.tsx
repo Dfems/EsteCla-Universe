@@ -14,6 +14,7 @@ export default function App() {
       <Navbar />
       <main style={{ padding: '1rem' }}>
         {/* <Outlet /> */}
+        Amo mia moglie!
         <BirthdayCountdown />
       </main>
     </>
