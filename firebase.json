@@ -1,7 +1,7 @@
 {
   "hosting": {
     "target": "production",
-    "public": "dist",
+    "public": ".",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
