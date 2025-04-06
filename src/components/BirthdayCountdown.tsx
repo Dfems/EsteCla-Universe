@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Box, Flex, Text, Heading, useColorModeValue } from '@chakra-ui/react'
 import Confetti from 'react-confetti'
 
@@ -11,18 +11,10 @@ interface TimeLeft {
 
 const BirthdayCountdown = () => {
   const [targetDate] = useState<Date>(new Date('2024-08-15')) // Imposta la data del compleanno qui
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft())
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => calculateTimeLeft())
   const [isBirthday, setIsBirthday] = useState(false)
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft())
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
-  function calculateTimeLeft(): TimeLeft {
+  const calculateTimeLeft = useCallback((): TimeLeft => {
     const now = new Date()
     const target = new Date(targetDate)
     target.setFullYear(now.getFullYear())
@@ -43,7 +35,15 @@ const BirthdayCountdown = () => {
     }
 
     return { days, hours, minutes, seconds }
-  }
+  }, [targetDate]) // Aggiungi targetDate alle dipendenze
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [calculateTimeLeft])
 
   const boxBg = useColorModeValue('pink.100', 'pink.700')
   const textColor = useColorModeValue('pink.600', 'pink.100')
