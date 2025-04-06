@@ -93,6 +93,12 @@ jobs:
           name: production-build
           path: . # Estrae l'artifact nella root
 
+      - name: List files in root
+        run: ls -la
+        
+      - name: List files in dist
+        run: ls -la dist
+
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
