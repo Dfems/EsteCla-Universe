@@ -14,7 +14,7 @@ export default function App() {
     <>
       <Navbar />
       <main style={{ padding: '1rem' }}>
-        <Outlet />
+        {/* <Outlet /> */}
         <BirthdayCountdown />
       </main>
     </>
