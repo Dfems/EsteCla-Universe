@@ -1,5 +1,12 @@
 {
   "projects": {
     "default": "estecla-universe"
+  },
+  "targets": {
+    "estecla-universe": {
+      "hosting": {
+        "production": ["estecla-universe"]
+      }
+    }
   }
 }
