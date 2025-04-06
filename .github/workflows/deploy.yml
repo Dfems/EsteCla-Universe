@@ -95,7 +95,7 @@ jobs:
 
       - name: List files in root
         run: ls -la
-        
+
       - name: List files in dist
         run: ls -la dist
 
