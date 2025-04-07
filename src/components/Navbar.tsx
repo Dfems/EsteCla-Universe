@@ -68,9 +68,9 @@ const Navbar = () => {
         height="60px"
         boxShadow="sm"
       >
-        <Text color="gray.500" fontSize="sm">
+        {/* <Text color="gray.500" fontSize="sm">
           PWA Status: {isInstallable ? 'Ins' : 'Not Ins'}
-        </Text>
+        </Text> */}
 
         {/* Logo Section */}
         <Link to="/">
