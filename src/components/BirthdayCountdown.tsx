@@ -1,44 +1,62 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Box, Flex, Text, Heading, useColorModeValue } from '@chakra-ui/react'
 import Confetti from 'react-confetti'
-import { TimeLeft } from '../types/interfaces'
 
-const BirthdayCountdown = () => {
-  const [targetDate] = useState<Date>(new Date('2024-08-15')) // Imposta la data del compleanno qui
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(() => calculateTimeLeft())
-  const [isBirthday, setIsBirthday] = useState(false)
+interface TimeLeft {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
+}
 
+const BirthdayCountdown: React.FC = () => {
+  const targetDate = useMemo(() => new Date('2000-04-10T00:00:00'), [])
+
+  // Funzione per calcolare il tempo residuo fino al prossimo compleanno
   const calculateTimeLeft = useCallback((): TimeLeft => {
     const now = new Date()
-    const target = new Date(targetDate)
-    target.setFullYear(now.getFullYear())
+    const currentYearTarget = new Date(targetDate)
+    currentYearTarget.setFullYear(now.getFullYear())
 
-    if (target < now) {
-      target.setFullYear(now.getFullYear() + 1)
+    // Se il compleanno di quest'anno è già passato, usa l'anno successivo
+    if (currentYearTarget.getTime() <= now.getTime()) {
+      currentYearTarget.setFullYear(now.getFullYear() + 1)
     }
 
-    const difference = target.getTime() - now.getTime()
+    const difference = currentYearTarget.getTime() - now.getTime()
     const days = Math.floor(difference / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((difference % (1000 * 60)) / 1000)
-
-    if (days + hours + minutes + seconds <= 0) {
-      setIsBirthday(true)
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 }
-    }
+    const hours = Math.floor((difference / (1000 * 60 * 60)) % 24)
+    const minutes = Math.floor((difference / (1000 * 60)) % 60)
+    const seconds = Math.floor((difference / 1000) % 60)
 
     return { days, hours, minutes, seconds }
   }, [targetDate])
 
+  // Stato per il countdown e per verificare se il compleanno è arrivato
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft())
+  const [isBirthday, setIsBirthday] = useState<boolean>(false)
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft())
+      const newTimeLeft = calculateTimeLeft()
+      setTimeLeft(newTimeLeft)
+
+      // Se il tempo residuo è zero, il compleanno è arrivato
+      if (
+        newTimeLeft.days <= 0 &&
+        newTimeLeft.hours <= 0 &&
+        newTimeLeft.minutes <= 0 &&
+        newTimeLeft.seconds <= 0
+      ) {
+        setIsBirthday(true)
+        clearInterval(timer)
+      }
     }, 1000)
 
     return () => clearInterval(timer)
   }, [calculateTimeLeft])
 
+  // Colori dinamici in base al tema
   const boxBg = useColorModeValue('pink.100', 'pink.700')
   const textColor = useColorModeValue('pink.600', 'pink.100')
 
@@ -52,12 +70,10 @@ const BirthdayCountdown = () => {
       p={4}
     >
       {isBirthday && <Confetti recycle={false} numberOfPieces={400} />}
-
       <Box bg="whiteAlpha.900" p={8} borderRadius="xl" boxShadow="2xl" textAlign="center">
         <Heading mb={6} color="pink.600" fontFamily="Pacifico">
-          🎉 Compleanno in Arrivo! 🎂
+          {isBirthday ? '🎂 BUON COMPLEANNO! 🥳' : '🎉 Compleanno in Arrivo! 🎂'}
         </Heading>
-
         {!isBirthday ? (
           <Flex gap={4} justify="center" wrap="wrap">
             <TimeBox value={timeLeft.days} label="Giorni" bg={boxBg} color={textColor} />
@@ -66,16 +82,10 @@ const BirthdayCountdown = () => {
             <TimeBox value={timeLeft.seconds} label="Secondi" bg={boxBg} color={textColor} />
           </Flex>
         ) : (
-          <Box>
-            <Text fontSize="3xl" fontWeight="bold" color="pink.600">
-              🎂 BUON COMPLEANNO! 🥳
-            </Text>
-            <Text mt={2} color="gray.600">
-              Tanti auguri di cuore! 🎈
-            </Text>
-          </Box>
+          <Text mt={2} color="gray.600">
+            Tanti auguri di cuore! 🎈
+          </Text>
         )}
-
         <Text mt={6} color="gray.600">
           Festeggeremo il{' '}
           {targetDate.toLocaleDateString('it-IT', {
@@ -88,17 +98,14 @@ const BirthdayCountdown = () => {
   )
 }
 
-const TimeBox = ({
-  value,
-  label,
-  bg,
-  color,
-}: {
+interface TimeBoxProps {
   value: number
   label: string
   bg: string
   color: string
-}) => (
+}
+
+const TimeBox: React.FC<TimeBoxProps> = ({ value, label, bg, color }) => (
   <Box
     p={4}
     minW="100px"
