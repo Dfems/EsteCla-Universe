@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'profile/:username', element: <Profile /> },
-      { path: 'countdown', element: <Countdown /> },
+      { path: '/countdown', element: <Countdown /> },
     ],
   },
   {
