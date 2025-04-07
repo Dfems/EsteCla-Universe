@@ -94,7 +94,7 @@ const Countdown: React.FC = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 10000, // 10 secondi
     fade: true,
     cssEase: 'linear',
     centerMode: false,
