@@ -72,7 +72,9 @@ const BirthdayCountdown: React.FC = () => {
       {isBirthday && <Confetti recycle={false} numberOfPieces={400} />}
       <Box bg="whiteAlpha.900" p={8} borderRadius="xl" boxShadow="2xl" textAlign="center">
         <Heading mb={6} color="pink.600" fontFamily="Pacifico">
-          {isBirthday ? '🎂 BUON COMPLEANNO MOGLIE MIA! 🥳' : '🎉 Compleanno di mia moglie in Arrivo! 🎂'}
+          {isBirthday
+            ? '🎂 BUON COMPLEANNO MOGLIE MIA! 🥳'
+            : '🎉 Compleanno di mia moglie in Arrivo! 🎂'}
         </Heading>
         {!isBirthday ? (
           <Flex gap={4} justify="center" wrap="wrap">
@@ -87,7 +89,7 @@ const BirthdayCountdown: React.FC = () => {
           </Text>
         )}
         <Text mt={6} color="gray.600">
-          Manca pochissimo al {' '}
+          Manca pochissimo al{' '}
           {targetDate.toLocaleDateString('it-IT', {
             day: 'numeric',
             month: 'long',
