@@ -93,7 +93,7 @@ jobs:
           name: production-build
           path: . # Estrae l'artifact nella root
 
-      - name: Visualizza struttura directory
+      - name: View tree structure root
         run: |
           sudo apt-get update
           sudo apt-get install tree -y
