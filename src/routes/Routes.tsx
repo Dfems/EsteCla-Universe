@@ -6,6 +6,7 @@ import Profile from '../pages/Profile'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import { ProtectedRoute } from '../components/ProtectedRoute'
+import Countdown from '../pages/Countdown'
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'profile/:username', element: <Profile /> },
+      { path: 'countdown', element: <Countdown /> },
     ],
   },
   {

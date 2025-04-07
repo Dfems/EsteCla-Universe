@@ -1,13 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Box, Flex, Text, Heading, useColorModeValue } from '@chakra-ui/react'
 import Confetti from 'react-confetti'
-
-interface TimeLeft {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-}
+import { TimeLeft } from '../types/interfaces'
 
 const BirthdayCountdown = () => {
   const [targetDate] = useState<Date>(new Date('2024-08-15')) // Imposta la data del compleanno qui
@@ -35,7 +29,7 @@ const BirthdayCountdown = () => {
     }
 
     return { days, hours, minutes, seconds }
-  }, [targetDate]) // Aggiungi targetDate alle dipendenze
+  }, [targetDate])
 
   useEffect(() => {
     const timer = setInterval(() => {

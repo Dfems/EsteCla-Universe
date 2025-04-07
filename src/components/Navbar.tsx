@@ -31,6 +31,7 @@ const Navbar = () => {
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
     { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
     { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
+    { icon: <FaApple size={24} />, path: '/countdown', label: 'Countdown' },
   ]
 
   // Elementi per il Drawer mobile (sidebar)
@@ -42,6 +43,7 @@ const Navbar = () => {
   // Elementi per la navbar mobile (parte superiore)
   const navItemsMobileNavbar = [
     { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
+    { icon: <FaApple size={24} />, path: '/countdown', label: 'Countdown' },
     { icon: <FaBars size={18} />, path: 'menu', label: 'Menu' },
   ]
 
