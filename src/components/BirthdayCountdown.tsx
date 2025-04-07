@@ -56,7 +56,6 @@ const BirthdayCountdown: React.FC = () => {
     return () => clearInterval(timer)
   }, [calculateTimeLeft])
 
-  // Colori dinamici in base al tema
   const boxBg = useColorModeValue('pink.100', 'pink.700')
   const textColor = useColorModeValue('pink.600', 'pink.100')
 

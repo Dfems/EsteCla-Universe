@@ -16,8 +16,7 @@ const Countdown: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Le query per cercare le immagini
-  const queries = useMemo(() => ['birthday', 'party', 'celebration', 'cake'], [])
+  const queries = useMemo(() => ['birthday', 'party', 'wine'], [])
   const NEXT_PUBLIC_UNSPLASH_ACCESS_KEY = 'lBe600fCqDc_a8HhEKcw2WCNc7KHzxf1z_qnf2TKLyk'
 
   useEffect(() => {
@@ -71,7 +70,7 @@ const Countdown: React.FC = () => {
   }
 
   return (
-    <Box position="relative" minH="100vh" overflow="hidden">
+    <Box position="relative" minH="100vh" overflow="hidden" margin={0} padding={0}>
       {loading ? (
         <Box display="flex" alignItems="center" justifyContent="center" height="100vh">
           <Spinner size="xl" />
