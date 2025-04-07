@@ -16,6 +16,8 @@ import {
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaHome, FaPlus, FaBell, FaDownload, FaBars, FaSignOutAlt, FaApple } from 'react-icons/fa'
+import { TbRefresh } from 'react-icons/tb'
+import { PiClockCountdownLight } from 'react-icons/pi'
 import { useAuth } from '../context/AuthContext'
 import { usePWA } from '../hooks/usePWA'
 
@@ -26,12 +28,29 @@ const Navbar = () => {
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { isInstallable, handleInstall, isIOS, showIOSInstallPrompt } = usePWA()
 
+  // Funzione per svuotare la cache e ricaricare la pagina
+  const clearCacheAndReload = async () => {
+    try {
+      if ('caches' in window) {
+        const cacheNames = await caches.keys()
+        await Promise.all(cacheNames.map((name) => caches.delete(name)))
+      }
+
+      localStorage.clear()
+      sessionStorage.clear()
+      window.location.reload()
+    } catch (error) {
+      console.error('Errore durante lo svuotamento della cache:', error)
+    }
+  }
+
   // Elementi per la navbar desktop
   const navItemsDesktop = [
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
     { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
     { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
-    { icon: <FaApple size={24} />, path: '/countdown', label: 'Countdown' },
+    { icon: <PiClockCountdownLight size={18} />, path: '/countdown', label: 'Countdown' },
+    { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
   ]
 
   // Elementi per il Drawer mobile (sidebar)
@@ -43,7 +62,8 @@ const Navbar = () => {
   // Elementi per la navbar mobile (parte superiore)
   const navItemsMobileNavbar = [
     { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
-    { icon: <FaApple size={24} />, path: '/countdown', label: 'Countdown' },
+    { icon: <PiClockCountdownLight size={18} />, path: '/countdown', label: 'Countdown' },
+    { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
     { icon: <FaBars size={18} />, path: 'menu', label: 'Menu' },
   ]
 
@@ -68,10 +88,6 @@ const Navbar = () => {
         height="60px"
         boxShadow="sm"
       >
-        {/* <Text color="gray.500" fontSize="sm">
-          PWA Status: {isInstallable ? 'Ins' : 'Not Ins'}
-        </Text> */}
-
         {/* Logo Section */}
         <Link to="/">
           <Flex
@@ -87,21 +103,6 @@ const Navbar = () => {
           </Flex>
         </Link>
 
-        {/* Search Bar (solo desktop) */}
-        {/* {!isMobile && (
-          <InputGroup maxW="600px" mx={4} flex={2}>
-            <InputLeftElement pointerEvents="none">
-              <FaSearch color="gray" />
-            </InputLeftElement>
-            <Input
-              placeholder="Search users and posts..."
-              borderRadius="full"
-              onClick={() => navigate('/search')}
-              _focus={{ boxShadow: 'outline' }}
-            />
-          </InputGroup>
-        )} */}
-
         {/* Navbar Desktop */}
         {!isMobile && (
           <Flex flex={1} justifyContent="flex-end" gap={4}>
@@ -111,7 +112,13 @@ const Navbar = () => {
                 aria-label={item.label}
                 icon={item.icon}
                 variant="ghost"
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  if (item.onClick) {
+                    item.onClick()
+                  } else {
+                    navigate(item.path)
+                  }
+                }}
                 fontSize="xl"
                 _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
               />
@@ -174,7 +181,9 @@ const Navbar = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  if (item.label === 'Menu') {
+                  if (item.onClick) {
+                    item.onClick()
+                  } else if (item.label === 'Menu') {
                     onOpen()
                   } else {
                     navigate(item.path)

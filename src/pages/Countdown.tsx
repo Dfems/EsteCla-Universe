@@ -11,11 +11,21 @@ interface UnsplashResponse {
   }
 }
 
+// Interfaccia per la cache
+interface CacheData {
+  timestamp: number
+  imageUrls: string[]
+}
+
+const CACHE_KEY = 'unsplashImagesCache'
+const CACHE_EXPIRATION = 24 * 60 * 60 * 1000 // 1 giorno in millisecondi
+
 const Countdown: React.FC = () => {
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Le query per cercare le immagini
   const queries = useMemo(() => ['birthday', 'party', 'wine'], [])
   const NEXT_PUBLIC_UNSPLASH_ACCESS_KEY = 'lBe600fCqDc_a8HhEKcw2WCNc7KHzxf1z_qnf2TKLyk'
 
@@ -39,6 +49,9 @@ const Countdown: React.FC = () => {
             return data.urls.regular
           })
         )
+        // Salva i dati in cache insieme a un timestamp
+        const cacheData: CacheData = { timestamp: Date.now(), imageUrls: fetchedUrls }
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData))
         setImageUrls(fetchedUrls)
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -53,8 +66,25 @@ const Countdown: React.FC = () => {
       }
     }
 
+    // Prova a leggere la cache
+    const cachedDataStr = localStorage.getItem(CACHE_KEY)
+    if (cachedDataStr) {
+      try {
+        const cachedData: CacheData = JSON.parse(cachedDataStr)
+        // Verifica se la cache è ancora valida
+        if (Date.now() - cachedData.timestamp < CACHE_EXPIRATION) {
+          setImageUrls(cachedData.imageUrls)
+          setLoading(false)
+          return // Esci dall'useEffect se abbiamo dati validi in cache
+        }
+      } catch (error) {
+        console.error('Errore nel parsing dei dati in cache', error)
+      }
+    }
+
+    // Se non ci sono dati in cache o sono scaduti, fai la fetch
     fetchImages()
-  }, [queries])
+  }, [queries, NEXT_PUBLIC_UNSPLASH_ACCESS_KEY])
 
   const settings: Settings = {
     dots: true,
@@ -67,10 +97,12 @@ const Countdown: React.FC = () => {
     autoplaySpeed: 4000,
     fade: true,
     cssEase: 'linear',
+    centerMode: false,
+    centerPadding: '0px',
   }
 
   return (
-    <Box position="relative" minH="100vh" overflow="hidden" margin={0} padding={0}>
+    <Box position="relative" minH="100vh" overflow="hidden" m={0} p={0}>
       {loading ? (
         <Box display="flex" alignItems="center" justifyContent="center" height="100vh">
           <Spinner size="xl" />
