@@ -15,9 +15,17 @@ import {
   Heading,
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaHome, FaPlus, FaBell, FaDownload, FaBars, FaSignOutAlt, FaApple } from 'react-icons/fa'
+import {
+  FaHome,
+  FaPlus,
+  FaBell,
+  FaDownload,
+  FaBars,
+  FaSignOutAlt,
+  FaApple,
+  FaBirthdayCake,
+} from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
-import { PiClockCountdownLight } from 'react-icons/pi'
 import { useAuth } from '../context/AuthContext'
 import { usePWA } from '../hooks/usePWA'
 
@@ -49,7 +57,7 @@ const Navbar = () => {
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
     { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
     { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
-    { icon: <PiClockCountdownLight size={18} />, path: '/countdown', label: 'Countdown' },
+    { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
     { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
   ]
 
@@ -62,7 +70,7 @@ const Navbar = () => {
   // Elementi per la navbar mobile (parte superiore)
   const navItemsMobileNavbar = [
     { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
-    { icon: <PiClockCountdownLight size={18} />, path: '/countdown', label: 'Countdown' },
+    { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
     { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
     { icon: <FaBars size={18} />, path: 'menu', label: 'Menu' },
   ]
@@ -153,6 +161,7 @@ const Navbar = () => {
                     size="sm"
                     src={user.profilePic}
                     name={user.username}
+                    onClick={() => alert(`/profile/${user.username}`)}
                     _hover={{ transform: 'scale(1.1)' }}
                     transition="transform 0.2s"
                   />
