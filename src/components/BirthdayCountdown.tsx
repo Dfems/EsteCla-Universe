@@ -73,7 +73,7 @@ const BirthdayCountdown: React.FC = () => {
         <Heading mb={6} color="pink.600" fontFamily="Pacifico">
           {isBirthday
             ? '🎂 BUON COMPLEANNO MOGLIE MIA! 🥳'
-            : '🎉 Compleanno di mia moglie in Arrivo! 🎂'}
+            : '🎉 Compleanno di mia moglie in arrivo! 🎂'}
         </Heading>
         {!isBirthday ? (
           <Flex gap={4} justify="center" wrap="wrap">
