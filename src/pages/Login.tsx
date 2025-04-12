@@ -59,7 +59,7 @@ const Login: React.FC = () => {
         const newUser = {
           uid: firebaseUser.uid,
           // Utilizziamo displayName o, in mancanza, una username derivata dall'email
-          username: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || '',
+          username: firebaseUser.email?.split('@')[0] || '',
           fullName: firebaseUser.displayName || '',
           profilePic: firebaseUser.photoURL || '',
           bio: '',

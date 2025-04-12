@@ -15,16 +15,7 @@ import {
   Heading,
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
-import {
-  FaHome,
-  FaPlus,
-  FaBell,
-  FaDownload,
-  FaBars,
-  FaSignOutAlt,
-  FaApple,
-  FaBirthdayCake,
-} from 'react-icons/fa'
+import { FaHome, FaDownload, FaBars, FaSignOutAlt, FaApple, FaBirthdayCake } from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
 import { useAuth } from '../context/AuthContext'
 import { usePWA } from '../hooks/usePWA'
@@ -55,8 +46,8 @@ const Navbar = () => {
   // Elementi per la navbar desktop
   const navItemsDesktop = [
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
-    { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
-    { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
+    // { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
+    // { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
     { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
     { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
   ]
@@ -64,15 +55,17 @@ const Navbar = () => {
   // Elementi per il Drawer mobile (sidebar)
   const navItemsMobileSidebar = [
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
-    { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
+    { icon: <FaBirthdayCake size={24} />, path: '/countdown', label: 'Birthday' },
+    // { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
   ]
 
   // Elementi per la navbar mobile (parte superiore)
   const navItemsMobileNavbar = [
-    { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
-    { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
-    { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
-    { icon: <FaBars size={18} />, path: 'menu', label: 'Menu' },
+    // { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
+    // { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
+    { icon: <FaHome size={22} />, path: '/', label: 'Home' },
+    { icon: <TbRefresh size={22} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
+    { icon: <FaBars size={20} />, path: 'menu', label: 'Menu' },
   ]
 
   const handleLogout = () => {

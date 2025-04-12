@@ -30,10 +30,12 @@ const Register: React.FC = () => {
       // 2) Creiamo il documento utente su Firestore
       const userData: UserInfo = {
         uid: firebaseUser.uid,
-        username, // campi obbligatori
-        fullName, // opzionale
-        profilePic, // opzionale
-        // bio, followers, following possono essere inizializzati in seguito se necessario
+        username,
+        fullName,
+        profilePic,
+        bio: '',
+        followers: [],
+        following: [],
       }
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
 

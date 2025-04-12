@@ -1,7 +1,8 @@
 // src/context/AuthProvider.tsx
 import React, { useEffect, useState } from 'react'
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth'
-import { auth } from '../services/firebase'
+import { doc, getDoc } from 'firebase/firestore'
+import { auth, db } from '../services/firebase'
 import { AuthContext } from './AuthContext'
 import { UserInfo } from '../types/interfaces'
 
@@ -14,15 +15,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+    // Ascoltiamo le variazioni dello stato di autenticazione tramite Firebase Auth
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
       if (firebaseUser) {
-        // Creiamo un minimal user (prendendo i dati disponibili da Firebase)
-        const minimalUser: UserInfo = {
-          uid: firebaseUser.uid,
-          username: firebaseUser.displayName || '',
-          profilePic: firebaseUser.photoURL || '',
+        try {
+          // Recupera il documento utente dalla collezione "users" in Firestore
+          const userDocRef = doc(db, 'users', firebaseUser.uid)
+          const snap = await getDoc(userDocRef)
+
+          if (snap.exists()) {
+            // Se il documento esiste, usiamo i dati completi salvati su Firestore
+            const userData = snap.data() as UserInfo
+            setUser(userData)
+          } else {
+            // Se per qualche motivo il documento non esiste (caso raro),
+            // creiamo un oggetto minimo usando i dati disponibili in firebaseUser
+            const minimalUser: UserInfo = {
+              uid: firebaseUser.uid,
+              username: firebaseUser.displayName || '',
+              profilePic: firebaseUser.photoURL || '',
+            }
+            setUser(minimalUser)
+          }
+        } catch (error) {
+          console.error('Errore nel recuperare il documento utente:', error)
+          setUser(null)
         }
-        setUser(minimalUser)
       } else {
         setUser(null)
       }
@@ -36,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await signOut(auth)
     } catch (error) {
-      console.error('Logout error: ', error)
+      console.error('Logout error:', error)
     }
   }
 

@@ -19,7 +19,6 @@ import {
 } from '@chakra-ui/react'
 import {
   doc,
-  getDoc,
   getDocs,
   updateDoc,
   arrayUnion,
@@ -35,10 +34,11 @@ import { db, storage } from '../services/firebase'
 import { useAuth } from '../context/AuthContext'
 import { Post, UserInfo } from '../types/interfaces'
 import PostCard from '../components/PostCard'
+import LoadingSpinner from '../components/LoadingSpinner'
 
-export default function Profile() {
+const Profile = () => {
   const { username } = useParams<{ username: string }>()
-  const { user: currentUser } = useAuth() // user è UserInfo | null
+  const { user: currentUser } = useAuth() // currentUser è di tipo UserInfo | null
   const [profileUser, setProfileUser] = useState<UserInfo | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [isEditing, setIsEditing] = useState(false)
@@ -50,21 +50,26 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Prendiamo il doc dell'utente da Firestore (users/<username>)
-        // Dove "username" è l'ID del doc utente, nel tuo schema
-        const userDoc = doc(db, 'users', username!)
-        const userSnap = await getDoc(userDoc)
+        console.log('Fetching profile for username:', username)
+        if (!username) return
 
-        if (!userSnap.exists()) {
+        // Eseguiamo una query per cercare l'utente in base al campo "username"
+        const userQuery = query(collection(db, 'users'), where('username', '==', username))
+        const querySnapshot = await getDocs(userQuery)
+
+        if (querySnapshot.empty) {
+          // Se non troviamo l'utente, reindirizziamo alla home
           navigate('/')
           return
         }
 
-        const data = userSnap.data() as UserInfo
+        // Consideriamo il primo documento trovato
+        const userDoc = querySnapshot.docs[0]
+        const data = userDoc.data() as UserInfo
         setProfileUser(data)
         setEditedBio(data.bio ?? '')
 
-        // Recuperiamo i post di questo utente
+        // Recuperiamo i post di questo utente ordinati per timestamp decrescente
         const postsSnapshot = await getDocs(
           query(
             collection(db, 'posts'),
@@ -83,7 +88,7 @@ export default function Profile() {
       }
     }
 
-    if (username) fetchProfile()
+    fetchProfile()
   }, [username, navigate, toast])
 
   // Handle follow/unfollow
@@ -97,14 +102,14 @@ export default function Profile() {
 
         const isAlreadyFollowing = profileUser.followers?.includes(currentUser.uid)
 
-        // Aggiorniamo la lista following dell'utente loggato
+        // Aggiorniamo la lista "following" dell'utente loggato
         transaction.update(currentUserRef, {
           following: isAlreadyFollowing
             ? arrayRemove(profileUser.uid)
             : arrayUnion(profileUser.uid),
         })
 
-        // Aggiorniamo la lista followers dell'utente del profilo
+        // Aggiorniamo la lista "followers" dell'utente del profilo
         transaction.update(profileUserRef, {
           followers: isAlreadyFollowing
             ? arrayRemove(currentUser.uid)
@@ -112,7 +117,7 @@ export default function Profile() {
         })
       })
 
-      // Aggiorniamo subito lo stato per non dover ricaricare
+      // Aggiorniamo localmente il profilo per riflettere subito il cambiamento
       setProfileUser((prev) =>
         prev
           ? {
@@ -142,7 +147,7 @@ export default function Profile() {
         profilePic: downloadURL,
       })
 
-      // Aggiorniamo localmente l'avatar
+      // Aggiorniamo localmente l'avatar nel profilo
       setProfileUser((prev) => (prev ? { ...prev, profilePic: downloadURL } : null))
     } catch (error) {
       toast({ title: 'Error updating profile picture', status: 'error' })
@@ -150,7 +155,7 @@ export default function Profile() {
     }
   }
 
-  // Save bio edits
+  // Salvataggio modifiche della bio
   const handleSaveBio = async () => {
     if (!currentUser || !profileUser) return
 
@@ -167,7 +172,7 @@ export default function Profile() {
   }
 
   if (!profileUser) {
-    return <div>Loading...</div>
+    return <LoadingSpinner />
   }
 
   const isCurrentUser = currentUser?.uid === profileUser.uid
@@ -193,14 +198,14 @@ export default function Profile() {
 
           <Flex gap={8} mb={4}>
             <Text>
-              <strong>{posts.length}</strong> posts
+              <strong>{posts.length}</strong> memories
             </Text>
-            <Text>
+            {/* <Text>
               <strong>{profileUser.followers?.length ?? 0}</strong> followers
             </Text>
             <Text>
               <strong>{profileUser.following?.length ?? 0}</strong> following
-            </Text>
+            </Text> */}
           </Flex>
 
           {isEditing ? (
@@ -232,21 +237,26 @@ export default function Profile() {
 
       <Tabs variant="enclosed">
         <TabList>
-          <Tab>Posts</Tab>
-          <Tab>Saved</Tab>
+          <Tab>Memories</Tab>
+          <Tab>Ristorants</Tab>
         </TabList>
 
         <TabPanels>
           <TabPanel>
+            {posts.length === 0 && <Text>No memories found</Text>}
             <Grid templateColumns="repeat(3, 1fr)" gap={1}>
               {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
             </Grid>
           </TabPanel>
-          <TabPanel>{/* Qui potresti gestire i "post salvati", se lo desideri */}</TabPanel>
+          <TabPanel>
+            <Text>Ristoranti salvati</Text>
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </Box>
   )
 }
+
+export default Profile
