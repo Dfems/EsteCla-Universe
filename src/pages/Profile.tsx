@@ -1,4 +1,3 @@
-// src/pages/Profile.tsx
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
@@ -16,6 +15,7 @@ import {
   useToast,
   Input,
   Textarea,
+  useColorModeValue, // Importa l'hook per i valori dinamici
 } from '@chakra-ui/react'
 import {
   doc,
@@ -43,33 +43,37 @@ const Profile = () => {
   const [posts, setPosts] = useState<Post[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [editedBio, setEditedBio] = useState('')
+  const [newProfilePicFile, setNewProfilePicFile] = useState<File | null>(null)
   const toast = useToast()
   const navigate = useNavigate()
 
-  // Fetch profile data
+  // Definiamo alcuni token dinamici per il tema
+  const containerBg = useColorModeValue('white', 'gray.800') // Background principale
+  const borderColor = useColorModeValue('gray.200', 'gray.600') // Bordo per Avatar, TabList, ecc.
+  const textColor = useColorModeValue('gray.800', 'whiteAlpha.900') // Colore del testo
+  const tabSelectedColor = useColorModeValue('black', 'white') // Colore del testo nelle Tab selezionate
+  const tabSelectedBorder = useColorModeValue('2px solid black', '2px solid white') // Border per la tab selezionata
+
+  // Fetch dei dati del profilo
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        console.log('Fetching profile for username:', username)
         if (!username) return
 
-        // Eseguiamo una query per cercare l'utente in base al campo "username"
         const userQuery = query(collection(db, 'users'), where('username', '==', username))
         const querySnapshot = await getDocs(userQuery)
 
         if (querySnapshot.empty) {
-          // Se non troviamo l'utente, reindirizziamo alla home
           navigate('/')
           return
         }
 
-        // Consideriamo il primo documento trovato
         const userDoc = querySnapshot.docs[0]
         const data = userDoc.data() as UserInfo
         setProfileUser(data)
         setEditedBio(data.bio ?? '')
 
-        // Recuperiamo i post di questo utente ordinati per timestamp decrescente
+        // Post ordinati per timestamp
         const postsSnapshot = await getDocs(
           query(
             collection(db, 'posts'),
@@ -91,10 +95,9 @@ const Profile = () => {
     fetchProfile()
   }, [username, navigate, toast])
 
-  // Handle follow/unfollow
+  // Gestione follow/unfollow
   const handleFollow = async () => {
     if (!currentUser || !profileUser) return
-
     try {
       await runTransaction(db, async (transaction) => {
         const currentUserRef = doc(db, 'users', currentUser.uid)
@@ -102,14 +105,12 @@ const Profile = () => {
 
         const isAlreadyFollowing = profileUser.followers?.includes(currentUser.uid)
 
-        // Aggiorniamo la lista "following" dell'utente loggato
         transaction.update(currentUserRef, {
           following: isAlreadyFollowing
             ? arrayRemove(profileUser.uid)
             : arrayUnion(profileUser.uid),
         })
 
-        // Aggiorniamo la lista "followers" dell'utente del profilo
         transaction.update(profileUserRef, {
           followers: isAlreadyFollowing
             ? arrayRemove(currentUser.uid)
@@ -117,7 +118,6 @@ const Profile = () => {
         })
       })
 
-      // Aggiorniamo localmente il profilo per riflettere subito il cambiamento
       setProfileUser((prev) =>
         prev
           ? {
@@ -134,39 +134,25 @@ const Profile = () => {
     }
   }
 
-  // Handle profile picture upload
-  const handleProfilePicUpload = async (file: File) => {
+  // Salvataggio modifiche profilo
+  const handleSaveProfile = async () => {
     if (!currentUser || !profileUser) return
-
     try {
-      const storageRef = ref(storage, `profile-pics/${currentUser.uid}`)
-      await uploadBytes(storageRef, file)
-      const downloadURL = await getDownloadURL(storageRef)
+      const updatedData: Partial<UserInfo> = { bio: editedBio }
 
-      await updateDoc(doc(db, 'users', currentUser.uid), {
-        profilePic: downloadURL,
-      })
+      if (newProfilePicFile) {
+        const storageRef = ref(storage, `profile-pics/${currentUser.uid}/${newProfilePicFile.name}`)
+        await uploadBytes(storageRef, newProfilePicFile)
+        const newProfilePicURL = await getDownloadURL(storageRef)
+        updatedData.profilePic = newProfilePicURL
+      }
 
-      // Aggiorniamo localmente l'avatar nel profilo
-      setProfileUser((prev) => (prev ? { ...prev, profilePic: downloadURL } : null))
-    } catch (error) {
-      toast({ title: 'Error updating profile picture', status: 'error' })
-      console.log(error)
-    }
-  }
-
-  // Salvataggio modifiche della bio
-  const handleSaveBio = async () => {
-    if (!currentUser || !profileUser) return
-
-    try {
-      await updateDoc(doc(db, 'users', currentUser.uid), {
-        bio: editedBio,
-      })
+      await updateDoc(doc(db, 'users', currentUser.uid), updatedData)
+      setProfileUser((prev) => (prev ? { ...prev, ...updatedData } : prev))
       setIsEditing(false)
-      toast({ title: 'Bio updated', status: 'success' })
+      toast({ title: 'Profile updated', status: 'success' })
     } catch (error) {
-      toast({ title: 'Error updating bio', status: 'error' })
+      toast({ title: 'Error updating profile', status: 'error' })
       console.log(error)
     }
   }
@@ -179,79 +165,123 @@ const Profile = () => {
   const isFollowing = profileUser.followers?.includes(currentUser?.uid || '')
 
   return (
-    <Box maxW="935px" mx="auto" p={4}>
-      <Flex gap={8} mb={8}>
-        <Avatar src={profileUser.profilePic} size="2xl" border="2px solid white" boxShadow="lg" />
+    <Box maxW="935px" mx="auto" p={4} minH="100vh" bg={containerBg} color={textColor}>
+      {/* Layout a 2 colonne fisse per avatar e info */}
+      <Grid templateColumns="min-content 1fr" gap={6} alignItems="center" mb={8}>
+        <Avatar
+          src={profileUser.profilePic}
+          size="2xl"
+          name={profileUser.username}
+          showBorder
+          borderWidth="1px"
+          borderColor={borderColor}
+        />
 
-        <Box flex={1}>
-          <Flex gap={4} alignItems="center" mb={4}>
-            <Text fontSize="2xl">{profileUser.username}</Text>
-
+        <Box>
+          {/* Prima riga: username + pulsante Edit/Follow */}
+          <Flex align="center" gap={4} mb={4}>
+            <Text fontSize="2xl" fontWeight="bold" noOfLines={1}>
+              {profileUser.username}
+            </Text>
             {isCurrentUser ? (
-              <Button onClick={() => setIsEditing(!isEditing)}>Edit Profile</Button>
+              <Button size="sm" onClick={() => setIsEditing(!isEditing)}>
+                Modifica profilo
+              </Button>
             ) : (
-              <Button colorScheme={isFollowing ? 'gray' : 'blue'} onClick={handleFollow}>
+              <Button size="sm" colorScheme={isFollowing ? 'gray' : 'blue'} onClick={handleFollow}>
                 {isFollowing ? 'Following' : 'Follow'}
               </Button>
             )}
           </Flex>
 
-          <Flex gap={8} mb={4}>
+          {/* Seconda riga: statistiche */}
+          <Flex gap={6} mb={4}>
             <Text>
-              <strong>{posts.length}</strong> memories
-            </Text>
-            {/* <Text>
-              <strong>{profileUser.followers?.length ?? 0}</strong> followers
+              <strong>{posts.length}</strong> post
             </Text>
             <Text>
-              <strong>{profileUser.following?.length ?? 0}</strong> following
-            </Text> */}
+              <strong>{profileUser.followers?.length ?? 0}</strong> follower
+            </Text>
+            <Text>
+              <strong>{profileUser.following?.length ?? 0}</strong> seguiti
+            </Text>
           </Flex>
 
-          {isEditing ? (
-            <Textarea value={editedBio} onChange={(e) => setEditedBio(e.target.value)} mb={2} />
-          ) : (
-            <Text>{profileUser.bio}</Text>
+          {/* Nome completo (se presente) + bio */}
+          {profileUser.fullName && (
+            <Text fontWeight="bold" mb={2}>
+              {profileUser.fullName}
+            </Text>
           )}
 
-          {isEditing && (
-            <Flex gap={2} mt={2}>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => e.target.files?.[0] && handleProfilePicUpload(e.target.files[0])}
-                display="none"
-                id="profile-pic-upload"
+          {isEditing ? (
+            <Box>
+              <Textarea
+                value={editedBio}
+                onChange={(e) => setEditedBio(e.target.value)}
+                mb={2}
+                placeholder="Aggiorna la tua bio"
               />
-              <label htmlFor="profile-pic-upload">
-                <Button as="span">Change Photo</Button>
-              </label>
-              <Button colorScheme="green" onClick={handleSaveBio}>
-                Save Bio
-              </Button>
-              <Button onClick={() => setIsEditing(false)}>Cancel</Button>
-            </Flex>
+              <Flex gap={2} flexWrap="wrap">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && setNewProfilePicFile(e.target.files[0])}
+                  display="none"
+                  id="profile-pic-upload"
+                />
+                <label htmlFor="profile-pic-upload">
+                  <Button as="span" size="sm" variant="outline">
+                    Cambia Foto
+                  </Button>
+                </label>
+                <Button size="sm" colorScheme="green" onClick={handleSaveProfile}>
+                  Salva
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>
+                  Annulla
+                </Button>
+              </Flex>
+            </Box>
+          ) : (
+            <Text whiteSpace="pre-wrap">{profileUser.bio}</Text>
           )}
         </Box>
-      </Flex>
+      </Grid>
 
-      <Tabs variant="enclosed">
-        <TabList>
-          <Tab>Memories</Tab>
-          <Tab>Ristorants</Tab>
+      {/* Tabs per i contenuti */}
+      <Tabs variant="unstyled">
+        <TabList borderBottom="1px solid" borderColor={borderColor} mb={2}>
+          <Tab
+            _selected={{ color: tabSelectedColor, borderBottom: tabSelectedBorder }}
+            mr={4}
+            fontWeight="bold"
+          >
+            Memories
+          </Tab>
+          <Tab
+            _selected={{ color: tabSelectedColor, borderBottom: tabSelectedBorder }}
+            fontWeight="bold"
+          >
+            Ristorants
+          </Tab>
         </TabList>
 
         <TabPanels>
-          <TabPanel>
-            {posts.length === 0 && <Text>No memories found</Text>}
-            <Grid templateColumns="repeat(3, 1fr)" gap={1}>
-              {posts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </Grid>
+          <TabPanel p={0}>
+            {posts.length === 0 ? (
+              <Text mt={4}>Nessun post trovato</Text>
+            ) : (
+              <Grid templateColumns="repeat(3, 1fr)" gap={1}>
+                {posts.map((post) => (
+                  <PostCard key={post.id} post={post} />
+                ))}
+              </Grid>
+            )}
           </TabPanel>
-          <TabPanel>
-            <Text>Ristoranti salvati</Text>
+          <TabPanel p={0}>
+            <Text mt={4}>Ristoranti salvati</Text>
+            {/* Inserisci qui il contenuto relativo ai ristoranti salvati */}
           </TabPanel>
         </TabPanels>
       </Tabs>

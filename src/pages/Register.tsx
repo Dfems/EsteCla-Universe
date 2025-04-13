@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { auth, db } from '../services/firebase'
 import { UserInfo } from '../types/interfaces'
 
@@ -13,7 +14,7 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [fullName, setFullName] = useState('')
-  const [profilePic, setProfilePic] = useState('')
+  const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -27,24 +28,40 @@ const Register: React.FC = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const firebaseUser = userCredential.user
 
-      // 2) Creiamo il documento utente su Firestore
+      // 2) Se è stato selezionato un file per la foto profilo, lo carichiamo su Firebase Storage
+      let profilePicURL = ''
+      if (profilePicFile) {
+        const storage = getStorage()
+        // Definiamo un percorso per il file, includendo ad esempio l'uid e il nome originale del file
+        const profilePicRef = ref(storage, `profilePics/${firebaseUser.uid}/${profilePicFile.name}`)
+        await uploadBytes(profilePicRef, profilePicFile)
+        profilePicURL = await getDownloadURL(profilePicRef)
+      }
+
+      // 3) Creiamo il documento utente su Firestore
       const userData: UserInfo = {
         uid: firebaseUser.uid,
         username,
         fullName,
-        profilePic,
+        profilePic: profilePicURL,
         bio: '',
         followers: [],
         following: [],
       }
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
 
-      // 3) Reindirizziamo in app
+      // 4) Reindirizziamo l'utente in app
       navigate('/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfilePicFile(e.target.files[0])
     }
   }
 
@@ -102,8 +119,8 @@ const Register: React.FC = () => {
         </FormControl>
 
         <FormControl mb={6}>
-          <FormLabel>Profile Picture (URL)</FormLabel>
-          <Input type="text" value={profilePic} onChange={(e) => setProfilePic(e.target.value)} />
+          <FormLabel>Profile Picture</FormLabel>
+          <Input type="file" accept="image/*" onChange={handleFileChange} />
         </FormControl>
 
         <Button

@@ -13,19 +13,27 @@ import {
   useBreakpointValue,
   Button,
   Heading,
+  useColorMode,
+  useColorModeValue, // Importa anche useColorModeValue
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaHome, FaDownload, FaBars, FaSignOutAlt, FaApple, FaBirthdayCake } from 'react-icons/fa'
+import { FaHome, FaBars, FaSignOutAlt, FaBirthdayCake, FaSun, FaMoon } from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
 import { useAuth } from '../context/AuthContext'
-import { usePWA } from '../hooks/usePWA'
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
-  const { isInstallable, handleInstall, isIOS, showIOSInstallPrompt } = usePWA()
+  const { colorMode, toggleColorMode } = useColorMode()
+
+  // Definisci colori dinamici in base al tema
+  const bg = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.700')
+  const hoverBg = useColorModeValue('gray.100', 'gray.600')
+  const textColor = useColorModeValue('gray.800', 'gray.100')
+  const textColorSecondary = useColorModeValue('gray.500', 'gray.300')
 
   // Funzione per svuotare la cache e ricaricare la pagina
   const clearCacheAndReload = async () => {
@@ -34,7 +42,6 @@ const Navbar = () => {
         const cacheNames = await caches.keys()
         await Promise.all(cacheNames.map((name) => caches.delete(name)))
       }
-
       localStorage.clear()
       sessionStorage.clear()
       window.location.reload()
@@ -46,23 +53,28 @@ const Navbar = () => {
   // Elementi per la navbar desktop
   const navItemsDesktop = [
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
-    // { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
-    // { icon: <FaBell size={24} />, path: '/activities', label: 'Notifications' },
     { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
     { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
+    {
+      icon: colorMode === 'light' ? <FaMoon size={24} /> : <FaSun size={24} />,
+      onClick: toggleColorMode,
+      label: colorMode === 'light' ? 'Dark Mode' : 'Light Mode',
+    },
   ]
 
   // Elementi per il Drawer mobile (sidebar)
   const navItemsMobileSidebar = [
     { icon: <FaHome size={24} />, path: '/', label: 'Home' },
     { icon: <FaBirthdayCake size={24} />, path: '/countdown', label: 'Birthday' },
-    // { icon: <FaPlus size={24} />, path: '/create', label: 'Create' },
+    {
+      icon: colorMode === 'light' ? <FaMoon size={24} /> : <FaSun size={24} />,
+      onClick: toggleColorMode,
+      label: colorMode === 'light' ? 'Dark Mode' : 'Light Mode',
+    },
   ]
 
   // Elementi per la navbar mobile (parte superiore)
   const navItemsMobileNavbar = [
-    // { icon: <FaBell size={18} />, path: '/activities', label: 'Notifications' },
-    // { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
     { icon: <FaHome size={22} />, path: '/', label: 'Home' },
     { icon: <TbRefresh size={22} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
     { icon: <FaBars size={20} />, path: 'menu', label: 'Menu' },
@@ -77,9 +89,9 @@ const Navbar = () => {
     <>
       <Flex
         p={{ base: 2, md: 4 }}
-        bg="white"
+        bg={bg} // usa il colore dinamico di background
         borderBottom="1px"
-        borderColor="gray.200"
+        borderColor={borderColor} // usa il colore dinamico per il bordo
         position="fixed"
         top={0}
         left={0}
@@ -97,7 +109,7 @@ const Navbar = () => {
             _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s' }}
           >
             {!isMobile && (
-              <Heading size="md" fontFamily="cursive">
+              <Heading size="md" fontFamily="cursive" color={textColor}>
                 EsteCla
               </Heading>
             )}
@@ -125,28 +137,6 @@ const Navbar = () => {
               />
             ))}
 
-            {/* Bottone Install App visibile solo se l'app è installabile */}
-            {isInstallable && (
-              <IconButton
-                id="install-button"
-                aria-label="Install app"
-                icon={<FaDownload size={18} />}
-                variant="ghost"
-                onClick={handleInstall}
-                _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
-              />
-            )}
-
-            {/* Pulsante specifico per iOS */}
-            {isIOS && (
-              <IconButton
-                aria-label="Installa su iOS"
-                icon={<FaApple />}
-                onClick={showIOSInstallPrompt}
-                variant="ghost"
-              />
-            )}
-
             {user && (
               <Flex align="center" gap={3}>
                 <Link to={`/profile/${user.username}`}>
@@ -154,17 +144,11 @@ const Navbar = () => {
                     size="sm"
                     src={user.profilePic}
                     name={user.username}
-                    onClick={() => alert(`/profile/${user.username}`)}
                     _hover={{ transform: 'scale(1.1)' }}
                     transition="transform 0.2s"
                   />
                 </Link>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleLogout}
-                  _hover={{ bg: 'gray.100' }}
-                >
+                <Button variant="outline" size="sm" onClick={handleLogout} _hover={{ bg: hoverBg }}>
                   Logout
                 </Button>
               </Flex>
@@ -201,87 +185,71 @@ const Navbar = () => {
       {/* Mobile Drawer Sidebar */}
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={bg}>
           <DrawerBody mt={8}>
-            <VStack spacing={4} align="stretch">
-              {user && (
-                <Link to={`/profile/${user.username}`}>
-                  <Flex align="center" p={2} _hover={{ bg: 'gray.50' }} borderRadius="md">
-                    <Avatar src={user.profilePic} />
-                    <Box ml={3}>
-                      <Text fontWeight="bold">{user.username}</Text>
-                      <Text fontSize="sm" color="gray.500">
-                        View Profile
-                      </Text>
-                    </Box>
-                  </Flex>
-                </Link>
-              )}
+            {user && (
+              <Link to={`/profile/${user.username}`}>
+                <Flex align="center" p={2} _hover={{ bg: hoverBg }} borderRadius="md">
+                  <Avatar src={user.profilePic} />
+                  <Box ml={3}>
+                    <Text fontWeight="bold" color={textColor}>
+                      {user.username}
+                    </Text>
+                    <Text fontSize="sm" color={textColorSecondary}>
+                      View Profile
+                    </Text>
+                  </Box>
+                </Flex>
+              </Link>
+            )}
 
-              <VStack spacing={1} align="stretch">
-                {navItemsMobileSidebar.map((item, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    onClick={() => {
+            <VStack spacing={1} align="stretch">
+              {navItemsMobileSidebar.map((item, index) => (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  onClick={() => {
+                    if (item.onClick) {
+                      item.onClick()
+                    } else {
                       navigate(item.path)
-                      onClose()
-                    }}
-                    height="48px"
-                    borderRadius="md"
-                    _hover={{ bg: 'gray.100' }}
-                  >
-                    <Flex align="center" gap={3}>
-                      <Box w="24px" display="flex" justifyContent="center">
-                        {item.icon}
-                      </Box>
-                      <Text>{item.label}</Text>
-                    </Flex>
-                  </Button>
-                ))}
+                    }
+                    onClose()
+                  }}
+                  height="48px"
+                  borderRadius="md"
+                  _hover={{ bg: hoverBg }}
+                >
+                  <Flex align="center" gap={3}>
+                    <Box w="24px" display="flex" justifyContent="center">
+                      {item.icon}
+                    </Box>
+                    <Text>{item.label}</Text>
+                  </Flex>
+                </Button>
+              ))}
 
-                {/* Bottone Install App per mobile */}
-                {isInstallable && (
-                  <Button
-                    id="install-button-mobile"
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    onClick={handleInstall}
-                    height="48px"
-                    borderRadius="md"
-                    _hover={{ bg: 'gray.100' }}
-                  >
-                    <Flex align="center" gap={3}>
-                      <Box w="24px" display="flex" justifyContent="center">
-                        <FaDownload size={18} />
-                      </Box>
-                      <Text>Install App</Text>
-                    </Flex>
-                  </Button>
-                )}
-
-                {user && (
-                  <Button
-                    variant="ghost"
-                    justifyContent="flex-start"
-                    onClick={() => {
-                      handleLogout()
-                      onClose()
-                    }}
-                    height="48px"
-                    borderRadius="md"
-                    _hover={{ bg: 'gray.100' }}
-                  >
-                    <Flex align="center" gap={3}>
-                      <Box w="24px" display="flex" justifyContent="center">
-                        <FaSignOutAlt size={18} />
-                      </Box>
-                      <Text>Logout</Text>
-                    </Flex>
-                  </Button>
-                )}
-              </VStack>
+              {user && (
+                <Button
+                  variant="ghost"
+                  justifyContent="flex-start"
+                  onClick={() => {
+                    handleLogout()
+                    onClose()
+                  }}
+                  height="48px"
+                  borderRadius="md"
+                  _hover={{ bg: hoverBg }}
+                >
+                  <Flex align="center" gap={3}>
+                    <Box w="24px" display="flex" justifyContent="center">
+                      <FaSignOutAlt size={18} />
+                    </Box>
+                    <Text>Logout</Text>
+                  </Flex>
+                </Button>
+              )}
             </VStack>
           </DrawerBody>
         </DrawerContent>
