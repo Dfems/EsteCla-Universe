@@ -1,16 +1,12 @@
-import { extendTheme, ThemeConfig } from '@chakra-ui/react'
-
-const config: ThemeConfig = {
-  initialColorMode: 'light', // colore di default
-  useSystemColorMode: true, // rileva automaticamente il tema di sistema
-}
+// src/theme/index.ts
+import { extendTheme } from '@chakra-ui/react'
+import config from './config'
+import fonts from './typography'
 
 const theme = extendTheme({
   config,
-  fonts: {
-    heading: 'Inter, sans-serif',
-    body: 'Inter, sans-serif',
-  },
+  fonts,
+  // Qui puoi aggiungere eventuali override o global styles in futuro
 })
 
 export default theme

@@ -1,4 +1,4 @@
-import LoadingSpinner from './components/LoadingSpinner'
+import LoadingSpinner from './components/common/LoadingSpinner'
 import Navbar from './components/Navbar'
 import { useAuth } from './context/AuthContext'
 import { Navigate, Outlet } from 'react-router-dom'
