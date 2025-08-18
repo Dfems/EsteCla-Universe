@@ -15,9 +15,9 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import PostCard from '../common/PostCard'
-import { UserInfo, Post } from '../../types/interfaces'
-import useThemeColors from '../../hooks/useThemeColors'
+import PostCard from '@components/ui/PostCard'
+import { UserInfo, Post } from '@models/interfaces'
+import useThemeColors from '@hooks/useThemeColors'
 
 interface ProfileDetailsProps {
   profileUser: UserInfo

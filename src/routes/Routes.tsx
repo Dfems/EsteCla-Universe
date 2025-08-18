@@ -1,12 +1,7 @@
 // src/routes/Routes.tsx
 import { createBrowserRouter } from 'react-router-dom'
-import App from '../App'
-import Home from '../pages/Home'
-import Profile from '../pages/Profile'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import { ProtectedRoute } from '../components/ProtectedRoute'
-import Countdown from '../pages/Countdown'
+import App from '@/App'
+import { ProtectedRoute } from '@components/ProtectedRoute'
 
 export const router = createBrowserRouter([
   {
@@ -17,17 +12,41 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <Home /> },
-      { path: '/profile/:username', element: <Profile /> },
-      { path: '/countdown', element: <Countdown /> },
+      {
+        index: true,
+        async lazy() {
+          const { default: Home } = await import('@pages/Home')
+          return { Component: Home }
+        },
+      },
+      {
+        path: '/profile/:username',
+        async lazy() {
+          const { default: Profile } = await import('@pages/Profile')
+          return { Component: Profile }
+        },
+      },
+      {
+        path: '/countdown',
+        async lazy() {
+          const { default: Countdown } = await import('@pages/Countdown')
+          return { Component: Countdown }
+        },
+      },
     ],
   },
   {
     path: '/login',
-    element: <Login />,
+    async lazy() {
+      const { default: Login } = await import('@pages/Login')
+      return { Component: Login }
+    },
   },
   {
     path: '/register',
-    element: <Register />,
+    async lazy() {
+      const { default: Register } = await import('@pages/Register')
+      return { Component: Register }
+    },
   },
 ])

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Box, Flex, Text, Heading, useColorModeValue } from '@chakra-ui/react'
+import { Box, Flex, Text, Heading, useColorMode } from '@chakra-ui/react'
+import useThemeColors from '@hooks/useThemeColors'
 import Confetti from 'react-confetti'
 
 interface TimeLeft {
@@ -16,6 +17,8 @@ interface Props {
 const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
   // Data di riferimento (solo mese/giorno dalla stringa birthday)
   const targetDate = useMemo(() => new Date(`${birthday}T00:00:00`), [birthday])
+  const { colorMode } = useColorMode()
+  const { containerBg, textColor: themeTextColor } = useThemeColors()
 
   // Funzione per calcolare il tempo residuo fino al prossimo compleanno
   const calculateTimeLeft = useCallback((): TimeLeft => {
@@ -62,8 +65,9 @@ const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
     return () => clearInterval(timer)
   }, [calculateTimeLeft])
 
-  const boxBg = useColorModeValue('pink.100', 'pink.700')
-  const textColor = useColorModeValue('pink.600', 'pink.100')
+  const boxBg = colorMode === 'dark' ? 'pink.700' : 'pink.100'
+  const countdownTextColor = colorMode === 'dark' ? 'pink.100' : 'pink.600'
+  const headingColor = colorMode === 'dark' ? 'pink.300' : 'pink.600'
   const month = targetDate.getMonth()
   const day = targetDate.getDate()
   const displayDate = new Date(2000, month, day)
@@ -78,25 +82,35 @@ const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
       p={4}
     >
       {isBirthday && <Confetti recycle={false} numberOfPieces={400} />}
-      <Box bg="whiteAlpha.900" p={8} borderRadius="xl" boxShadow="2xl" textAlign="center">
-        <Heading mb={6} color="pink.600" fontFamily="Pacifico">
+      <Box bg={containerBg} p={8} borderRadius="xl" boxShadow="2xl" textAlign="center">
+        <Heading mb={6} color={headingColor} fontFamily="Pacifico">
           {isBirthday
             ? '🎂 BUON COMPLEANNO MOGLIE MIA! 🥳'
             : '🎉 Compleanno di mia moglie in arrivo! 🎂'}
         </Heading>
         {!isBirthday ? (
           <Flex gap={4} justify="center" wrap="wrap">
-            <TimeBox value={timeLeft.days} label="Giorni" bg={boxBg} color={textColor} />
-            <TimeBox value={timeLeft.hours} label="Ore" bg={boxBg} color={textColor} />
-            <TimeBox value={timeLeft.minutes} label="Minuti" bg={boxBg} color={textColor} />
-            <TimeBox value={timeLeft.seconds} label="Secondi" bg={boxBg} color={textColor} />
+            <TimeBox value={timeLeft.days} label="Giorni" bg={boxBg} color={countdownTextColor} />
+            <TimeBox value={timeLeft.hours} label="Ore" bg={boxBg} color={countdownTextColor} />
+            <TimeBox
+              value={timeLeft.minutes}
+              label="Minuti"
+              bg={boxBg}
+              color={countdownTextColor}
+            />
+            <TimeBox
+              value={timeLeft.seconds}
+              label="Secondi"
+              bg={boxBg}
+              color={countdownTextColor}
+            />
           </Flex>
         ) : (
-          <Text mt={2} color="gray.600">
+          <Text mt={2} color={themeTextColor}>
             Tanti auguri di cuore! 🎈
           </Text>
         )}
-        <Text mt={6} color="gray.600">
+        <Text mt={6} color={themeTextColor}>
           Manca pochissimo al{' '}
           {displayDate.toLocaleDateString('it-IT', {
             day: 'numeric',

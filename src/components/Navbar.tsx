@@ -14,12 +14,12 @@ import {
   Button,
   Heading,
   useColorMode,
-  useColorModeValue, // Importa anche useColorModeValue
 } from '@chakra-ui/react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaHome, FaBars, FaSignOutAlt, FaBirthdayCake, FaSun, FaMoon } from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '@context/AuthContext'
+import useThemeColors from '@hooks/useThemeColors'
 
 const Navbar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -27,13 +27,25 @@ const Navbar = () => {
   const navigate = useNavigate()
   const isMobile = useBreakpointValue({ base: true, md: false })
   const { colorMode, toggleColorMode } = useColorMode()
+  const { containerBg, borderColor, textColor } = useThemeColors()
+  // Prefetch dei chunk delle pagine al passaggio del mouse per UX più veloce
+  const prefetchRoute = (path?: string) => {
+    switch (path) {
+      case '/':
+        import('@pages/Home')
+        break
+      case '/countdown':
+        import('@pages/Countdown')
+        break
+      default:
+        break
+    }
+  }
 
-  // Definisci colori dinamici in base al tema
-  const bg = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.700')
-  const hoverBg = useColorModeValue('gray.100', 'gray.600')
-  const textColor = useColorModeValue('gray.800', 'gray.100')
-  const textColorSecondary = useColorModeValue('gray.500', 'gray.300')
+  // Colori derivati dal nostro tema e dal color mode
+  const bg = containerBg
+  const hoverBg = colorMode === 'light' ? 'gray.100' : 'gray.600'
+  const textColorSecondary = colorMode === 'light' ? 'gray.500' : 'gray.300'
 
   // Funzione per svuotare la cache e ricaricare la pagina
   const clearCacheAndReload = async () => {
@@ -132,6 +144,7 @@ const Navbar = () => {
                     navigate(item.path)
                   }
                 }}
+                onMouseEnter={() => prefetchRoute(item.path)}
                 fontSize="xl"
                 _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
               />
@@ -139,7 +152,12 @@ const Navbar = () => {
 
             {user && (
               <Flex align="center" gap={3}>
-                <Link to={`/profile/${user.username}`}>
+                <Link
+                  to={`/profile/${user.username}`}
+                  onMouseEnter={() => {
+                    import('@pages/Profile')
+                  }}
+                >
                   <Avatar
                     size="sm"
                     src={user.profilePic}
@@ -175,6 +193,7 @@ const Navbar = () => {
                     navigate(item.path)
                   }
                 }}
+                onMouseEnter={() => prefetchRoute(item.path)}
                 _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
               />
             ))}

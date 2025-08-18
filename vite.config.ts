@@ -1,8 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@components': fileURLToPath(new URL('./src/components', import.meta.url)),
+      '@pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
+      '@routes': fileURLToPath(new URL('./src/routes', import.meta.url)),
+      '@hooks': fileURLToPath(new URL('./src/hooks', import.meta.url)),
+      '@context': fileURLToPath(new URL('./src/context', import.meta.url)),
+      '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
+      '@theme': fileURLToPath(new URL('./src/theme', import.meta.url)),
+      '@models': fileURLToPath(new URL('./src/types', import.meta.url)),
+      '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -46,4 +61,16 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          chakra: ['@chakra-ui/react', '@chakra-ui/icons', '@emotion/react', '@emotion/styled'],
+          firebase: ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
+          slick: ['react-slick', 'slick-carousel'],
+        },
+      },
+    },
+  },
 })

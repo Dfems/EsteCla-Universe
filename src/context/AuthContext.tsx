@@ -1,6 +1,6 @@
 // src/context/AuthContext.ts
 import { createContext, useContext } from 'react'
-import { UserInfo } from '../types/interfaces'
+import { UserInfo } from '@models/interfaces'
 
 interface AuthContextValue {
   user: UserInfo | null

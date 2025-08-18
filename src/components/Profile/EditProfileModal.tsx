@@ -15,10 +15,19 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react'
-import { UserInfo } from '../../types/interfaces'
-import { auth, db, storage } from '../../services/firebase'
+import { UserInfo } from '@models/interfaces'
+import { auth, db, storage } from '@services/firebase'
 import { updateProfile } from 'firebase/auth'
-import { collection, doc, getDocs, query, updateDoc, where, deleteField } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  deleteField,
+  type UpdateData,
+} from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 
 interface Props {
@@ -90,13 +99,20 @@ const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, user }) => {
       }
 
       // Prepara il payload di update
-      const payload: Record<string, unknown> = {
-        fullName: fullName.trim() || null,
-        bio: bio.trim() || '',
+      const payload: UpdateData<UserInfo> = {
+        bio: bio.trim(),
         username: trimmedUsername,
         usernameLowercase,
-        profilePic: profilePicUrl || null,
       }
+
+      const fn = fullName.trim()
+      payload.fullName = fn
+        ? (fn as UpdateData<UserInfo>['fullName'])
+        : (deleteField() as unknown as UpdateData<UserInfo>['fullName'])
+
+      payload.profilePic = profilePicUrl
+        ? (profilePicUrl as UpdateData<UserInfo>['profilePic'])
+        : (deleteField() as unknown as UpdateData<UserInfo>['profilePic'])
 
       // Validazione birthday: opzionale, ma se presente deve avere età >= 13 e non essere futura
       if (birthday) {
@@ -105,9 +121,9 @@ const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, user }) => {
         if (age < 13) throw new Error('Devi avere almeno 13 anni.')
         const max = new Date().toISOString().split('T')[0]
         if (birthday > max) throw new Error('La data di compleanno non può essere nel futuro.')
-        payload.birthday = birthday
+        payload.birthday = birthday as UpdateData<UserInfo>['birthday']
       } else {
-        payload.birthday = deleteField()
+        payload.birthday = deleteField() as unknown as UpdateData<UserInfo>['birthday']
       }
 
       await updateDoc(doc(db, 'users', user.uid), payload)

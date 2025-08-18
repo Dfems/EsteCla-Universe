@@ -5,9 +5,9 @@ import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@ch
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { auth, db } from '../services/firebase'
-import { UserInfo } from '../types/interfaces'
-import useThemeColors from '../hooks/useThemeColors'
+import { auth, db } from '@services/firebase'
+import { UserInfo } from '@models/interfaces'
+import useThemeColors from '@hooks/useThemeColors'
 
 const Register: React.FC = () => {
   const navigate = useNavigate()
@@ -204,7 +204,12 @@ const Register: React.FC = () => {
           Register
         </Button>
 
-        <Button variant="outline" w="100%" onClick={() => navigate('/login')}>
+        <Button
+          variant="outline"
+          w="100%"
+          onMouseEnter={() => import('@pages/Login')}
+          onClick={() => navigate('/login')}
+        >
           Hai già un account? Fai il Login
         </Button>
       </Box>

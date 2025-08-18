@@ -1,8 +1,8 @@
 // src/components/ProtectedRoute.tsx
 import React, { JSX } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import LoadingSpinner from './common/LoadingSpinner'
+import { useAuth } from '@context/AuthContext'
+import LoadingSpinner from '@components/ui/LoadingSpinner'
 
 interface ProtectedRouteProps {
   children: JSX.Element

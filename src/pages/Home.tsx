@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react'
-import { useAuth } from '../context/AuthContext'
-import useThemeColors from '../hooks/useThemeColors'
+import { useAuth } from '@context/AuthContext'
+import useThemeColors from '@hooks/useThemeColors'
 
 export default function Home() {
   const { user } = useAuth()

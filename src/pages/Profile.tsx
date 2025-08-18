@@ -1,10 +1,10 @@
 // src/pages/Profile.tsx
 import { Box, useDisclosure } from '@chakra-ui/react'
-import { useProfile } from '../hooks/useProfile'
-import ProfileDetails from '../components/Profile/ProfileDetails'
-import LoadingSpinner from '../components/common/LoadingSpinner'
-import { useAuth } from '../context/AuthContext'
-import EditProfileModal from '../components/Profile/EditProfileModal'
+import { useProfile } from '@hooks/useProfile'
+import ProfileDetails from '@components/Profile/ProfileDetails'
+import LoadingSpinner from '@components/ui/LoadingSpinner'
+import { useAuth } from '@context/AuthContext'
+import EditProfileModal from '@components/Profile/EditProfileModal'
 
 const Profile = () => {
   const { profileUser, posts, loading } = useProfile()

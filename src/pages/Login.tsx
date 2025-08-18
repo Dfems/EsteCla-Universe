@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
 import { signInWithEmailAndPassword, signOut, signInWithPopup, updateProfile } from 'firebase/auth'
 import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
-import { auth, db, googleProvider } from '../services/firebase'
-import GoogleLoginButton from '../components/GoogleLoginButton'
-import useThemeColors from '../hooks/useThemeColors'
+import { auth, db, googleProvider } from '@services/firebase'
+import GoogleLoginButton from '@components/ui/GoogleLoginButton'
+import useThemeColors from '@hooks/useThemeColors'
 // import { useColorMode } from '@chakra-ui/react'
 
 const Login: React.FC = () => {
@@ -167,7 +167,12 @@ const Login: React.FC = () => {
 
         <GoogleLoginButton onClick={handleGoogleLogin} isLoading={loading}></GoogleLoginButton>
 
-        <Button variant="outline" w="100%" onClick={() => navigate('/register')}>
+        <Button
+          variant="outline"
+          w="100%"
+          onMouseEnter={() => import('@pages/Register')}
+          onClick={() => navigate('/register')}
+        >
           Non hai un account? Registrati
         </Button>
       </Box>
