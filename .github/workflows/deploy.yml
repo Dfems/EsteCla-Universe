@@ -1,20 +1,27 @@
-name: Deploy to Firebase
+name: Deploy to Firebase (main)
 
 on:
   push:
-    branches: ['main']
+    branches: [main]
     paths-ignore:
       - 'docs/**'
       - 'README.md'
       - '.gitignore'
       - '.github/**'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
-  CI: true # Force production mode
+  CI: true
 
 jobs:
-  lint_and_test:
-    name: Lint & Test
+  build_and_deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,46 +31,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
-
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          cache: npm
 
       - name: Install dependencies
         run: npm ci --prefer-offline
 
-      - name: Run ESLint
+      - name: Lint
         run: npm run lint
 
-      - name: Type Check (TS)
-        run: |
-          if grep -q '"typescript"' package.json; then
-            npm run type-check
-          fi
+      - name: Type check
+        run: npm run type-check
 
-      # - name: Run tests
-      #   run: npm test -- --watchAll=false
-
-  build:
-    name: Build Production
-    runs-on: ubuntu-latest
-    needs: lint_and_test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
+      - name: Build
         run: npm run build
         env:
           VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
@@ -73,38 +52,11 @@ jobs:
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
 
-      - name: Archive build
-        uses: actions/upload-artifact@v4
-        with:
-          name: production-build
-          path: dist
-
-  deploy:
-    name: Deploy to Firebase
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download build
-        uses: actions/download-artifact@v4
-        with:
-          name: production-build
-          path: . # Estrae l'artifact nella root
-
-      - name: View tree structure root
-        run: |
-          sudo apt-get update
-          sudo apt-get install tree -y
-          tree -a .
-
-      - name: Deploy to Firebase Hosting
+      - name: Deploy to Firebase Hosting (live)
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          entryPoint: '.'
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ESTECLA_UNIVERSE }}'
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ESTECLA_UNIVERSE }}
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           channelId: live
-          target: 'production'
+          target: production
