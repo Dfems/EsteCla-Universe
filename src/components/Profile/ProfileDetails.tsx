@@ -11,7 +11,10 @@ import {
   TabPanels,
   Tabs,
   Text,
+  IconButton,
+  Tooltip,
 } from '@chakra-ui/react'
+import { EditIcon } from '@chakra-ui/icons'
 import PostCard from '../common/PostCard'
 import { UserInfo, Post } from '../../types/interfaces'
 import useThemeColors from '../../hooks/useThemeColors'
@@ -19,10 +22,16 @@ import useThemeColors from '../../hooks/useThemeColors'
 interface ProfileDetailsProps {
   profileUser: UserInfo
   posts: Post[]
-  // Puoi estendere le props con funzioni di follow/edit se necessario
+  isOwnProfile?: boolean
+  onEdit?: () => void
 }
 
-const ProfileDetails: React.FC<ProfileDetailsProps> = ({ profileUser, posts }) => {
+const ProfileDetails: React.FC<ProfileDetailsProps> = ({
+  profileUser,
+  posts,
+  isOwnProfile,
+  onEdit,
+}) => {
   const { containerBg, borderColor, textColor, tabSelectedColor, tabSelectedBorder } =
     useThemeColors()
 
@@ -45,8 +54,28 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({ profileUser, posts }) =
             <Text fontSize="2xl" fontWeight="bold" noOfLines={1}>
               {profileUser.username}
             </Text>
-            {/* I pulsanti per edit o follow possono essere passati come children o gestiti diversamente */}
+            {isOwnProfile && (
+              <Tooltip label="Modifica profilo" hasArrow>
+                <IconButton
+                  aria-label="Modifica profilo"
+                  icon={<EditIcon />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={onEdit}
+                />
+              </Tooltip>
+            )}
           </Flex>
+
+          {profileUser.birthday && (
+            <Text fontSize="sm" color="gray.500" mt={-2} mb={2}>
+              🎂{' '}
+              {new Date(profileUser.birthday).toLocaleDateString('it-IT', {
+                day: 'numeric',
+                month: 'long',
+              })}
+            </Text>
+          )}
 
           {/* Statistiche */}
           <Flex gap={6} mb={4}>

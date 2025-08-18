@@ -9,14 +9,20 @@ interface TimeLeft {
   seconds: number
 }
 
-const BirthdayCountdown: React.FC = () => {
-  const targetDate = useMemo(() => new Date('2000-04-10T00:00:00'), [])
+interface Props {
+  birthday: string // ISO YYYY-MM-DD
+}
+
+const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
+  // Data di riferimento (solo mese/giorno dalla stringa birthday)
+  const targetDate = useMemo(() => new Date(`${birthday}T00:00:00`), [birthday])
 
   // Funzione per calcolare il tempo residuo fino al prossimo compleanno
   const calculateTimeLeft = useCallback((): TimeLeft => {
     const now = new Date()
-    const currentYearTarget = new Date(targetDate)
-    currentYearTarget.setFullYear(now.getFullYear())
+    const month = targetDate.getMonth()
+    const day = targetDate.getDate()
+    const currentYearTarget = new Date(now.getFullYear(), month, day, 0, 0, 0, 0)
 
     // Se il compleanno di quest'anno è già passato, usa l'anno successivo
     if (currentYearTarget.getTime() <= now.getTime()) {
@@ -58,6 +64,9 @@ const BirthdayCountdown: React.FC = () => {
 
   const boxBg = useColorModeValue('pink.100', 'pink.700')
   const textColor = useColorModeValue('pink.600', 'pink.100')
+  const month = targetDate.getMonth()
+  const day = targetDate.getDate()
+  const displayDate = new Date(2000, month, day)
 
   return (
     <Flex
@@ -89,7 +98,7 @@ const BirthdayCountdown: React.FC = () => {
         )}
         <Text mt={6} color="gray.600">
           Manca pochissimo al{' '}
-          {targetDate.toLocaleDateString('it-IT', {
+          {displayDate.toLocaleDateString('it-IT', {
             day: 'numeric',
             month: 'long',
           })}

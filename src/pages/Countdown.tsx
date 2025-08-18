@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import BirthdayCountdown from '../components/BirthdayCountdown'
-import { Box, Image, Spinner } from '@chakra-ui/react'
+import { Box, Image, Spinner, Alert, AlertIcon, Button } from '@chakra-ui/react'
 import Slider, { Settings } from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 interface UnsplashResponse {
   urls: {
@@ -21,17 +23,24 @@ const CACHE_KEY = 'unsplashImagesCache'
 const CACHE_EXPIRATION = 24 * 60 * 60 * 1000 // 1 giorno in millisecondi
 
 const Countdown: React.FC = () => {
+  const { user, loading: authLoading } = useAuth()
+  const navigate = useNavigate()
   const [imageUrls, setImageUrls] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
   // Le query per cercare le immagini
   const queries = useMemo(() => ['birthday', 'party', 'wine'], [])
-  const NEXT_PUBLIC_UNSPLASH_ACCESS_KEY = 'lBe600fCqDc_a8HhEKcw2WCNc7KHzxf1z_qnf2TKLyk'
+  const NEXT_PUBLIC_UNSPLASH_ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY as string
 
   useEffect(() => {
     const fetchImages = async (): Promise<void> => {
       try {
+        if (!NEXT_PUBLIC_UNSPLASH_ACCESS_KEY) {
+          setError("Chiave Unsplash mancante. Imposta VITE_UNSPLASH_ACCESS_KEY nell'env.")
+          setLoading(false)
+          return
+        }
         const fetchedUrls: string[] = await Promise.all(
           queries.map(async (query: string): Promise<string> => {
             const res: Response = await fetch(
@@ -103,13 +112,31 @@ const Countdown: React.FC = () => {
 
   return (
     <Box position="relative" minH="100vh" overflow="hidden" m={0} p={0}>
-      {loading ? (
+      {authLoading || loading ? (
         <Box display="flex" alignItems="center" justifyContent="center" height="100vh">
           <Spinner size="xl" />
         </Box>
       ) : error ? (
         <Box textAlign="center" pt="20">
           <p>Si è verificato un errore: {error}</p>
+        </Box>
+      ) : !user?.birthday ? (
+        <Box maxW="700px" mx="auto" pt="20" px={4}>
+          <Alert status="warning" borderRadius="md">
+            <AlertIcon />
+            <Box>
+              Per visualizzare il countdown, imposta prima la tua data di compleanno nelle
+              impostazioni del profilo.
+            </Box>
+          </Alert>
+          <Box mt={4} display="flex" gap={2}>
+            <Button colorScheme="blue" onClick={() => navigate(`/profile/${user?.username}`)}>
+              Vai al profilo
+            </Button>
+            <Button variant="outline" onClick={() => navigate('/')}>
+              Home
+            </Button>
+          </Box>
         </Box>
       ) : (
         <>
@@ -130,7 +157,7 @@ const Countdown: React.FC = () => {
             </Slider>
           </Box>
           {/* Countdown in primo piano */}
-          <BirthdayCountdown />
+          <BirthdayCountdown birthday={user.birthday} />
         </>
       )}
     </Box>

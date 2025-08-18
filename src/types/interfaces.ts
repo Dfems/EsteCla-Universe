@@ -1,11 +1,15 @@
 export interface UserInfo {
   uid: string
   username: string
+  usernameLowercase?: string
   fullName?: string
   profilePic?: string
   bio?: string
   followers?: string[]
   following?: string[]
+  email?: string
+  // Optional birthday stored as ISO date string (YYYY-MM-DD)
+  birthday?: string
 }
 
 export interface Post {

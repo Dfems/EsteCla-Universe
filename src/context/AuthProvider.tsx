@@ -1,7 +1,7 @@
 // src/context/AuthProvider.tsx
 import React, { useEffect, useState } from 'react'
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '../services/firebase'
 import { AuthContext } from './AuthContext'
 import { UserInfo } from '../types/interfaces'
@@ -15,39 +15,57 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Ascoltiamo le variazioni dello stato di autenticazione tramite Firebase Auth
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
+    // Ascolta lo stato di autenticazione e sottoscrive in tempo reale il documento utente
+    let unsubscribeUserDoc: (() => void) | null = null
+
+    const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+      // Pulisci la precedente sottoscrizione al doc utente
+      if (unsubscribeUserDoc) {
+        unsubscribeUserDoc()
+        unsubscribeUserDoc = null
+      }
+
       if (firebaseUser) {
         try {
-          // Recupera il documento utente dalla collezione "users" in Firestore
           const userDocRef = doc(db, 'users', firebaseUser.uid)
-          const snap = await getDoc(userDocRef)
-
-          if (snap.exists()) {
-            // Se il documento esiste, usiamo i dati completi salvati su Firestore
-            const userData = snap.data() as UserInfo
-            setUser(userData)
-          } else {
-            // Se per qualche motivo il documento non esiste (caso raro),
-            // creiamo un oggetto minimo usando i dati disponibili in firebaseUser
-            const minimalUser: UserInfo = {
-              uid: firebaseUser.uid,
-              username: firebaseUser.displayName || '',
-              profilePic: firebaseUser.photoURL || '',
+          unsubscribeUserDoc = onSnapshot(
+            userDocRef,
+            (snap) => {
+              if (snap.exists()) {
+                const userData = snap.data() as UserInfo
+                setUser(userData)
+              } else {
+                // Documento mancante: manteniamo un utente minimo per evitare null
+                const minimalUser: UserInfo = {
+                  uid: firebaseUser.uid,
+                  username: firebaseUser.displayName || '',
+                  profilePic: firebaseUser.photoURL || '',
+                }
+                setUser(minimalUser)
+              }
+              setLoading(false)
+            },
+            (error) => {
+              console.error('Errore sottoscrizione documento utente:', error)
+              setUser(null)
+              setLoading(false)
             }
-            setUser(minimalUser)
-          }
+          )
         } catch (error) {
-          console.error('Errore nel recuperare il documento utente:', error)
+          console.error("Errore nell'impostare la sottoscrizione del documento utente:", error)
           setUser(null)
+          setLoading(false)
         }
       } else {
         setUser(null)
+        setLoading(false)
       }
-      setLoading(false)
     })
 
-    return () => unsubscribe()
+    return () => {
+      if (unsubscribeUserDoc) unsubscribeUserDoc()
+      unsubscribeAuth()
+    }
   }, [])
 
   const logout = async () => {

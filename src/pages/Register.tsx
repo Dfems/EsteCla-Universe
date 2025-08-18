@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { auth, db } from '../services/firebase'
 import { UserInfo } from '../types/interfaces'
@@ -17,9 +17,20 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [fullName, setFullName] = useState('')
+  const [birthday, setBirthday] = useState('')
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const calculateAge = (dateStr: string) => {
+    const d = new Date(dateStr)
+    if (Number.isNaN(d.getTime())) return NaN
+    const today = new Date()
+    let age = today.getFullYear() - d.getFullYear()
+    const m = today.getMonth() - d.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--
+    return age
+  }
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -27,6 +38,38 @@ const Register: React.FC = () => {
     setLoading(true)
 
     try {
+      // Validazione username semplice
+      const trimmedUsername = username.trim()
+      if (!/^([a-zA-Z0-9_.-]){3,20}$/.test(trimmedUsername)) {
+        throw new Error(
+          'Username non valido. Usa 3-20 caratteri alfanumerici, punto, trattino o underscore.'
+        )
+      }
+
+      // Validazione data di compleanno (opzionale ma, se presente, età minima 13)
+      if (birthday) {
+        const age = calculateAge(birthday)
+        if (Number.isNaN(age)) {
+          throw new Error('Data di compleanno non valida.')
+        }
+        if (age < 13) {
+          throw new Error('Devi avere almeno 13 anni per registrarti.')
+        }
+        const max = new Date().toISOString().split('T')[0]
+        if (birthday > max) {
+          throw new Error('La data di compleanno non può essere nel futuro.')
+        }
+      }
+
+      // Controllo unicità username (case-insensitive)
+      const usernameLowercase = trimmedUsername.toLowerCase()
+      const dupSnap = await getDocs(
+        query(collection(db, 'users'), where('usernameLowercase', '==', usernameLowercase))
+      )
+      if (!dupSnap.empty) {
+        throw new Error('Username già in uso. Scegline un altro.')
+      }
+
       // 1) Creiamo l'account su Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const firebaseUser = userCredential.user
@@ -41,19 +84,28 @@ const Register: React.FC = () => {
         profilePicURL = await getDownloadURL(profilePicRef)
       }
 
-      // 3) Creiamo il documento utente su Firestore
+      // 3) Aggiorna profilo Auth con displayName e photoURL
+      await updateProfile(firebaseUser, {
+        displayName: trimmedUsername,
+        photoURL: profilePicURL || undefined,
+      })
+
+      // 4) Creiamo il documento utente su Firestore
       const userData: UserInfo = {
         uid: firebaseUser.uid,
-        username,
-        fullName,
-        profilePic: profilePicURL,
+        username: trimmedUsername,
+        usernameLowercase,
+        fullName: fullName.trim() || undefined,
+        birthday: birthday || undefined,
+        profilePic: profilePicURL || undefined,
         bio: '',
         followers: [],
         following: [],
+        email: firebaseUser.email || undefined,
       }
       await setDoc(doc(db, 'users', firebaseUser.uid), userData)
 
-      // 4) Reindirizziamo l'utente in app
+      // 5) Reindirizziamo l'utente in app
       navigate('/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
@@ -124,6 +176,16 @@ const Register: React.FC = () => {
         <FormControl mb={4}>
           <FormLabel>Full Name</FormLabel>
           <Input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+        </FormControl>
+
+        <FormControl mb={4}>
+          <FormLabel>Birthday</FormLabel>
+          <Input
+            type="date"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
+            max={new Date().toISOString().split('T')[0]}
+          />
         </FormControl>
 
         <FormControl mb={6}>

@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { signInWithEmailAndPassword, signOut, signInWithPopup } from 'firebase/auth'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { signInWithEmailAndPassword, signOut, signInWithPopup, updateProfile } from 'firebase/auth'
+import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { auth, db, googleProvider } from '../services/firebase'
 import GoogleLoginButton from '../components/GoogleLoginButton'
 import useThemeColors from '../hooks/useThemeColors'
@@ -60,15 +60,43 @@ const Login: React.FC = () => {
 
       if (!snap.exists()) {
         // Se non esiste, creiamo automaticamente il documento utente
+        // Scegli uno username base
+        const base = (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user')
+          .replace(/[^a-zA-Z0-9_.-]/g, '')
+          .slice(0, 20)
+        const pickAvailableUsername = async (): Promise<string> => {
+          const tryNames = [base]
+          for (let i = 1; i <= 20; i++) tryNames.push(`${base}${i}`)
+          for (const candidate of tryNames) {
+            const qSnap = await getDocs(
+              query(
+                collection(db, 'users'),
+                where('usernameLowercase', '==', candidate.toLowerCase())
+              )
+            )
+            if (qSnap.empty) return candidate
+          }
+          return `${base}${Date.now().toString().slice(-4)}`
+        }
+        const username = await pickAvailableUsername()
+        const usernameLowercase = username.toLowerCase()
+
+        // Assicura che displayName e photoURL in Auth siano coerenti
+        await updateProfile(firebaseUser, {
+          displayName: username,
+          photoURL: firebaseUser.photoURL || undefined,
+        })
+
         const newUser = {
           uid: firebaseUser.uid,
-          // Utilizziamo displayName o, in mancanza, una username derivata dall'email
-          username: firebaseUser.email?.split('@')[0] || '',
-          fullName: firebaseUser.displayName || '',
-          profilePic: firebaseUser.photoURL || '',
+          username,
+          usernameLowercase,
+          fullName: firebaseUser.displayName || undefined,
+          profilePic: firebaseUser.photoURL || undefined,
           bio: '',
           followers: [],
           following: [],
+          email: firebaseUser.email || undefined,
         }
         await setDoc(userDocRef, newUser)
       }
