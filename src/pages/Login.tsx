@@ -6,9 +6,13 @@ import { signInWithEmailAndPassword, signOut, signInWithPopup } from 'firebase/a
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, db, googleProvider } from '../services/firebase'
 import GoogleLoginButton from '../components/GoogleLoginButton'
+import useThemeColors from '../hooks/useThemeColors'
+// import { useColorMode } from '@chakra-ui/react'
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
+  const { containerBg, textColor } = useThemeColors()
+  // const { toggleColorMode } = useColorMode()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -77,11 +81,11 @@ const Login: React.FC = () => {
   }
 
   return (
-    <Center minH="100vh" bg="gray.50">
+    <Center minH="100vh" bg={containerBg} color={textColor}>
       <Box
         as="form"
         onSubmit={handleEmailLogin}
-        bg="white"
+        bg={containerBg}
         p={8}
         borderRadius="lg"
         boxShadow="lg"
@@ -97,6 +101,10 @@ const Login: React.FC = () => {
             {error}
           </Box>
         )}
+
+        {/* <Button onClick={toggleColorMode} mb={4}>
+          Cambia Modalità
+        </Button> */}
 
         <FormControl isRequired mb={4}>
           <FormLabel>Email</FormLabel>

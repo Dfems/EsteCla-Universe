@@ -11,10 +11,10 @@ import {
   TabPanels,
   Tabs,
   Text,
-  useColorModeValue,
 } from '@chakra-ui/react'
 import PostCard from '../common/PostCard'
 import { UserInfo, Post } from '../../types/interfaces'
+import useThemeColors from '../../hooks/useThemeColors'
 
 interface ProfileDetailsProps {
   profileUser: UserInfo
@@ -23,11 +23,8 @@ interface ProfileDetailsProps {
 }
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({ profileUser, posts }) => {
-  const containerBg = useColorModeValue('white', 'gray.800')
-  const borderColor = useColorModeValue('gray.200', 'gray.600')
-  const textColor = useColorModeValue('gray.800', 'whiteAlpha.900')
-  const tabSelectedColor = useColorModeValue('black', 'white')
-  const tabSelectedBorder = useColorModeValue('2px solid black', '2px solid white')
+  const { containerBg, borderColor, textColor, tabSelectedColor, tabSelectedBorder } =
+    useThemeColors()
 
   return (
     <Box maxW="935px" mx="auto" p={4} minH="100vh" bg={containerBg} color={textColor}>

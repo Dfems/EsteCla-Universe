@@ -7,9 +7,12 @@ import { doc, setDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { auth, db } from '../services/firebase'
 import { UserInfo } from '../types/interfaces'
+import useThemeColors from '../hooks/useThemeColors'
 
 const Register: React.FC = () => {
   const navigate = useNavigate()
+  const { containerBg, textColor } = useThemeColors()
+  // const { toggleColorMode } = useColorMode()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
@@ -66,11 +69,11 @@ const Register: React.FC = () => {
   }
 
   return (
-    <Center minH="100vh" bg="gray.50">
+    <Center minH="100vh" bg={containerBg} color={textColor}>
       <Box
         as="form"
         onSubmit={handleRegister}
-        bg="white"
+        bg={containerBg}
         p={8}
         borderRadius="lg"
         boxShadow="lg"
@@ -86,6 +89,11 @@ const Register: React.FC = () => {
             {error}
           </Box>
         )}
+
+        {/* Pulsante per cambiare modalità */}
+        {/* <Button onClick={toggleColorMode} mb={4}>
+          Cambia Modalità
+        </Button> */}
 
         <FormControl isRequired mb={4}>
           <FormLabel>Email</FormLabel>
