@@ -28,6 +28,20 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'prettier/prettier': 'error', // Abilita regola Prettier
+
+      // anti "god component" / funzioni troppo grandi
+      'max-lines': ['warn', { max: 400, skipBlankLines: true, skipComments: true }],
+      'max-lines-per-function': [
+        'error',
+        { max: 200, skipBlankLines: true, skipComments: true, IIFEs: true },
+      ],
+      'max-depth': ['warn', 4],
+      complexity: ['warn', 12],
+      'max-params': ['warn', 6],
+
+      // tipi più rigorosi & riuso sensato
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
     },
   }
 )
