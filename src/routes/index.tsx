@@ -11,6 +11,12 @@ export const router = createBrowserRouter([
         <App />
       </ProtectedRoute>
     ),
+    errorElement: (
+      <div style={{ padding: 24 }}>
+        <h1>Qualcosa è andato storto</h1>
+        <p>Riprova a ricaricare la pagina.</p>
+      </div>
+    ),
     children: [
       {
         index: true,
@@ -41,6 +47,12 @@ export const router = createBrowserRouter([
       const { default: Login } = await import('@pages/Login')
       return { Component: Login }
     },
+    errorElement: (
+      <div style={{ padding: 24 }}>
+        <h1>Qualcosa è andato storto</h1>
+        <p>Riprova a ricaricare la pagina.</p>
+      </div>
+    ),
   },
   {
     path: '/register',
@@ -48,5 +60,11 @@ export const router = createBrowserRouter([
       const { default: Register } = await import('@pages/Register')
       return { Component: Register }
     },
+    errorElement: (
+      <div style={{ padding: 24 }}>
+        <h1>Qualcosa è andato storto</h1>
+        <p>Riprova a ricaricare la pagina.</p>
+      </div>
+    ),
   },
 ])

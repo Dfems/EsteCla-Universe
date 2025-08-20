@@ -24,14 +24,16 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@theme": ["src/theme/index.ts"],
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
+      "@routes": ["src/routes/index.tsx"],
       "@routes/*": ["src/routes/*"],
       "@hooks/*": ["src/hooks/*"],
       "@context/*": ["src/context/*"],
-      "@services/*": ["src/services/*"],
+      "@services/*": ["src/lib/*"],
+      "@theme": ["src/styles/theme.ts"],
       "@theme/*": ["src/theme/*"],
+      "@features/*": ["src/features/*"],
       "@models/*": ["src/types/*"],
       "@assets/*": ["src/assets/*"]
     }

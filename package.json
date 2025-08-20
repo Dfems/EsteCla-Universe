@@ -30,6 +30,7 @@
     "@types/react-router-dom": "^5.3.3",
     "firebase": "^11.6.0",
     "framer-motion": "^12.6.3",
+    "gh": "^2.8.9",
     "react": "^19.0.0",
     "react-confetti": "^6.4.0",
     "react-dom": "^19.0.0",

@@ -2,7 +2,7 @@ import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom'
-import { router } from '@routes/Routes'
+import { router } from '@routes'
 import { AuthProvider } from '@context/AuthProvider'
 import theme from '@theme'
 
@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <AuthProvider>
-        <Suspense fallback={null}>
+        <Suspense fallback={<div style={{ padding: 24 }}>Caricamento…</div>}>
           <RouterProvider router={router} />
         </Suspense>
       </AuthProvider>
