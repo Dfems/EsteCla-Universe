@@ -7,6 +7,15 @@ const theme = extendTheme({
   config,
   colors,
   fonts,
+  // Ensure semantic color tokens are available to components and useToken
+  semanticTokens: {
+    colors: {
+      containerBg: { default: colors.light.containerBg, _dark: colors.dark.containerBg },
+      border: { default: colors.light.borderColor, _dark: colors.dark.borderColor },
+      text: { default: colors.light.textColor, _dark: colors.dark.textColor },
+      tabSelected: { default: colors.light.tabSelectedColor, _dark: colors.dark.tabSelectedColor },
+    },
+  },
   components: {
     Tabs: {
       variants: {

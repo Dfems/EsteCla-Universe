@@ -1,278 +1,272 @@
+import React, { useEffect, useRef, useState } from 'react'
 import {
+  Box,
   Flex,
   IconButton,
-  useDisclosure,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerBody,
-  VStack,
-  Avatar,
-  Box,
-  Text,
-  useBreakpointValue,
-  Button,
-  Heading,
   useColorMode,
+  Heading,
+  HStack,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Tooltip,
+  VisuallyHidden,
+  Input,
+  useToast,
+  Spacer,
+  Button,
+  Badge,
 } from '@chakra-ui/react'
-import { Link, useNavigate } from 'react-router-dom'
-import { FaHome, FaBars, FaSignOutAlt, FaBirthdayCake, FaSun, FaMoon } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import {
+  FaHome,
+  FaUser,
+  FaPlusSquare,
+  FaSun,
+  FaMoon,
+  FaSignOutAlt,
+  FaBirthdayCake,
+} from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
 import { useAuth } from '@context/AuthContext'
 import useThemeColors from '@hooks/useThemeColors'
+import { storage } from '@services/firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
-const Navbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+const Navbar: React.FC = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const isMobile = useBreakpointValue({ base: true, md: false })
   const { colorMode, toggleColorMode } = useColorMode()
   const { containerBg, borderColor, textColor } = useThemeColors()
-  // Prefetch dei chunk delle pagine al passaggio del mouse per UX più veloce
-  const prefetchRoute = (path?: string) => {
-    switch (path) {
-      case '/':
-        import('@pages/Home')
-        break
-      case '/countdown':
-        import('@pages/Countdown')
-        break
-      default:
-        break
-    }
-  }
+  const toast = useToast()
 
-  // Colori derivati dal nostro tema e dal color mode
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [secsToBirthday, setSecsToBirthday] = useState<number | null>(null)
+
   const bg = containerBg
-  const hoverBg = colorMode === 'light' ? 'gray.100' : 'gray.600'
-  const textColorSecondary = colorMode === 'light' ? 'gray.500' : 'gray.300'
 
-  // Funzione per svuotare la cache e ricaricare la pagina
-  const clearCacheAndReload = async () => {
+  const refresh = () => window.location.reload()
+
+  const openFilePicker = () => {
+    if (!user) return navigate('/login')
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !user) return
+    setUploading(true)
     try {
-      if ('caches' in window) {
-        const cacheNames = await caches.keys()
-        await Promise.all(cacheNames.map((name) => caches.delete(name)))
-      }
-      localStorage.clear()
-      sessionStorage.clear()
-      window.location.reload()
-    } catch (error) {
-      console.error('Errore durante lo svuotamento della cache:', error)
+      const path = `uploads/${user.uid}/${Date.now()}-${file.name}`
+      const fileRef = ref(storage, path)
+      await uploadBytes(fileRef, file)
+      const url = await getDownloadURL(fileRef)
+      toast({
+        status: 'success',
+        title: 'Immagine caricata',
+        description: 'URL copiato negli appunti',
+      })
+      await navigator.clipboard.writeText(url).catch(() => {})
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Upload fallito'
+      toast({ status: 'error', title: 'Errore upload', description: message })
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
-  // Elementi per la navbar desktop
-  const navItemsDesktop = [
-    { icon: <FaHome size={24} />, path: '/', label: 'Home' },
-    { icon: <FaBirthdayCake size={18} />, path: '/countdown', label: 'Countdown' },
-    { icon: <TbRefresh size={24} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
-    {
-      icon: colorMode === 'light' ? <FaMoon size={24} /> : <FaSun size={24} />,
-      onClick: toggleColorMode,
-      label: colorMode === 'light' ? 'Dark Mode' : 'Light Mode',
-    },
-  ]
+  const goHome = () => navigate('/')
+  const goCountdown = () => navigate('/countdown')
+  const goProfile = () =>
+    user ? navigate(`/profile/${user.username || 'me'}`) : navigate('/login')
 
-  // Elementi per il Drawer mobile (sidebar)
-  const navItemsMobileSidebar = [
-    { icon: <FaHome size={24} />, path: '/', label: 'Home' },
-    { icon: <FaBirthdayCake size={24} />, path: '/countdown', label: 'Birthday' },
-    {
-      icon: colorMode === 'light' ? <FaMoon size={24} /> : <FaSun size={24} />,
-      onClick: toggleColorMode,
-      label: colorMode === 'light' ? 'Dark Mode' : 'Light Mode',
-    },
-  ]
+  // Compute seconds until next birthday; update every minute
+  useEffect(() => {
+    const compute = () => {
+      if (!user?.birthday) {
+        setSecsToBirthday(null)
+        return
+      }
+      const [y, m, d] = user.birthday.split('-').map((n) => parseInt(n, 10))
+      if (!y || !m || !d) {
+        setSecsToBirthday(null)
+        return
+      }
+      const now = new Date()
+      const currentYear = now.getFullYear()
+      let next = new Date(currentYear, m - 1, d, 0, 0, 0, 0)
+      if (next.getTime() < now.getTime()) {
+        next = new Date(currentYear + 1, m - 1, d, 0, 0, 0, 0)
+      }
+      const secs = Math.max(0, Math.floor((next.getTime() - now.getTime()) / 1000))
+      setSecsToBirthday(secs)
+    }
+    compute()
+    const id = setInterval(compute, 60_000)
+    return () => clearInterval(id)
+  }, [user?.birthday])
 
-  // Elementi per la navbar mobile (parte superiore)
-  const navItemsMobileNavbar = [
-    { icon: <FaHome size={22} />, path: '/', label: 'Home' },
-    { icon: <TbRefresh size={22} />, onClick: clearCacheAndReload, label: 'Clear Cache' },
-    { icon: <FaBars size={20} />, path: 'menu', label: 'Menu' },
-  ]
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
+  const renderBirthdayBadge = () => {
+    if (secsToBirthday == null || secsToBirthday >= 86_400) return null
+    const hours = Math.floor(secsToBirthday / 3600)
+    const minutes = Math.floor((secsToBirthday % 3600) / 60)
+    const label = hours >= 1 ? `${hours}h` : `${minutes}m`
+    return (
+      <Badge
+        position="absolute"
+        top={-1}
+        right={-1}
+        colorScheme="pink"
+        borderRadius="full"
+        fontSize="0.6rem"
+        px={2}
+        py={0.5}
+      >
+        {label}
+      </Badge>
+    )
   }
 
-  return (
+  const DesktopBar = () => (
     <>
       <Flex
-        p={{ base: 2, md: 4 }}
-        bg={bg} // usa il colore dinamico di background
-        borderBottom="1px"
-        borderColor={borderColor} // usa il colore dinamico per il bordo
+        display={{ base: 'none', md: 'flex' }}
         position="fixed"
         top={0}
         left={0}
         right={0}
-        zIndex="sticky"
-        alignItems="center"
-        height="60px"
-        boxShadow="sm"
+        height="64px"
+        bg={bg}
+        borderBottomWidth="1px"
+        borderColor={borderColor}
+        align="center"
+        px={4}
+        zIndex={1000}
       >
-        {/* Logo Section */}
-        <Link to="/">
-          <Flex
-            align="center"
-            gap={2}
-            _hover={{ transform: 'scale(1.05)', transition: 'transform 0.2s' }}
-          >
-            {!isMobile && (
-              <Heading size="md" fontFamily="cursive" color={textColor}>
-                EsteCla
-              </Heading>
-            )}
-          </Flex>
-        </Link>
-
-        {/* Navbar Desktop */}
-        {!isMobile && (
-          <Flex flex={1} justifyContent="flex-end" gap={4}>
-            {navItemsDesktop.map((item, index) => (
+        <HStack spacing={3} cursor="pointer" onClick={goHome}>
+          <Heading size="md" color={textColor} fontFamily="cursive">
+            EsteCla
+          </Heading>
+        </HStack>
+        <Spacer />
+        <HStack spacing={2}>
+          <Tooltip label="Home">
+            <IconButton aria-label="Home" icon={<FaHome />} variant="ghost" onClick={goHome} />
+          </Tooltip>
+          <Tooltip label="Countdown">
+            <Box position="relative">
               <IconButton
-                key={index}
-                aria-label={item.label}
-                icon={item.icon}
+                aria-label="Countdown"
+                icon={<FaBirthdayCake />}
                 variant="ghost"
-                onClick={() => {
-                  if (item.onClick) {
-                    item.onClick()
-                  } else {
-                    navigate(item.path)
-                  }
-                }}
-                onMouseEnter={() => prefetchRoute(item.path)}
-                fontSize="xl"
-                _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
+                onClick={goCountdown}
               />
-            ))}
-
-            {user && (
-              <Flex align="center" gap={3}>
-                <Link
-                  to={`/profile/${user.username}`}
-                  onMouseEnter={() => {
-                    import('@pages/Profile')
-                  }}
-                >
-                  <Avatar
-                    size="sm"
-                    src={user.profilePic}
-                    name={user.username}
-                    _hover={{ transform: 'scale(1.1)' }}
-                    transition="transform 0.2s"
-                  />
-                </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout} _hover={{ bg: hoverBg }}>
-                  Logout
-                </Button>
-              </Flex>
-            )}
-          </Flex>
-        )}
-
-        {/* Navbar Mobile */}
-        {isMobile && (
-          <Flex flex={1} justifyContent="flex-end" gap={2}>
-            {navItemsMobileNavbar.map((item, index) => (
-              <IconButton
-                key={index}
-                aria-label={item.label}
-                icon={item.icon}
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (item.onClick) {
-                    item.onClick()
-                  } else if (item.label === 'Menu') {
-                    onOpen()
-                  } else {
-                    navigate(item.path)
-                  }
-                }}
-                onMouseEnter={() => prefetchRoute(item.path)}
-                _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
-              />
-            ))}
-          </Flex>
-        )}
+              {renderBirthdayBadge()}
+            </Box>
+          </Tooltip>
+          <Tooltip label="Upload">
+            <IconButton
+              aria-label="Upload"
+              icon={<FaPlusSquare />}
+              variant="ghost"
+              onClick={openFilePicker}
+              isDisabled={uploading}
+            />
+          </Tooltip>
+          <Tooltip label="Refresh">
+            <IconButton
+              aria-label="Refresh"
+              icon={<TbRefresh />}
+              variant="ghost"
+              onClick={refresh}
+            />
+          </Tooltip>
+          <Tooltip label={colorMode === 'light' ? 'Dark mode' : 'Light mode'}>
+            <IconButton
+              aria-label="Toggle theme"
+              icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
+              variant="ghost"
+              onClick={toggleColorMode}
+            />
+          </Tooltip>
+          <Menu>
+            <MenuButton as={Button} variant="ghost" p={0} minW={0} aria-label="User menu">
+              <Avatar size="sm" src={user?.profilePic} />
+            </MenuButton>
+            <MenuList>
+              <MenuItem icon={<FaUser />} onClick={goProfile}>
+                Profilo
+              </MenuItem>
+              <MenuItem icon={<FaSignOutAlt />} onClick={logout}>
+                Logout
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        </HStack>
       </Flex>
+      <Box display={{ base: 'none', md: 'block' }} height="64px" />
+    </>
+  )
 
-      {/* Mobile Drawer Sidebar */}
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
-        <DrawerContent bg={bg}>
-          <DrawerBody mt={8}>
-            {user && (
-              <Link to={`/profile/${user.username}`}>
-                <Flex align="center" p={2} _hover={{ bg: hoverBg }} borderRadius="md">
-                  <Avatar src={user.profilePic} />
-                  <Box ml={3}>
-                    <Text fontWeight="bold" color={textColor}>
-                      {user.username}
-                    </Text>
-                    <Text fontSize="sm" color={textColorSecondary}>
-                      View Profile
-                    </Text>
-                  </Box>
-                </Flex>
-              </Link>
-            )}
+  const MobileBar = () => (
+    <>
+      <Flex
+        display={{ base: 'flex', md: 'none' }}
+        position="fixed"
+        bottom={0}
+        left={0}
+        right={0}
+        height="64px"
+        bg={bg}
+        borderTopWidth="1px"
+        borderColor={borderColor}
+        align="center"
+        justify="space-around"
+        px={2}
+        zIndex={1400}
+        pb="env(safe-area-inset-bottom)"
+      >
+        <IconButton aria-label="Home" icon={<FaHome />} variant="ghost" onClick={goHome} />
+        <Box position="relative">
+          <IconButton
+            aria-label="Countdown"
+            icon={<FaBirthdayCake />}
+            variant="ghost"
+            onClick={goCountdown}
+          />
+          {renderBirthdayBadge()}
+        </Box>
+        <Box position="relative" top={-4}>
+          <IconButton
+            aria-label="Upload"
+            icon={<FaPlusSquare />}
+            variant="solid"
+            colorScheme="blue"
+            boxShadow="0 8px 20px rgba(0,0,0,0.25)"
+            borderRadius="full"
+            size="lg"
+            onClick={openFilePicker}
+            isLoading={uploading}
+          />
+        </Box>
+        <IconButton aria-label="Refresh" icon={<TbRefresh />} variant="ghost" onClick={refresh} />
+        <IconButton aria-label="Profilo" icon={<FaUser />} variant="ghost" onClick={goProfile} />
+      </Flex>
+      <Box display={{ base: 'block', md: 'none' }} height="72px" />
+    </>
+  )
 
-            <VStack spacing={1} align="stretch">
-              {navItemsMobileSidebar.map((item, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  onClick={() => {
-                    if (item.onClick) {
-                      item.onClick()
-                    } else {
-                      navigate(item.path)
-                    }
-                    onClose()
-                  }}
-                  height="48px"
-                  borderRadius="md"
-                  _hover={{ bg: hoverBg }}
-                >
-                  <Flex align="center" gap={3}>
-                    <Box w="24px" display="flex" justifyContent="center">
-                      {item.icon}
-                    </Box>
-                    <Text>{item.label}</Text>
-                  </Flex>
-                </Button>
-              ))}
-
-              {user && (
-                <Button
-                  variant="ghost"
-                  justifyContent="flex-start"
-                  onClick={() => {
-                    handleLogout()
-                    onClose()
-                  }}
-                  height="48px"
-                  borderRadius="md"
-                  _hover={{ bg: hoverBg }}
-                >
-                  <Flex align="center" gap={3}>
-                    <Box w="24px" display="flex" justifyContent="center">
-                      <FaSignOutAlt size={18} />
-                    </Box>
-                    <Text>Logout</Text>
-                  </Flex>
-                </Button>
-              )}
-            </VStack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+  return (
+    <>
+      <DesktopBar />
+      <MobileBar />
+      <VisuallyHidden>
+        <Input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} />
+      </VisuallyHidden>
     </>
   )
 }

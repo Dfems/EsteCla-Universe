@@ -7,7 +7,7 @@ export default function App() {
   return (
     <>
       <Navbar />
-      <main style={{ marginTop: '60px' }}>
+      <main className="content">
         <Suspense fallback={<LoadingSpinner />}>
           <Outlet />
         </Suspense>

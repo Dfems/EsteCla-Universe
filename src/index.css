@@ -23,10 +23,11 @@ a:hover {
 }
 
 body {
-  display: flex;
-  place-items: center;
+  display: block;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100svh;
+  margin: 0;
+  width: 100%;
 }
 
 html,
@@ -34,6 +35,16 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+}
+
+/* Ensure space for mobile bottom bar without affecting desktop */
+.content {
+  padding-bottom: 72px;
+}
+@media (min-width: 768px) {
+  .content {
+    padding-bottom: 0;
+  }
 }
 
 h1 {

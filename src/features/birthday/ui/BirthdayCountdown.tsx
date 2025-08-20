@@ -12,9 +12,11 @@ interface TimeLeft {
 
 interface Props {
   birthday: string // ISO YYYY-MM-DD
+  fullName?: string
+  bio?: string
 }
 
-const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
+const BirthdayCountdown: React.FC<Props> = ({ birthday, fullName, bio }) => {
   // Data di riferimento (solo mese/giorno dalla stringa birthday)
   const targetDate = useMemo(() => new Date(`${birthday}T00:00:00`), [birthday])
   const { colorMode } = useColorMode()
@@ -72,21 +74,41 @@ const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
   const day = targetDate.getDate()
   const displayDate = new Date(2000, month, day)
 
+  const leadPhrase = useMemo(() => {
+    const d = timeLeft.days
+    const h = timeLeft.hours
+    const m = timeLeft.minutes
+    if (d > 30) return "C'è ancora tempo fino al"
+    if (d > 7) return 'Si avvicina il grande giorno, il'
+    if (d > 1) return 'Manca pochissimo al'
+    if (d === 1) return 'Domani è il grande giorno:'
+    if (h >= 1) return `Solo ${h} ${h === 1 ? 'ora' : 'ore'} al`
+    if (m >= 1) return `Solo ${m} ${m === 1 ? 'minuto' : 'minuti'} al`
+    return 'Tra pochissimi istanti, il'
+  }, [timeLeft.days, timeLeft.hours, timeLeft.minutes])
+
   return (
     <Flex
-      minH="100vh"
+      minH="100svh"
       align="center"
-      justify="center"
-      bg="transparent" // oppure usa un colore semi-trasparente, es: 'rgba(255,255,255,0.7)'
+      justify={{ base: 'flex-start', md: 'center' }}
+      bg="transparent"
       position="relative"
-      p={4}
+      p={{ base: 2, md: 4 }}
     >
       {isBirthday && <Confetti recycle={false} numberOfPieces={400} />}
-      <Box bg={containerBg} p={8} borderRadius="xl" boxShadow="2xl" textAlign="center">
+      <Box
+        bg={containerBg}
+        p={8}
+        borderRadius="xl"
+        boxShadow="2xl"
+        textAlign="center"
+        mt={{ base: 4, md: 0 }}
+      >
         <Heading mb={6} color={headingColor} fontFamily="Pacifico">
           {isBirthday
             ? '🎂 BUON COMPLEANNO MOGLIE MIA! 🥳'
-            : '🎉 Compleanno di mia moglie in arrivo! 🎂'}
+            : `🎉 Compleanno di ${fullName ?? 'una persona speciale'} in arrivo! 🎂`}
         </Heading>
         {!isBirthday ? (
           <Flex gap={4} justify="center" wrap="wrap">
@@ -111,14 +133,14 @@ const BirthdayCountdown: React.FC<Props> = ({ birthday }) => {
           </Text>
         )}
         <Text mt={6} color={themeTextColor}>
-          Manca pochissimo al{' '}
+          {leadPhrase}{' '}
           {displayDate.toLocaleDateString('it-IT', {
             day: 'numeric',
             month: 'long',
           })}
           !!!
           <br />
-          Amo infinitamente mia moglie! ❤️
+          {bio ?? ''}
         </Text>
       </Box>
     </Flex>

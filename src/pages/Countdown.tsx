@@ -111,17 +111,17 @@ const Countdown: React.FC = () => {
   }
 
   return (
-    <Box position="relative" minH="100vh" overflow="hidden" m={0} p={0}>
+    <Box position="relative" minH="100svh" overflow="hidden" m={0} p={0}>
       {authLoading || loading ? (
-        <Box display="flex" alignItems="center" justifyContent="center" height="100vh">
+        <Box display="flex" alignItems="center" justifyContent="center" height="100svh">
           <Spinner size="xl" />
         </Box>
       ) : error ? (
-        <Box textAlign="center" pt="20">
+        <Box textAlign="center" pt={{ base: 4, md: 20 }}>
           <p>Si è verificato un errore: {error}</p>
         </Box>
       ) : !user?.birthday ? (
-        <Box maxW="700px" mx="auto" pt="20" px={4}>
+        <Box maxW="700px" mx="auto" pt={{ base: 4, md: 20 }} px={4}>
           <Alert status="warning" borderRadius="md">
             <AlertIcon />
             <Box>
@@ -144,7 +144,7 @@ const Countdown: React.FC = () => {
           <Box position="absolute" top="0" left="0" width="100%" height="100%" zIndex="-1">
             <Slider {...settings}>
               {imageUrls.map((url: string, idx: number) => (
-                <Box key={idx} height="100vh">
+                <Box key={idx} height="100svh">
                   <Image
                     src={url}
                     alt={`Slide ${idx}`}
@@ -157,7 +157,7 @@ const Countdown: React.FC = () => {
             </Slider>
           </Box>
           {/* Countdown in primo piano */}
-          <BirthdayCountdown birthday={user.birthday} />
+          <BirthdayCountdown birthday={user.birthday} fullName={user.fullName} bio={user.bio} />
         </>
       )}
     </Box>
