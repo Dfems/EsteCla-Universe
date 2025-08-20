@@ -15,6 +15,85 @@ function calculateAge(dateStr: string): number {
   return age
 }
 
+function requireAuth(): NonNullable<typeof auth.currentUser> {
+  const u = auth.currentUser
+  if (!u) throw new Error('Utente non autenticato')
+  return u
+}
+
+function validateAndNormalizeUsername(username: string): { trimmed: string; lowercase: string } {
+  const trimmed = username.trim()
+  if (!/^([a-zA-Z0-9_.-]){3,20}$/.test(trimmed)) {
+    throw new Error('Username non valido. Usa 3-20 caratteri consentiti.')
+  }
+  return { trimmed, lowercase: trimmed.toLowerCase() }
+}
+
+async function ensureUsernameIfChanged(
+  current: UserInfo,
+  usernameLowercase: string
+): Promise<void> {
+  const currentLower = current.usernameLowercase || current.username.toLowerCase()
+  if (usernameLowercase !== currentLower) {
+    const available = await ensureUsernameAvailable(usernameLowercase)
+    if (!available) throw new Error('Username già in uso.')
+  }
+}
+
+async function maybeUploadProfilePic(uid: string, file?: File | null): Promise<string> {
+  if (!file) return ''
+  const fileRef = ref(storage, `profilePics/${uid}/${file.name}`)
+  await uploadBytes(fileRef, file)
+  return getDownloadURL(fileRef)
+}
+
+function computeBirthdayUpdate(birthday?: string): string | FieldValue | undefined {
+  if (birthday === undefined) return undefined
+  if (birthday === '') return deleteField()
+  const age = calculateAge(birthday)
+  if (Number.isNaN(age)) throw new Error('Data di compleanno non valida.')
+  if (age < 13) throw new Error('Devi avere almeno 13 anni.')
+  const max = new Date().toISOString().split('T')[0]
+  if (birthday > max) throw new Error('La data di compleanno non può essere nel futuro.')
+  return birthday
+}
+
+function cleanString(v?: string): string {
+  return (v || '').trim()
+}
+
+function valueOrDelete<T extends string>(value?: T): T | undefined {
+  const v = (value || '').toString().trim()
+  return v ? (v as T) : (deleteField() as unknown as undefined)
+}
+
+function buildFirestorePayload(args: {
+  bio: string | undefined
+  username: string
+  usernameLowercase: string
+  fullName?: string
+  profilePic?: string
+  birthday?: string | FieldValue | undefined
+}) {
+  const { bio, username, usernameLowercase, fullName, profilePic, birthday } = args
+  const payload: {
+    bio: string
+    username: string
+    usernameLowercase: string
+    fullName?: string
+    profilePic?: string
+    birthday?: string | FieldValue
+  } = {
+    bio: cleanString(bio),
+    username,
+    usernameLowercase,
+  }
+  payload.fullName = valueOrDelete(fullName)
+  payload.profilePic = valueOrDelete(profilePic)
+  if (birthday !== undefined) payload.birthday = birthday
+  return payload
+}
+
 export async function updateUserProfile(params: {
   current: UserInfo
   updates: {
@@ -26,74 +105,38 @@ export async function updateUserProfile(params: {
   }
 }): Promise<UserInfo> {
   const { current, updates } = params
-  if (!auth.currentUser) throw new Error('Utente non autenticato')
+  const authUser = requireAuth()
 
-  const trimmedUsername = updates.username.trim()
-  if (!/^([a-zA-Z0-9_.-]){3,20}$/.test(trimmedUsername)) {
-    throw new Error('Username non valido. Usa 3-20 caratteri consentiti.')
-  }
+  const { trimmed, lowercase } = validateAndNormalizeUsername(updates.username)
+  await ensureUsernameIfChanged(current, lowercase)
 
-  const usernameLowercase = trimmedUsername.toLowerCase()
-  if (usernameLowercase !== (current.usernameLowercase || current.username.toLowerCase())) {
-    const available = await ensureUsernameAvailable(usernameLowercase)
-    if (!available) throw new Error('Username già in uso.')
-  }
+  const uploadedPic = await maybeUploadProfilePic(current.uid, updates.profilePicFile)
+  const profilePicUrl = uploadedPic || current.profilePic || ''
 
-  let profilePicUrl = current.profilePic || ''
-  if (updates.profilePicFile) {
-    const fileRef = ref(storage, `profilePics/${current.uid}/${updates.profilePicFile.name}`)
-    await uploadBytes(fileRef, updates.profilePicFile)
-    profilePicUrl = await getDownloadURL(fileRef)
-  }
+  const birthdayUpdate = computeBirthdayUpdate(updates.birthday)
 
-  // Validazione birthday: opzionale, ma se presente deve avere età >= 13 e non essere futura
-  let birthdayUpdate: string | FieldValue | undefined
-  if (updates.birthday) {
-    const age = calculateAge(updates.birthday)
-    if (Number.isNaN(age)) throw new Error('Data di compleanno non valida.')
-    if (age < 13) throw new Error('Devi avere almeno 13 anni.')
-    const max = new Date().toISOString().split('T')[0]
-    if (updates.birthday > max) throw new Error('La data di compleanno non può essere nel futuro.')
-    birthdayUpdate = updates.birthday
-  } else if (updates.birthday === '') {
-    // quando viene svuotata nel form
-    birthdayUpdate = deleteField()
-  }
-
-  // Applica update su Firestore
   const userRef = doc(db, 'users', current.uid)
-  const firestorePayload: {
-    bio: string
-    username: string
-    usernameLowercase: string
-    fullName?: string
-    profilePic?: string
-    birthday?: string | import('firebase/firestore').FieldValue
-  } = {
-    bio: (updates.bio || '').trim(),
-    username: trimmedUsername,
-    usernameLowercase,
-  }
-  const fn = (updates.fullName || '').trim()
-  firestorePayload.fullName = fn ? fn : (deleteField() as unknown as undefined)
-  firestorePayload.profilePic = profilePicUrl
-    ? profilePicUrl
-    : (deleteField() as unknown as undefined)
-  if (birthdayUpdate !== undefined) firestorePayload.birthday = birthdayUpdate
-  await updateDoc(userRef, firestorePayload)
+  const payload = buildFirestorePayload({
+    bio: updates.bio,
+    username: trimmed,
+    usernameLowercase: lowercase,
+    fullName: updates.fullName,
+    profilePic: profilePicUrl,
+    birthday: birthdayUpdate,
+  })
+  await updateDoc(userRef, payload)
 
-  // Aggiorna profilo Auth
-  await updateProfile(auth.currentUser, {
-    displayName: trimmedUsername,
+  await updateProfile(authUser, {
+    displayName: trimmed,
     photoURL: profilePicUrl || undefined,
   })
 
   const updated: UserInfo = {
     ...current,
-    username: trimmedUsername,
-    usernameLowercase,
-    fullName: fn || undefined,
-    bio: (updates.bio || '').trim(),
+    username: trimmed,
+    usernameLowercase: lowercase,
+    fullName: cleanString(updates.fullName) || undefined,
+    bio: cleanString(updates.bio),
     birthday: typeof birthdayUpdate === 'string' ? birthdayUpdate : undefined,
     profilePic: profilePicUrl || undefined,
   }
