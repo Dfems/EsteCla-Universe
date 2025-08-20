@@ -2,7 +2,7 @@ import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
 import { RouterProvider } from 'react-router-dom'
-import { router } from '@routes/Routes'
+import { router } from '@routes'
 import { AuthProvider } from '@context/AuthProvider'
 import theme from '@theme'
 

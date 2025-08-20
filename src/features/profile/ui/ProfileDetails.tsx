@@ -1,4 +1,4 @@
-// src/components/Profile/ProfileDetails.tsx
+// src/features/profile/ui/ProfileDetails.tsx
 import React from 'react'
 import {
   Box,

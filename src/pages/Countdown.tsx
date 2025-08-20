@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import BirthdayCountdown from '@components/BirthdayCountdown'
+import BirthdayCountdown from '@/features/birthday/ui/BirthdayCountdown'
 import { Box, Image, Spinner, Alert, AlertIcon, Button } from '@chakra-ui/react'
 import Slider, { Settings } from 'react-slick'
 import 'slick-carousel/slick/slick.css'

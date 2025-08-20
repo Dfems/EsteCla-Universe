@@ -24,13 +24,13 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@theme": ["src/theme/index.ts"],
+  "@theme": ["src/theme/index.ts"],
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
       "@routes/*": ["src/routes/*"],
       "@hooks/*": ["src/hooks/*"],
       "@context/*": ["src/context/*"],
-      "@services/*": ["src/services/*"],
+  "@services/*": ["src/lib/*"],
       "@theme/*": ["src/theme/*"],
       "@models/*": ["src/types/*"],
       "@assets/*": ["src/assets/*"]
