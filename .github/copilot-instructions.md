@@ -74,18 +74,25 @@ applyTo: '**'
 ## Quando GENERI codice
 
 1. **Applica su tutto `src/`** le best practices: struttura cartelle, alias Vite, tipi in `src/types`, limiti (400/150).
-2. **Usa/converti** gli import agli **alias di Vite** dove disponibili (evita percorsi relativi profondi).
-3. **Crea/sposta** i tipi riusabili in `src/types` ed **esportali** dal barrel `src/types/index.ts`; **aggiorna** gli import correlati.
-4. Se tocchi regole Firebase, **applica la patch** e **pubblica** (`npm run deploy:rules`), spiegando eventuali impatti.
-5. **Esegui in sequenza** e assicurati che passino, applicando patch finché necessario:
+2. - Mantieni bassa la complessità del codice:
+
+- **Profondità di annidamento**: massimo ~4 livelli (`max-depth: 4`).
+- **Complessità ciclomatica**: massimo ~12 (`complexity: 12`).
+- **Parametri per funzione**: massimo ~6 (`max-params: 6`).
+  Se superi i limiti, **applica refactor** (estrai helper/hook, early return, oggetto opzioni per parametri).
+
+3. **Usa/converti** gli import agli **alias di Vite** dove disponibili (evita percorsi relativi profondi).
+4. **Crea/sposta** i tipi riusabili in `src/types` ed **esportali** dal barrel `src/types/index.ts`; **aggiorna** gli import correlati.
+5. Se tocchi regole Firebase, **applica la patch** e **pubblica** (`npm run deploy:rules`), spiegando eventuali impatti.
+6. **Esegui in sequenza** e assicurati che passino, applicando patch finché necessario:
    ```bash
    npm run format
    npm run lint
    npm run type-check
    npm run build
    ```
-6. **Correggi** eventuali violazioni (lint/TS/build) con patch addizionali fino a stato pulito.
-7. **Spiega** in 3–5 bullet il perché delle scelte (tipi, architettura, a11y, performance).
+7. **Correggi** eventuali violazioni (lint/TS/build) con patch addizionali fino a stato pulito.
+8. **Spiega** in 3–5 bullet il perché delle scelte (tipi, architettura, a11y, performance).
 
 ## Quando fai REVIEW
 
@@ -99,3 +106,10 @@ applyTo: '**'
   npm run format && npm run lint && npm run type-check && npm run build
   ```
   e **correggi** finché tutto è pulito.
+
+## Lingua
+
+- **Rispondi sempre in italiano** in chat, spiegazioni, review, commenti nel codice, descrizioni PR e testi dei commit (dopo il tipo Conventional Commit).
+- Mantieni **identificatori, nomi di tipi/funzioni e API in inglese** (standard di sviluppo).
+- Testi UI/UX e log destinati all’utente finale: in **italiano** salvo requisiti contrari.
+- Quando citi output/errore di tool/CLI, **riporta l’originale** e aggiungi una **spiegazione in italiano**.

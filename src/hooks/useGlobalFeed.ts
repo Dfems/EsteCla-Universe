@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { collectionGroup, doc, getDoc, onSnapshot, orderBy, query } from 'firebase/firestore'
+import {
+  collectionGroup,
+  doc,
+  getDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  type QuerySnapshot,
+  type DocumentData,
+  type QueryDocumentSnapshot,
+} from 'firebase/firestore'
 import { db } from '@services/firebase'
 import type { Post, UserInfo } from '@models/interfaces'
 
@@ -30,10 +40,15 @@ export function useGlobalFeed(limit?: number) {
 
   useEffect(() => {
     const q = query(collectionGroup(db, 'posts'), orderBy('createdAt', 'desc'))
-    const unsub = onSnapshot(q, async (snap) => {
-      const rows = snap.docs.map((d) => {
+
+    interface Row {
+      uid: string
+      post: Post
+    }
+    async function processSnapshot(snap: QuerySnapshot<DocumentData>) {
+      const rows: Row[] = snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => {
         const data = d.data() as Record<string, unknown>
-        const uid = d.ref.parent.parent?.id || ''
+        const uid: string = d.ref.parent.parent?.id || ''
         const post: Post = {
           id: d.id,
           imageUrl: (data.imageUrl as string) || '',
@@ -47,13 +62,15 @@ export function useGlobalFeed(limit?: number) {
 
       const limited = typeof limit === 'number' ? rows.slice(0, limit) : rows
 
-      const missingUids = Array.from(
-        new Set(limited.map((r) => r.uid).filter((u) => u && !usersCache.current.has(u)))
+      const missingUids: string[] = Array.from(
+        new Set(
+          limited.map((r: Row) => r.uid).filter((u: string) => u && !usersCache.current.has(u))
+        )
       )
 
       if (missingUids.length) {
         await Promise.all(
-          missingUids.map(async (uid) => {
+          missingUids.map(async (uid: string) => {
             try {
               const userSnap = await getDoc(doc(db, 'users', uid))
               if (userSnap.exists()) {
@@ -69,14 +86,43 @@ export function useGlobalFeed(limit?: number) {
         )
       }
 
-      const feed: FeedItem[] = limited.map(({ uid, post }) => ({
+      const feed: FeedItem[] = limited.map(({ uid, post }: Row) => ({
         id: post.id,
         user: usersCache.current.get(uid) || { username: 'utente', profilePic: undefined },
         post,
       }))
 
       setItems(feed)
-    })
+    }
+
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        // Evita callback async direttamente in onSnapshot
+        void processSnapshot(snap).catch((e) => {
+          console.error('Errore elaborazione feed:', e)
+          setItems([])
+        })
+      },
+      (err) => {
+        const code = (err as { code?: string; message?: string }).code
+        if (code === 'permission-denied') {
+          const projectId = (db.app.options as { projectId?: string }).projectId
+          console.warn(
+            `Feed non accessibile: permessi insufficienti (rules). projectId=${projectId}`
+          )
+          setItems([])
+          return
+        }
+        if (code === 'failed-precondition') {
+          console.error('Indice richiesto per la query del feed. Dettagli:', err)
+          setItems([])
+          return
+        }
+        console.error('Errore feed (non gestito):', err)
+        setItems([])
+      }
+    )
 
     return () => unsub()
   }, [limit])

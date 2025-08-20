@@ -3,6 +3,8 @@ mode: 'agent'
 description: 'Applica best practices a TUTTO src/, converte import con alias Vite, pulisce lint e verifica build'
 ---
 
+> Rispondi e commenta **sempre in italiano**.
+
 Obiettivo: applica le best practices del repo **a tutto `src/`** (non solo ai file più critici) e assicurati che **format, lint, type-check e build** vadano a buon fine.
 
 Istruzioni operative:

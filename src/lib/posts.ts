@@ -28,6 +28,7 @@ export async function uploadImageAndCreatePost({
   const imageAt = sameAsPublish || !imageDateISO ? serverTimestamp() : new Date(imageDateISO)
 
   await addDoc(collection(db, 'users', uid, 'posts'), {
+    ownerUid: uid,
     imageUrl,
     caption: caption?.trim() || '',
     // Keep createdAt for backward compatibility (Home ordering), equal to publishAt
