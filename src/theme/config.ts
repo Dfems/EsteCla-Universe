@@ -26,6 +26,14 @@ const colors = {
 const theme = extendTheme({
   config,
   colors,
+  semanticTokens: {
+    colors: {
+      containerBg: { default: colors.light.containerBg, _dark: colors.dark.containerBg },
+      border: { default: colors.light.borderColor, _dark: colors.dark.borderColor },
+      text: { default: colors.light.textColor, _dark: colors.dark.textColor },
+      tabSelected: { default: colors.light.tabSelectedColor, _dark: colors.dark.tabSelectedColor },
+    },
+  },
 })
 
 export { config, theme, colors }

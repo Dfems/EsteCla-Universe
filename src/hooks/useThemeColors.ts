@@ -1,9 +1,15 @@
-import { useColorMode } from '@chakra-ui/react'
-import { colors } from '@theme'
+import { useToken } from '@chakra-ui/react'
 
 const useThemeColors = () => {
-  const { colorMode } = useColorMode()
-  return colors[colorMode === 'dark' ? 'dark' : 'light']
+  const [containerBg, borderColor, textColor, tabSelectedColor] = useToken('colors', [
+    'containerBg',
+    'border',
+    'text',
+    'tabSelected',
+  ])
+  // Manteniamo la compatibilità col chiamante esistente
+  const tabSelectedBorder = `2px solid ${tabSelectedColor}`
+  return { containerBg, borderColor, textColor, tabSelectedColor, tabSelectedBorder }
 }
 
 export default useThemeColors

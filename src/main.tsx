@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <AuthProvider>
-        <Suspense fallback={null}>
+        <Suspense fallback={<div style={{ padding: 24 }}>Caricamento…</div>}>
           <RouterProvider router={router} />
         </Suspense>
       </AuthProvider>

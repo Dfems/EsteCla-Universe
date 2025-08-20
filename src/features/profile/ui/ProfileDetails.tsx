@@ -34,8 +34,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   isOwnProfile,
   onEdit,
 }) => {
-  const { containerBg, borderColor, textColor, tabSelectedColor, tabSelectedBorder } =
-    useThemeColors()
+  const { containerBg, borderColor, textColor } = useThemeColors()
 
   return (
     <Box
@@ -112,55 +111,21 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
       </Grid>
 
       {/* Tabs stile Instagram */}
-      <Tabs variant="unstyled">
-        <TabList
-          borderTop="1px solid"
-          borderColor={borderColor}
-          display="flex"
-          justifyContent="center"
-          gap={{ base: 6, md: 12 }}
-          mb={2}
-        >
-          <Tab
-            px={0}
-            fontSize="xs"
-            letterSpacing="wider"
-            fontWeight="bold"
-            color="gray.500"
-            _selected={{ color: tabSelectedColor, borderTop: tabSelectedBorder }}
-            borderTop="2px solid transparent"
-            pt={3}
-          >
+      <Tabs variant="instagram">
+        <TabList borderColor={borderColor}>
+          <Tab>
             <Flex align="center" gap={2}>
               <Box as={BsGrid3X3} aria-hidden />
               <Text display={{ base: 'none', md: 'inline' }}>POST</Text>
             </Flex>
           </Tab>
-          <Tab
-            px={0}
-            fontSize="xs"
-            letterSpacing="wider"
-            fontWeight="bold"
-            color="gray.500"
-            _selected={{ color: tabSelectedColor, borderTop: tabSelectedBorder }}
-            borderTop="2px solid transparent"
-            pt={3}
-          >
+          <Tab>
             <Flex align="center" gap={2}>
               <Box as={BsBookmark} aria-hidden />
               <Text display={{ base: 'none', md: 'inline' }}>SALVATI</Text>
             </Flex>
           </Tab>
-          <Tab
-            px={0}
-            fontSize="xs"
-            letterSpacing="wider"
-            fontWeight="bold"
-            color="gray.500"
-            _selected={{ color: tabSelectedColor, borderTop: tabSelectedBorder }}
-            borderTop="2px solid transparent"
-            pt={3}
-          >
+          <Tab>
             <Flex align="center" gap={2}>
               <Box as={MdOutlineRestaurant} aria-hidden />
               <Text display={{ base: 'none', md: 'inline' }}>RISTORANTI</Text>

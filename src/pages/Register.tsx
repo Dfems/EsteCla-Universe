@@ -2,11 +2,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
-import { collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { auth, db } from '@services/firebase'
-import { UserInfo } from '@models/interfaces'
+import { registerWithEmailPassword } from '@features/auth/api/auth'
+import type { UserInfo } from '@models/interfaces'
 import useThemeColors from '@hooks/useThemeColors'
 
 const Register: React.FC = () => {
@@ -61,52 +58,16 @@ const Register: React.FC = () => {
         }
       }
 
-      // Controllo unicità username (case-insensitive)
-      const usernameLowercase = trimmedUsername.toLowerCase()
-      const dupSnap = await getDocs(
-        query(collection(db, 'users'), where('usernameLowercase', '==', usernameLowercase))
-      )
-      if (!dupSnap.empty) {
-        throw new Error('Username già in uso. Scegline un altro.')
-      }
-
-      // 1) Creiamo l'account su Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      const firebaseUser = userCredential.user
-
-      // 2) Se è stato selezionato un file per la foto profilo, lo carichiamo su Firebase Storage
-      let profilePicURL = ''
-      if (profilePicFile) {
-        const storage = getStorage()
-        // Definiamo un percorso per il file, includendo ad esempio l'uid e il nome originale del file
-        const profilePicRef = ref(storage, `profilePics/${firebaseUser.uid}/${profilePicFile.name}`)
-        await uploadBytes(profilePicRef, profilePicFile)
-        profilePicURL = await getDownloadURL(profilePicRef)
-      }
-
-      // 3) Aggiorna profilo Auth con displayName e photoURL
-      await updateProfile(firebaseUser, {
-        displayName: trimmedUsername,
-        photoURL: profilePicURL || undefined,
-      })
-
-      // 4) Creiamo il documento utente su Firestore
-      const userData: UserInfo = {
-        uid: firebaseUser.uid,
+      // Registrazione tramite API centralizzata
+      const userData: UserInfo = await registerWithEmailPassword({
+        email,
+        password,
         username: trimmedUsername,
-        usernameLowercase,
-        fullName: fullName.trim() || undefined,
-        birthday: birthday || undefined,
-        profilePic: profilePicURL || undefined,
-        bio: '',
-        followers: [],
-        following: [],
-        email: firebaseUser.email || undefined,
-      }
-      await setDoc(doc(db, 'users', firebaseUser.uid), userData)
-
-      // 5) Reindirizziamo l'utente in app
-      navigate('/')
+        fullName,
+        birthday,
+        profilePicFile,
+      })
+      if (userData) navigate('/')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed')
     } finally {

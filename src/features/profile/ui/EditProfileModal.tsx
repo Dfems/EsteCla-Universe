@@ -16,19 +16,7 @@ import {
   useToast,
 } from '@chakra-ui/react'
 import { UserInfo } from '@models/interfaces'
-import { auth, db, storage } from '@services/firebase'
-import { updateProfile } from 'firebase/auth'
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-  deleteField,
-  type UpdateData,
-} from 'firebase/firestore'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { updateUserProfile } from '@features/profile/api/profile'
 
 interface Props {
   isOpen: boolean
@@ -45,15 +33,7 @@ const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, user }) => {
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
 
-  const calculateAge = (dateStr: string) => {
-    const d = new Date(dateStr)
-    if (Number.isNaN(d.getTime())) return NaN
-    const today = new Date()
-    let age = today.getFullYear() - d.getFullYear()
-    const m = today.getMonth() - d.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--
-    return age
-  }
+  // age calculation moved into API
 
   useEffect(() => {
     if (isOpen) {
@@ -75,64 +55,18 @@ const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, user }) => {
   }
 
   const save = async () => {
-    if (!auth.currentUser) return
     setSaving(true)
     try {
-      const trimmedUsername = username.trim()
-      if (!/^([a-zA-Z0-9_.-]){3,20}$/.test(trimmedUsername)) {
-        throw new Error('Username non valido. Usa 3-20 caratteri consentiti.')
-      }
-      const usernameLowercase = trimmedUsername.toLowerCase()
-      if (usernameLowercase !== (user.usernameLowercase || user.username.toLowerCase())) {
-        // controlla unicità
-        const snap = await getDocs(
-          query(collection(db, 'users'), where('usernameLowercase', '==', usernameLowercase))
-        )
-        if (!snap.empty) throw new Error('Username già in uso.')
-      }
-
-      let profilePicUrl = user.profilePic || ''
-      if (profilePicFile) {
-        const fileRef = ref(storage, `profilePics/${user.uid}/${profilePicFile.name}`)
-        await uploadBytes(fileRef, profilePicFile)
-        profilePicUrl = await getDownloadURL(fileRef)
-      }
-
-      // Prepara il payload di update
-      const payload: UpdateData<UserInfo> = {
-        bio: bio.trim(),
-        username: trimmedUsername,
-        usernameLowercase,
-      }
-
-      const fn = fullName.trim()
-      payload.fullName = fn
-        ? (fn as UpdateData<UserInfo>['fullName'])
-        : (deleteField() as unknown as UpdateData<UserInfo>['fullName'])
-
-      payload.profilePic = profilePicUrl
-        ? (profilePicUrl as UpdateData<UserInfo>['profilePic'])
-        : (deleteField() as unknown as UpdateData<UserInfo>['profilePic'])
-
-      // Validazione birthday: opzionale, ma se presente deve avere età >= 13 e non essere futura
-      if (birthday) {
-        const age = calculateAge(birthday)
-        if (Number.isNaN(age)) throw new Error('Data di compleanno non valida.')
-        if (age < 13) throw new Error('Devi avere almeno 13 anni.')
-        const max = new Date().toISOString().split('T')[0]
-        if (birthday > max) throw new Error('La data di compleanno non può essere nel futuro.')
-        payload.birthday = birthday as UpdateData<UserInfo>['birthday']
-      } else {
-        payload.birthday = deleteField() as unknown as UpdateData<UserInfo>['birthday']
-      }
-
-      await updateDoc(doc(db, 'users', user.uid), payload)
-
-      await updateProfile(auth.currentUser, {
-        displayName: trimmedUsername,
-        photoURL: profilePicUrl || undefined,
+      await updateUserProfile({
+        current: user,
+        updates: {
+          username,
+          fullName,
+          bio,
+          birthday,
+          profilePicFile,
+        },
       })
-
       toast({ status: 'success', title: 'Profilo aggiornato' })
       onClose()
     } catch (e: unknown) {
