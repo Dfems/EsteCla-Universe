@@ -1,5 +1,5 @@
 // src/features/profile/ui/ProfileDetails.tsx
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Box,
   Avatar,
@@ -13,11 +13,15 @@ import {
   Text,
   Button,
   Tooltip,
+  HStack,
+  IconButton,
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { BsGrid3X3, BsBookmark } from 'react-icons/bs'
+import { FaList } from 'react-icons/fa'
 import { MdOutlineRestaurant } from 'react-icons/md'
 import PostCard from '@components/ui/PostCard'
+import PostListItem from '@components/ui/PostListItem'
 import { UserInfo, Post } from '@models/interfaces'
 import useThemeColors from '@hooks/useThemeColors'
 
@@ -35,6 +39,13 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   onEdit,
 }) => {
   const { containerBg, borderColor, textColor } = useThemeColors()
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+
+  const postsSorted = useMemo(() => {
+    // Ordina per publishAt/createdAt/timestamp disc
+    const key = (p: Post) => (p.publishAt || p.createdAt || p.timestamp || new Date(0)).getTime()
+    return [...posts].sort((a, b) => key(b) - key(a))
+  }, [posts])
 
   return (
     <Box
@@ -136,16 +147,49 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
 
         <TabPanels>
           <TabPanel p={0}>
-            {posts.length === 0 ? (
+            <Flex justify="space-between" align="center" py={3} px={1}>
+              <Text fontWeight="semibold">I tuoi post</Text>
+              <HStack>
+                <Tooltip label="Vista griglia">
+                  <IconButton
+                    aria-label="Vista griglia"
+                    size="sm"
+                    icon={<BsGrid3X3 />}
+                    variant={viewMode === 'grid' ? 'solid' : 'ghost'}
+                    onClick={() => setViewMode('grid')}
+                  />
+                </Tooltip>
+                <Tooltip label="Vista lista">
+                  <IconButton
+                    aria-label="Vista lista"
+                    size="sm"
+                    icon={<FaList />}
+                    variant={viewMode === 'list' ? 'solid' : 'ghost'}
+                    onClick={() => setViewMode('list')}
+                  />
+                </Tooltip>
+              </HStack>
+            </Flex>
+            {postsSorted.length === 0 ? (
               <Flex justify="center" py={12}>
                 <Text color="gray.500">Ancora nessun post</Text>
               </Flex>
-            ) : (
+            ) : viewMode === 'grid' ? (
               <Grid templateColumns="repeat(3, 1fr)" gap={1}>
-                {posts.map((post) => (
+                {postsSorted.map((post) => (
                   <PostCard key={post.id} post={post} />
                 ))}
               </Grid>
+            ) : (
+              <Box px={1}>
+                {postsSorted.map((post) => (
+                  <PostListItem
+                    key={post.id}
+                    user={{ username: profileUser.username, profilePic: profileUser.profilePic }}
+                    post={post}
+                  />
+                ))}
+              </Box>
             )}
           </TabPanel>
           <TabPanel p={0}>

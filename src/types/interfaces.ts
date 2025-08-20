@@ -16,7 +16,11 @@ export interface Post {
   id: string
   imageUrl: string
   caption: string
-  timestamp: Date
+  // Per compatibilità storica (Home iniziale)
+  timestamp?: Date
+  createdAt?: Date
+  publishAt?: Date
+  imageAt?: Date
 }
 
 export interface TimeLeft {

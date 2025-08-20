@@ -10,6 +10,11 @@ import {
   Button,
   Textarea,
   Image,
+  FormControl,
+  FormLabel,
+  Input,
+  Checkbox,
+  VStack,
 } from '@chakra-ui/react'
 
 interface UploadModalProps {
@@ -20,6 +25,10 @@ interface UploadModalProps {
   onCancel: () => void
   onConfirm: () => void
   uploading?: boolean
+  imageDateISO: string
+  onImageDateChange: (v: string) => void
+  sameAsPublish: boolean
+  onSameAsPublishChange: (v: boolean) => void
 }
 
 const UploadModal: React.FC<UploadModalProps> = ({
@@ -30,6 +39,10 @@ const UploadModal: React.FC<UploadModalProps> = ({
   onCancel,
   onConfirm,
   uploading,
+  imageDateISO,
+  onImageDateChange,
+  sameAsPublish,
+  onSameAsPublishChange,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onCancel} isCentered>
@@ -38,22 +51,39 @@ const UploadModal: React.FC<UploadModalProps> = ({
         <ModalHeader>Nuovo post</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {previewUrl ? (
-            <Image
-              src={previewUrl}
-              alt="preview"
-              borderRadius="md"
-              mb={3}
-              maxH="300px"
-              objectFit="cover"
-              w="100%"
+          <VStack align="stretch" spacing={3}>
+            {previewUrl ? (
+              <Image
+                src={previewUrl}
+                alt="preview"
+                borderRadius="md"
+                maxH="300px"
+                objectFit="cover"
+                w="100%"
+              />
+            ) : null}
+            <Textarea
+              placeholder="Scrivi una descrizione..."
+              value={caption}
+              onChange={(e) => onCaptionChange(e.target.value)}
             />
-          ) : null}
-          <Textarea
-            placeholder="Scrivi una descrizione..."
-            value={caption}
-            onChange={(e) => onCaptionChange(e.target.value)}
-          />
+            <FormControl>
+              <FormLabel>Data dell'immagine</FormLabel>
+              <Checkbox
+                isChecked={sameAsPublish}
+                onChange={(e) => onSameAsPublishChange(e.target.checked)}
+                mb={2}
+              >
+                Uguale alla data di pubblicazione
+              </Checkbox>
+              <Input
+                type="date"
+                value={imageDateISO}
+                onChange={(e) => onImageDateChange(e.target.value)}
+                isDisabled={sameAsPublish}
+              />
+            </FormControl>
+          </VStack>
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" mr={3} onClick={onCancel} isDisabled={uploading}>

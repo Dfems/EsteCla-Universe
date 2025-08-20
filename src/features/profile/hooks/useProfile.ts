@@ -48,19 +48,43 @@ export const useProfile = () => {
               const data = snap.data() as UserInfo
               setProfileUser(data)
 
-              // Sottoscrizione ai post dell'utente quando abbiamo l'uid
+              // Sottoscrizione ai post dell'utente (subcollection)
               if (unsubscribePosts) unsubscribePosts()
               unsubscribePosts = onSnapshot(
-                query(
-                  collection(db, 'posts'),
-                  where('userId', '==', data.uid),
-                  orderBy('timestamp', 'desc')
-                ),
+                query(collection(db, 'users', data.uid, 'posts'), orderBy('createdAt', 'desc')),
                 (postsSnap) => {
-                  const userPosts = postsSnap.docs.map((d) => ({
-                    id: d.id,
-                    ...d.data(),
-                  })) as Post[]
+                  type TimestampLike = { toDate: () => Date }
+                  const toDate = (v?: unknown): Date | undefined => {
+                    if (!v) return undefined
+                    if (v instanceof Date) return v
+                    if (typeof v === 'object' && v !== null && 'toDate' in v) {
+                      try {
+                        return (v as TimestampLike).toDate()
+                      } catch {
+                        return undefined
+                      }
+                    }
+                    return undefined
+                  }
+
+                  const userPosts: Post[] = postsSnap.docs.map((d) => {
+                    const p = d.data() as {
+                      imageUrl: string
+                      caption: string
+                      createdAt?: unknown
+                      publishAt?: unknown
+                      imageAt?: unknown
+                    }
+
+                    return {
+                      id: d.id,
+                      imageUrl: p.imageUrl,
+                      caption: p.caption,
+                      createdAt: toDate(p.createdAt),
+                      publishAt: toDate(p.publishAt),
+                      imageAt: toDate(p.imageAt),
+                    }
+                  })
                   setPosts(userPosts)
                 },
                 (err) => console.error('Errore sottoscrizione post: ', err)

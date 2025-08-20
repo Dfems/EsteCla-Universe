@@ -7,6 +7,8 @@ export function useUploadPost() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [imageDateISO, setImageDateISO] = useState<string>('')
+  const [sameAsPublish, setSameAsPublish] = useState<boolean>(true)
 
   const pickFile = useCallback((f: File) => {
     setFile(f)
@@ -22,6 +24,8 @@ export function useUploadPost() {
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPreviewUrl(null)
     setFile(null)
+    setImageDateISO('')
+    setSameAsPublish(true)
   }, [previewUrl])
 
   const confirmUpload = useCallback(
@@ -29,14 +33,33 @@ export function useUploadPost() {
       if (!uid || !file) throw new Error('Missing file or user')
       setUploading(true)
       try {
-        const { imageUrl } = await uploadImageAndCreatePost({ uid, file, caption })
+        const { imageUrl } = await uploadImageAndCreatePost({
+          uid,
+          file,
+          caption,
+          imageDateISO: sameAsPublish ? undefined : imageDateISO || undefined,
+          sameAsPublish,
+        })
         return imageUrl
       } finally {
         setUploading(false)
       }
     },
-    [file, caption]
+    [file, caption, imageDateISO, sameAsPublish]
   )
 
-  return { isOpen, caption, setCaption, previewUrl, uploading, pickFile, cancel, confirmUpload }
+  return {
+    isOpen,
+    caption,
+    setCaption,
+    previewUrl,
+    uploading,
+    pickFile,
+    cancel,
+    confirmUpload,
+    imageDateISO,
+    setImageDateISO,
+    sameAsPublish,
+    setSameAsPublish,
+  }
 }

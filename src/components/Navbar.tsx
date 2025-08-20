@@ -28,6 +28,10 @@ const Navbar: React.FC = () => {
     pickFile,
     cancel,
     confirmUpload,
+    imageDateISO,
+    setImageDateISO,
+    sameAsPublish,
+    setSameAsPublish,
   } = useUploadPost()
 
   const bg = containerBg
@@ -171,6 +175,10 @@ const Navbar: React.FC = () => {
         onCancel={closeModal}
         onConfirm={handleConfirmUpload}
         uploading={modalUploading || uploading}
+        imageDateISO={imageDateISO}
+        onImageDateChange={setImageDateISO}
+        sameAsPublish={sameAsPublish}
+        onSameAsPublishChange={setSameAsPublish}
       />
     </>
   )
