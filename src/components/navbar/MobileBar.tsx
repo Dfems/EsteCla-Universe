@@ -1,6 +1,6 @@
-import React from 'react'
-import { Box, Flex, IconButton } from '@chakra-ui/react'
-import { FaBirthdayCake, FaHome, FaPlusSquare, FaUser } from 'react-icons/fa'
+import React, { ReactNode } from 'react'
+import { Box, Flex, IconButton, Avatar, Icon } from '@chakra-ui/react'
+import { FaBirthdayCake, FaHome, FaPlusSquare } from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
 
 interface MobileBarProps {
@@ -12,7 +12,8 @@ interface MobileBarProps {
   onUpload: () => void
   onRefresh: () => void
   onProfile: () => void
-  renderBirthdayBadge?: () => React.ReactNode
+  userProfilePic?: string | null
+  renderBirthdayBadge?: () => ReactNode
 }
 
 const MobileBar: React.FC<MobileBarProps> = ({
@@ -24,6 +25,7 @@ const MobileBar: React.FC<MobileBarProps> = ({
   onUpload,
   onRefresh,
   onProfile,
+  userProfilePic,
   renderBirthdayBadge,
 }) => {
   return (
@@ -86,14 +88,30 @@ const MobileBar: React.FC<MobileBarProps> = ({
         fontSize="28px"
         onClick={onRefresh}
       />
-      <IconButton
+      <Box
+        as="button"
         aria-label="Profilo"
-        icon={<FaUser />}
-        variant="ghost"
-        size="lg"
-        fontSize="28px"
         onClick={onProfile}
-      />
+        bg="none"
+        border="none"
+        p={0}
+        m={0}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        height="48px"
+        width="48px"
+        borderRadius="full"
+        _focus={{ boxShadow: 'outline' }}
+      >
+        <Avatar
+          size="md"
+          name="Profilo"
+          src={userProfilePic || undefined}
+          bg="gray.200"
+          icon={<Icon viewBox="0 0 24 24" as={undefined} />}
+        />
+      </Box>
     </Flex>
   )
 }

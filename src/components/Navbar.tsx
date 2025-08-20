@@ -9,7 +9,6 @@ import NavbarDesktop from '@components/navbar/NavbarDesktop'
 import NavbarMobile from '@components/navbar/NavbarMobile'
 import UploadModal from '@components/navbar/UploadModal'
 import { useNavbarUpload } from '@hooks/useNavbarUpload'
-// icons handled inside DesktopBar; no direct usage here
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth()
@@ -74,6 +73,7 @@ const Navbar: React.FC = () => {
       }}
       onRefresh={refresh}
       onProfile={goProfile}
+      userProfilePic={user?.profilePic}
       secsToBirthday={secsToBirthday}
     />
   )

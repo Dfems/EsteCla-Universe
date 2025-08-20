@@ -12,6 +12,7 @@ interface NavbarMobileProps {
   onRefresh: () => void
   onProfile: () => void
   secsToBirthday: number | null
+  userProfilePic?: string | null
 }
 
 const NavbarMobile: React.FC<NavbarMobileProps> = ({
@@ -24,6 +25,7 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
   onRefresh,
   onProfile,
   secsToBirthday,
+  userProfilePic,
 }) => (
   <MobileBar
     bg={bg}
@@ -34,6 +36,7 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
     onUpload={onUpload}
     onRefresh={onRefresh}
     onProfile={onProfile}
+    userProfilePic={userProfilePic}
     renderBirthdayBadge={() => <BirthdayBadge secsToBirthday={secsToBirthday} />}
   />
 )
