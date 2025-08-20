@@ -1,6 +1,6 @@
 // src/pages/Profile.tsx
 import { Box, useDisclosure } from '@chakra-ui/react'
-import { useProfile } from '@hooks/useProfile'
+import { useProfile } from '@features/profile/hooks/useProfile'
 import ProfileDetails from '@features/profile/ui/ProfileDetails'
 import LoadingSpinner from '@components/ui/LoadingSpinner'
 import { useAuth } from '@context/AuthContext'
