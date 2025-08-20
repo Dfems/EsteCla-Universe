@@ -228,13 +228,18 @@ const Navbar: React.FC = () => {
         justify="space-around"
         px={2}
         zIndex={1400}
-        pb="env(safe-area-inset-bottom)"
+        pb="10"
       >
-        <IconButton aria-label="Home" icon={<FaHome />} variant="ghost" onClick={goHome} />
+        <IconButton
+          aria-label="Home"
+          icon={<FaHome size={24} />}
+          variant="ghost"
+          onClick={goHome}
+        />
         <Box position="relative">
           <IconButton
             aria-label="Countdown"
-            icon={<FaBirthdayCake />}
+            icon={<FaBirthdayCake size={24} />}
             variant="ghost"
             onClick={goCountdown}
           />
@@ -243,7 +248,7 @@ const Navbar: React.FC = () => {
         <Box position="relative" top={-4}>
           <IconButton
             aria-label="Upload"
-            icon={<FaPlusSquare />}
+            icon={<FaPlusSquare size={24} />}
             variant="solid"
             colorScheme="blue"
             boxShadow="0 8px 20px rgba(0,0,0,0.25)"
@@ -253,10 +258,20 @@ const Navbar: React.FC = () => {
             isLoading={uploading}
           />
         </Box>
-        <IconButton aria-label="Refresh" icon={<TbRefresh />} variant="ghost" onClick={refresh} />
-        <IconButton aria-label="Profilo" icon={<FaUser />} variant="ghost" onClick={goProfile} />
+        <IconButton
+          aria-label="Refresh"
+          icon={<TbRefresh size={24} />}
+          variant="ghost"
+          onClick={refresh}
+        />
+        <IconButton
+          aria-label="Profilo"
+          icon={<FaUser size={24} />}
+          variant="ghost"
+          onClick={goProfile}
+        />
       </Flex>
-      <Box display={{ base: 'block', md: 'none' }} height="72px" />
+      {/* <Box display={{ base: 'block', md: 'none' }} height="72px" /> */}
     </>
   )
 

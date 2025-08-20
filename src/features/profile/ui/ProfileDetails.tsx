@@ -45,6 +45,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
       minH="100vh"
       bg={containerBg}
       color={textColor}
+      mt={{ base: 6, md: 6 }}
     >
       {/* Header profilo stile Instagram */}
       <Grid

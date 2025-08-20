@@ -7,7 +7,7 @@ export default function Home() {
   const { containerBg, textColor } = useThemeColors()
 
   return (
-    <Box p={4} bg={containerBg} color={textColor}>
+    <Box p={4} bg={containerBg} color={textColor} mt={{ base: 6, md: 6 }}>
       <Text>Benvenuto/a {user?.fullName || 'Guest'}!</Text>
       <Text mt={4}>Amo infinitamente mia moglie!</Text>
     </Box>
