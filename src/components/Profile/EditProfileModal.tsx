@@ -151,7 +151,7 @@ const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, user }) => {
         <ModalBody>
           <Box display="flex" gap={4} alignItems="center" mb={4}>
             <Avatar src={previewUrl} name={username} size="lg" />
-            <Input type="file" accept="image/*" onChange={onFileChange} />
+            <Input type="file" accept="image/*" onChange={onFileChange} alignContent="center" />
           </Box>
           <FormControl mb={3}>
             <FormLabel>Username</FormLabel>
