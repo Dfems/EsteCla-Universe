@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useColorMode, VisuallyHidden, Input, useToast, Badge } from '@chakra-ui/react'
+import React from 'react'
+import { useColorMode, VisuallyHidden, Input } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@context/AuthContext'
 import useThemeColors from '@hooks/useThemeColors'
-import DesktopBar from './navbar/DesktopBar'
-import MobileBar from './navbar/MobileBar'
-import UploadModal from './navbar/UploadModal'
-import { useUploadPost } from '@hooks/useUploadPost'
+import { useBirthdayCountdown } from '@/features/birthday/hooks/useBirthdayCountdown'
+
+import NavbarDesktop from '@components/navbar/NavbarDesktop'
+import NavbarMobile from '@components/navbar/NavbarMobile'
+import UploadModal from '@components/navbar/UploadModal'
+import { useNavbarUpload } from '@hooks/useNavbarUpload'
 // icons handled inside DesktopBar; no direct usage here
 
 const Navbar: React.FC = () => {
@@ -14,148 +16,65 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate()
   const { colorMode, toggleColorMode } = useColorMode()
   const { containerBg, borderColor, textColor } = useThemeColors()
-  const toast = useToast()
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [uploading, setUploading] = useState(false)
-  const [secsToBirthday, setSecsToBirthday] = useState<number | null>(null)
+  const secsToBirthday = useBirthdayCountdown(user?.birthday)
+  const bg = containerBg
+  const refresh = () => window.location.reload()
   const {
+    fileInputRef,
+    uploading,
     isOpen,
     caption,
     setCaption,
     previewUrl,
-    uploading: modalUploading,
-    pickFile,
-    cancel,
-    confirmUpload,
+    openFilePicker,
+    handleFileChange,
+    closeModal,
+    handleConfirmUpload,
     imageDateISO,
     setImageDateISO,
     sameAsPublish,
     setSameAsPublish,
-  } = useUploadPost()
-
-  const bg = containerBg
-
-  const refresh = () => window.location.reload()
-
-  const openFilePicker = () => {
-    if (!user) return navigate('/login')
-    fileInputRef.current?.click()
-  }
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !user) return
-    pickFile(file)
-  }
-
-  const closeModal = () => {
-    cancel()
-    if (fileInputRef.current) fileInputRef.current.value = ''
-  }
-
-  const handleConfirmUpload = async () => {
-    if (!user) return
-    setUploading(true)
-    try {
-      const url = await confirmUpload(user.uid)
-      toast({
-        status: 'success',
-        title: 'Post pubblicato',
-        description: 'URL copiato negli appunti',
-      })
-      await navigator.clipboard.writeText(url).catch(() => {})
-      closeModal()
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Upload fallito'
-      toast({ status: 'error', title: 'Errore upload', description: message })
-    } finally {
-      setUploading(false)
-    }
-  }
+  } = useNavbarUpload(user)
 
   const goHome = () => navigate('/')
   const goCountdown = () => navigate('/countdown')
   const goProfile = () =>
     user ? navigate(`/profile/${user.username || 'me'}`) : navigate('/login')
 
-  // Compute seconds until next birthday; update every minute
-  useEffect(() => {
-    const compute = () => {
-      if (!user?.birthday) {
-        setSecsToBirthday(null)
-        return
-      }
-      const [y, m, d] = user.birthday.split('-').map((n) => parseInt(n, 10))
-      if (!y || !m || !d) {
-        setSecsToBirthday(null)
-        return
-      }
-      const now = new Date()
-      const currentYear = now.getFullYear()
-      let next = new Date(currentYear, m - 1, d, 0, 0, 0, 0)
-      if (next.getTime() < now.getTime()) {
-        next = new Date(currentYear + 1, m - 1, d, 0, 0, 0, 0)
-      }
-      const secs = Math.max(0, Math.floor((next.getTime() - now.getTime()) / 1000))
-      setSecsToBirthday(secs)
-    }
-    compute()
-    const id = setInterval(compute, 60_000)
-    return () => clearInterval(id)
-  }, [user?.birthday])
-
-  const renderBirthdayBadge = () => {
-    if (secsToBirthday == null || secsToBirthday >= 86_400) return null
-    const hours = Math.floor(secsToBirthday / 3600)
-    const minutes = Math.floor((secsToBirthday % 3600) / 60)
-    const label = hours >= 1 ? `${hours}h` : `${minutes}m`
-    return (
-      <Badge
-        position="absolute"
-        top={-1}
-        right={-1}
-        colorScheme="pink"
-        borderRadius="full"
-        fontSize="0.6rem"
-        px={2}
-        py={0.5}
-      >
-        {label}
-      </Badge>
-    )
-  }
-
   const Desktop = () => (
-    <DesktopBar
+    <NavbarDesktop
       bg={bg}
       borderColor={borderColor}
       textColor={textColor}
-      colorMode={colorMode}
+      colorMode={colorMode as 'light' | 'dark'}
       toggleColorMode={toggleColorMode}
       userProfilePic={user?.profilePic}
       uploading={uploading}
       onHome={goHome}
       onCountdown={goCountdown}
-      onUpload={openFilePicker}
+      onUpload={() => {
+        if (!openFilePicker()) navigate('/login')
+      }}
       onRefresh={refresh}
       onProfile={goProfile}
       onLogout={logout}
-      renderBirthdayBadge={renderBirthdayBadge}
+      secsToBirthday={secsToBirthday}
     />
   )
 
   const Mobile = () => (
-    <MobileBar
+    <NavbarMobile
       bg={bg}
       borderColor={borderColor}
       uploading={uploading}
       onHome={goHome}
       onCountdown={goCountdown}
-      onUpload={openFilePicker}
+      onUpload={() => {
+        if (!openFilePicker()) navigate('/login')
+      }}
       onRefresh={refresh}
       onProfile={goProfile}
-      renderBirthdayBadge={renderBirthdayBadge}
+      secsToBirthday={secsToBirthday}
     />
   )
 
@@ -166,7 +85,6 @@ const Navbar: React.FC = () => {
       <VisuallyHidden>
         <Input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} />
       </VisuallyHidden>
-
       <UploadModal
         isOpen={isOpen}
         previewUrl={previewUrl}
@@ -174,7 +92,7 @@ const Navbar: React.FC = () => {
         onCaptionChange={setCaption}
         onCancel={closeModal}
         onConfirm={handleConfirmUpload}
-        uploading={modalUploading || uploading}
+        uploading={uploading}
         imageDateISO={imageDateISO}
         onImageDateChange={setImageDateISO}
         sameAsPublish={sameAsPublish}

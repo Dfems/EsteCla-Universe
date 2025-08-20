@@ -2,26 +2,24 @@
 import React, { useMemo, useState } from 'react'
 import {
   Box,
-  Avatar,
   Flex,
-  Grid,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
-  Button,
   Tooltip,
   HStack,
   IconButton,
 } from '@chakra-ui/react'
-import { EditIcon } from '@chakra-ui/icons'
+
 import { BsGrid3X3, BsBookmark } from 'react-icons/bs'
 import { FaList } from 'react-icons/fa'
 import { MdOutlineRestaurant } from 'react-icons/md'
-import PostCard from '@components/ui/PostCard'
-import PostListItem from '@components/ui/PostListItem'
+import ProfileHeader from './ProfileHeader'
+import ProfilePostGrid from './ProfilePostGrid'
+import ProfilePostList from './ProfilePostList'
 import { UserInfo, Post } from '@models/interfaces'
 import useThemeColors from '@hooks/useThemeColors'
 
@@ -58,69 +56,14 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
       color={textColor}
       mt={{ base: 6, md: 6 }}
     >
-      {/* Header profilo stile Instagram */}
-      <Grid
-        templateColumns={{ base: '80px 1fr', md: 'min-content 1fr' }}
-        gap={{ base: 8, md: 10 }}
-        alignItems="center"
-        mb={{ base: 6, md: 10 }}
-      >
-        <Avatar
-          src={profileUser.profilePic}
-          size={{ base: 'xl', md: '2xl' }}
-          name={profileUser.username}
-          showBorder
-          borderWidth="1px"
-          borderColor={borderColor}
-          alignSelf="center"
-        />
-
-        <Box w="full">
-          {/* Riga username + azioni */}
-          <Flex align={{ base: 'flex-start', md: 'center' }} gap={4} mb={4} wrap="wrap">
-            <Text fontSize={{ base: 'xl', md: '2xl' }} fontWeight="semibold" noOfLines={1}>
-              {profileUser.username}
-            </Text>
-            {isOwnProfile && (
-              <Tooltip label="Modifica profilo" hasArrow>
-                <Button size="sm" variant="outline" onClick={onEdit} leftIcon={<EditIcon />}>
-                  Modifica profilo
-                </Button>
-              </Tooltip>
-            )}
-          </Flex>
-
-          {/* Statistiche */}
-          <Flex gap={{ base: 6, md: 8 }} mb={4}>
-            <Text>
-              <strong>{posts.length}</strong> post
-            </Text>
-            <Text>
-              <strong>{profileUser.followers?.length ?? 0}</strong> follower
-            </Text>
-            <Text>
-              <strong>{profileUser.following?.length ?? 0}</strong> seguiti
-            </Text>
-          </Flex>
-
-          {/* Bio */}
-          {profileUser.fullName && (
-            <Text fontWeight="semibold" mb={1}>
-              {profileUser.fullName}
-            </Text>
-          )}
-          {profileUser.bio && <Text whiteSpace="pre-wrap">{profileUser.bio}</Text>}
-          {profileUser.birthday && (
-            <Text fontSize="sm" color="gray.500" mt={2}>
-              🎂{' '}
-              {new Date(profileUser.birthday).toLocaleDateString('it-IT', {
-                day: 'numeric',
-                month: 'long',
-              })}
-            </Text>
-          )}
-        </Box>
-      </Grid>
+      {/* Header profilo estratto in componente */}
+      <ProfileHeader
+        profileUser={profileUser}
+        postsCount={posts.length}
+        isOwnProfile={isOwnProfile}
+        onEdit={onEdit}
+        borderColor={borderColor}
+      />
 
       {/* Tabs stile Instagram */}
       <Tabs variant="instagram">
@@ -175,21 +118,12 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
                 <Text color="gray.500">Ancora nessun post</Text>
               </Flex>
             ) : viewMode === 'grid' ? (
-              <Grid templateColumns="repeat(3, 1fr)" gap={1}>
-                {postsSorted.map((post) => (
-                  <PostCard key={post.id} post={post} />
-                ))}
-              </Grid>
+              <ProfilePostGrid posts={postsSorted} />
             ) : (
-              <Box px={1}>
-                {postsSorted.map((post) => (
-                  <PostListItem
-                    key={post.id}
-                    user={{ username: profileUser.username, profilePic: profileUser.profilePic }}
-                    post={post}
-                  />
-                ))}
-              </Box>
+              <ProfilePostList
+                posts={postsSorted}
+                user={{ username: profileUser.username, profilePic: profileUser.profilePic }}
+              />
             )}
           </TabPanel>
           <TabPanel p={0}>

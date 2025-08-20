@@ -3,17 +3,13 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
-import prettierConfig from 'eslint-config-prettier' // Aggiungi questo
-import pluginPrettier from 'eslint-plugin-prettier' // Aggiungi questo
+import prettierConfig from 'eslint-config-prettier'
+import pluginPrettier from 'eslint-plugin-prettier'
 
 export default tseslint.config(
   { ignores: ['dist'] },
   {
-    extends: [
-      js.configs.recommended,
-      ...tseslint.configs.recommended,
-      prettierConfig, // Estendi la configurazione Prettier
-    ],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierConfig],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
@@ -22,7 +18,7 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      prettier: pluginPrettier, // Aggiungi il plugin
+      prettier: pluginPrettier,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -33,7 +29,7 @@ export default tseslint.config(
       'max-lines': ['warn', { max: 400, skipBlankLines: true, skipComments: true }],
       'max-lines-per-function': [
         'error',
-        { max: 200, skipBlankLines: true, skipComments: true, IIFEs: true },
+        { max: 150, skipBlankLines: true, skipComments: true, IIFEs: true },
       ],
       'max-depth': ['warn', 4],
       complexity: ['warn', 12],

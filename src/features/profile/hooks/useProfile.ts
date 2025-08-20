@@ -53,7 +53,9 @@ export const useProfile = () => {
               unsubscribePosts = onSnapshot(
                 query(collection(db, 'users', data.uid, 'posts'), orderBy('createdAt', 'desc')),
                 (postsSnap) => {
-                  type TimestampLike = { toDate: () => Date }
+                  interface TimestampLike {
+                    toDate: () => Date
+                  }
                   const toDate = (v?: unknown): Date | undefined => {
                     if (!v) return undefined
                     if (v instanceof Date) return v

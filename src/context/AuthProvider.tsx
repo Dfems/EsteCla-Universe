@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { auth, db } from '@services/firebase'
-import { AuthContext } from './AuthContext'
+import { AuthContext } from '@context/AuthContext'
 import { UserInfo } from '@models/interfaces'
 
 interface AuthProviderProps {
