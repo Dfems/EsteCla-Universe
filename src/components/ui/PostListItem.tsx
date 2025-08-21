@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Avatar, Box, Flex, HStack, Image, Text } from '@chakra-ui/react'
 import { UserInfo, Post } from '@models/interfaces'
 
@@ -17,13 +18,21 @@ function formatDate(d?: Date) {
 }
 
 const PostListItem: React.FC<PostListItemProps> = ({ user, post }) => {
+  const navigate = useNavigate()
+  const goProfile = () => navigate(`/profile/${user.username}`)
   return (
     <Box borderWidth="1px" borderRadius="md" overflow="hidden" mb={4} bg="chakra-body-bg">
       {/* Header */}
       <HStack spacing={3} px={3} py={2}>
-        <Avatar size="sm" src={user.profilePic} name={user.username} />
+        <Avatar
+          size="sm"
+          src={user.profilePic}
+          name={user.username}
+          cursor="pointer"
+          onClick={goProfile}
+        />
         <Flex direction="column" minW={0} flex={1}>
-          <Text fontWeight="semibold" noOfLines={1}>
+          <Text fontWeight="semibold" noOfLines={1} cursor="pointer" onClick={goProfile}>
             {user.username}
           </Text>
           <Text fontSize="sm" color="gray.500">
@@ -32,7 +41,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ user, post }) => {
         </Flex>
       </HStack>
       {/* Immagine */}
-      <Box>
+      <Box cursor="pointer" onClick={goProfile}>
         <Image src={post.imageUrl} alt={post.caption} w="100%" objectFit="cover" />
       </Box>
       {/* Descrizione */}

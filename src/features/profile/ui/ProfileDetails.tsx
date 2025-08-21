@@ -14,12 +14,13 @@ import {
   IconButton,
 } from '@chakra-ui/react'
 
-import { BsGrid3X3, BsBookmark } from 'react-icons/bs'
+import { BsGrid3X3, BsBookmark, BsCalendarEvent } from 'react-icons/bs'
 import { FaList } from 'react-icons/fa'
 import { MdOutlineRestaurant } from 'react-icons/md'
 import ProfileHeader from './ProfileHeader'
 import ProfilePostGrid from './ProfilePostGrid'
 import ProfilePostList from './ProfilePostList'
+import ProfileCalendar from './ProfileCalendar'
 import { UserInfo, Post } from '@models/interfaces'
 import useThemeColors from '@hooks/useThemeColors'
 
@@ -86,12 +87,20 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
               <Text display={{ base: 'none', md: 'inline' }}>RISTORANTI</Text>
             </Flex>
           </Tab>
+          <Tab>
+            <Flex align="center" gap={2}>
+              <Box as={BsCalendarEvent} aria-hidden />
+              <Text display={{ base: 'none', md: 'inline' }}>CALENDARIO</Text>
+            </Flex>
+          </Tab>
         </TabList>
 
         <TabPanels>
           <TabPanel p={0}>
             <Flex justify="space-between" align="center" py={3} px={1}>
-              <Text fontWeight="semibold">I tuoi post</Text>
+              <Text fontWeight="semibold">
+                {isOwnProfile ? 'I tuoi post' : `I post di ${profileUser.username}`}
+              </Text>
               <HStack>
                 <Tooltip label="Vista griglia">
                   <IconButton
@@ -118,7 +127,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
                 <Text color="gray.500">Ancora nessun post</Text>
               </Flex>
             ) : viewMode === 'grid' ? (
-              <ProfilePostGrid posts={postsSorted} />
+              <ProfilePostGrid posts={postsSorted} username={profileUser.username} />
             ) : (
               <ProfilePostList
                 posts={postsSorted}
@@ -137,6 +146,9 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
               <Text color="gray.500">Ristoranti</Text>
             </Flex>
             {/* Elenco ristoranti o griglia; integra quando i dati saranno disponibili */}
+          </TabPanel>
+          <TabPanel p={0}>
+            <ProfileCalendar posts={postsSorted.filter((p) => !!p.imageAt)} />
           </TabPanel>
         </TabPanels>
       </Tabs>

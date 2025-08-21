@@ -1,4 +1,5 @@
 import { Box, Image, Flex, Text } from '@chakra-ui/react'
+import { useNavigate } from 'react-router-dom'
 
 interface PostCardProps {
   post: {
@@ -6,11 +7,33 @@ interface PostCardProps {
     imageUrl: string
     caption: string
   }
+  // opzionale: se fornito, il click porta al profilo di questo username
+  username?: string
 }
 
-export default function PostCard({ post }: PostCardProps) {
+export default function PostCard({ post, username }: PostCardProps) {
+  const navigate = useNavigate()
+  const handleClick = username ? () => navigate(`/profile/${username}`) : undefined
+  const clickable = Boolean(handleClick)
   return (
-    <Box position="relative" cursor="pointer" role="group">
+    <Box
+      position="relative"
+      cursor={clickable ? 'pointer' : 'default'}
+      role="group"
+      onClick={handleClick}
+      tabIndex={clickable ? 0 : undefined}
+      onKeyDown={
+        clickable
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleClick?.()
+              }
+            }
+          : undefined
+      }
+      aria-label={clickable ? `Apri profilo di ${username}` : undefined}
+    >
       {/* Wrapper quadrato stile Instagram */}
       <Box position="relative" w="100%" pt="100%" overflow="hidden">
         <Image
