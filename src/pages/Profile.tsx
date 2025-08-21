@@ -7,7 +7,7 @@ import { useAuth } from '@context/AuthContext'
 import EditProfileModal from '@features/profile/ui/EditProfileModal'
 
 const Profile = () => {
-  const { profileUser, posts, loading } = useProfile()
+  const { profileUser, posts, loading, loadingPosts } = useProfile()
   const { user } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -24,6 +24,7 @@ const Profile = () => {
         posts={posts}
         isOwnProfile={isOwnProfile}
         onEdit={onOpen}
+        loadingPosts={loadingPosts}
       />
       {isOwnProfile && <EditProfileModal isOpen={isOpen} onClose={onClose} user={profileUser} />}
     </Box>

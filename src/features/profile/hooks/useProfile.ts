@@ -11,6 +11,7 @@ export const useProfile = () => {
   const [profileUser, setProfileUser] = useState<UserInfo | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadingPosts, setLoadingPosts] = useState(true)
 
   useEffect(() => {
     if (!username) return
@@ -18,6 +19,7 @@ export const useProfile = () => {
     let unsubscribeUser: (() => void) | null = null
     let unsubscribePosts: (() => void) | null = null
     setLoading(true)
+    setLoadingPosts(true)
 
     const init = async () => {
       try {
@@ -88,6 +90,7 @@ export const useProfile = () => {
                     }
                   })
                   setPosts(userPosts)
+                  setLoadingPosts(false)
                 },
                 (err) => console.error('Errore sottoscrizione post: ', err)
               )
@@ -112,5 +115,5 @@ export const useProfile = () => {
     }
   }, [username, navigate])
 
-  return { profileUser, posts, loading, setProfileUser }
+  return { profileUser, posts, loading, loadingPosts, setProfileUser }
 }

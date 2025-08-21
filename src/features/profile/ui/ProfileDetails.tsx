@@ -1,5 +1,5 @@
 // src/features/profile/ui/ProfileDetails.tsx
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import {
   Box,
   Flex,
@@ -23,12 +23,14 @@ import ProfilePostList from './ProfilePostList'
 import ProfileCalendar from './ProfileCalendar'
 import { UserInfo, Post } from '@models/interfaces'
 import useThemeColors from '@hooks/useThemeColors'
+import { useProfileViewMode } from '@features/profile/hooks/useProfileViewMode'
 
 interface ProfileDetailsProps {
   profileUser: UserInfo
   posts: Post[]
   isOwnProfile?: boolean
   onEdit?: () => void
+  loadingPosts?: boolean
 }
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({
@@ -36,9 +38,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   posts,
   isOwnProfile,
   onEdit,
+  loadingPosts,
 }) => {
   const { containerBg, borderColor, textColor } = useThemeColors()
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const { viewMode, setGrid, setList } = useProfileViewMode('grid')
 
   const postsSorted = useMemo(() => {
     // Ordina per publishAt/createdAt/timestamp disc
@@ -108,7 +111,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
                     size="sm"
                     icon={<BsGrid3X3 />}
                     variant={viewMode === 'grid' ? 'solid' : 'ghost'}
-                    onClick={() => setViewMode('grid')}
+                    onClick={setGrid}
                   />
                 </Tooltip>
                 <Tooltip label="Vista lista">
@@ -117,7 +120,7 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
                     size="sm"
                     icon={<FaList />}
                     variant={viewMode === 'list' ? 'solid' : 'ghost'}
-                    onClick={() => setViewMode('list')}
+                    onClick={setList}
                   />
                 </Tooltip>
               </HStack>
@@ -148,7 +151,10 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
             {/* Elenco ristoranti o griglia; integra quando i dati saranno disponibili */}
           </TabPanel>
           <TabPanel p={0}>
-            <ProfileCalendar posts={postsSorted.filter((p) => !!p.imageAt)} />
+            <ProfileCalendar
+              posts={postsSorted.filter((p) => !!p.imageAt)}
+              isLoading={loadingPosts}
+            />
           </TabPanel>
         </TabPanels>
       </Tabs>

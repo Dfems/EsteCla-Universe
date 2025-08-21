@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { Post } from '@models/interfaces'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 
 interface ProfileCalendarModalProps {
@@ -29,6 +29,7 @@ export default function ProfileCalendarModal({
   posts,
 }: ProfileCalendarModalProps) {
   const [index, setIndex] = useState(0)
+  const touchStartX = useRef<number | null>(null)
 
   useEffect(() => {
     setIndex(0)
@@ -37,8 +38,12 @@ export default function ProfileCalendarModal({
   const hasPrev = index > 0
   const hasNext = index < Math.max(0, posts.length - 1)
 
-  const prev = () => hasPrev && setIndex((i) => i - 1)
-  const next = () => hasNext && setIndex((i) => i + 1)
+  const prev = useCallback(() => {
+    if (hasPrev) setIndex((i) => i - 1)
+  }, [hasPrev])
+  const next = useCallback(() => {
+    if (hasNext) setIndex((i) => i + 1)
+  }, [hasNext])
 
   const current = posts[index]
   const title = dateKey
@@ -49,13 +54,50 @@ export default function ProfileCalendarModal({
       })
     : ''
 
+  // Scorciatoie tastiera: ←/→ per navigare, Esc per chiudere
+  useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        prev()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        next()
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isOpen, prev, next, onClose])
+
+  // Swipe su mobile: rileva tocco sinistra/destra
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartX.current = e.touches[0].clientX
+    }
+  }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    const threshold = 40 // px
+    if (dx > threshold) {
+      prev()
+    } else if (dx < -threshold) {
+      next()
+    }
+    touchStartX.current = null
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader textTransform="capitalize">{title}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
           {current ? (
             <>
               <Flex align="center" gap={2} mb={3} justify="space-between">
