@@ -23,7 +23,7 @@ const Login: React.FC = () => {
 
     try {
       await loginWithEmailPassword(email, password)
-      navigate('/')
+      navigate('/welcome')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
     } finally {
@@ -37,7 +37,7 @@ const Login: React.FC = () => {
 
     try {
       await loginWithGoogleAndEnsureUser()
-      navigate('/')
+      navigate('/welcome')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Google login failed')
     } finally {

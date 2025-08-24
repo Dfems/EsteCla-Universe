@@ -22,6 +22,13 @@ export const router = createBrowserRouter([
         },
       },
       {
+        path: '/welcome',
+        async lazy() {
+          const { default: Welcome } = await import('@pages/Welcome')
+          return { Component: Welcome }
+        },
+      },
+      {
         path: '/profile/:username',
         async lazy() {
           const { default: Profile } = await import('@pages/Profile')
