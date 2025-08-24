@@ -13,6 +13,7 @@ interface NavbarMobileProps {
   onProfile: () => void
   secsToBirthday: number | null
   userProfilePic?: string | null
+  notifications?: { count: number; onOpen: () => void }
 }
 
 const NavbarMobile: React.FC<NavbarMobileProps> = ({
@@ -26,6 +27,7 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
   onProfile,
   secsToBirthday,
   userProfilePic,
+  notifications,
 }) => (
   <MobileBar
     bg={bg}
@@ -38,6 +40,7 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
     onProfile={onProfile}
     userProfilePic={userProfilePic}
     renderBirthdayBadge={() => <BirthdayBadge secsToBirthday={secsToBirthday} />}
+    notifications={notifications}
   />
 )
 

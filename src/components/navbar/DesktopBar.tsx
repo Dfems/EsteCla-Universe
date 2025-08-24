@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { FaBirthdayCake, FaHome, FaMoon, FaPlusSquare, FaSun, FaUser } from 'react-icons/fa'
+import { IoNotificationsOutline } from 'react-icons/io5'
 import { TbRefresh } from 'react-icons/tb'
 
 interface DesktopBarProps {
@@ -32,6 +33,7 @@ interface DesktopBarProps {
   onProfile: () => void
   onLogout: () => void
   renderBirthdayBadge?: () => React.ReactNode
+  notifications?: { count: number; onOpen: () => void }
 }
 
 const DesktopBar: React.FC<DesktopBarProps> = ({
@@ -49,6 +51,7 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
   onProfile,
   onLogout,
   renderBirthdayBadge,
+  notifications,
 }) => {
   return (
     <>
@@ -104,6 +107,37 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
               onClick={onRefresh}
             />
           </Tooltip>
+          {notifications && (
+            <Tooltip label="Notifiche">
+              <Box position="relative">
+                <IconButton
+                  aria-label="Notifiche"
+                  icon={<IoNotificationsOutline />}
+                  variant="ghost"
+                  onClick={notifications.onOpen}
+                />
+                {notifications.count > 0 && (
+                  <Box
+                    position="absolute"
+                    top={1}
+                    right={1}
+                    bg="red.500"
+                    color="white"
+                    borderRadius="full"
+                    fontSize="10px"
+                    minW="16px"
+                    h="16px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    px={1}
+                  >
+                    {notifications.count > 9 ? '9+' : notifications.count}
+                  </Box>
+                )}
+              </Box>
+            </Tooltip>
+          )}
           <Tooltip label={colorMode === 'light' ? 'Dark mode' : 'Light mode'}>
             <IconButton
               aria-label="Toggle theme"

@@ -9,6 +9,7 @@ import NavbarDesktop from '@components/navbar/NavbarDesktop'
 import NavbarMobile from '@components/navbar/NavbarMobile'
 import UploadModal from '@components/navbar/UploadModal'
 import { useNavbarUpload } from '@hooks/useNavbarUpload'
+import useUnreadNotifications from '@features/notifications/hooks/useUnreadNotifications'
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth()
@@ -37,8 +38,10 @@ const Navbar: React.FC = () => {
 
   const goHome = () => navigate('/')
   const goCountdown = () => navigate('/countdown')
+  const goNotifications = () => navigate('/notifications')
   const goProfile = () =>
     user ? navigate(`/profile/${user.username || 'me'}`) : navigate('/login')
+  const unread = useUnreadNotifications()
 
   const Desktop = () => (
     <NavbarDesktop
@@ -58,6 +61,7 @@ const Navbar: React.FC = () => {
       onProfile={goProfile}
       onLogout={logout}
       secsToBirthday={secsToBirthday}
+      notifications={{ count: unread, onOpen: goNotifications }}
     />
   )
 
@@ -75,6 +79,7 @@ const Navbar: React.FC = () => {
       onProfile={goProfile}
       userProfilePic={user?.profilePic}
       secsToBirthday={secsToBirthday}
+      notifications={{ count: unread, onOpen: goNotifications }}
     />
   )
 

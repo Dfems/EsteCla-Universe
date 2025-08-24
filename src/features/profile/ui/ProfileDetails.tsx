@@ -31,6 +31,8 @@ interface ProfileDetailsProps {
   isOwnProfile?: boolean
   onEdit?: () => void
   loadingPosts?: boolean
+  onOpenFollowers?: () => void
+  onOpenFollowing?: () => void
 }
 
 const ProfileDetails: React.FC<ProfileDetailsProps> = ({
@@ -39,6 +41,8 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
   isOwnProfile,
   onEdit,
   loadingPosts,
+  onOpenFollowers,
+  onOpenFollowing,
 }) => {
   const { containerBg, borderColor, textColor } = useThemeColors()
   const { viewMode, setGrid, setList } = useProfileViewMode('grid')
@@ -67,6 +71,8 @@ const ProfileDetails: React.FC<ProfileDetailsProps> = ({
         isOwnProfile={isOwnProfile}
         onEdit={onEdit}
         borderColor={borderColor}
+        onOpenFollowers={onOpenFollowers}
+        onOpenFollowing={onOpenFollowing}
       />
 
       {/* Tabs stile Instagram */}

@@ -39,6 +39,7 @@ const PostListItem: React.FC<PostListItemProps> = ({ user, post }) => {
             {formatDate(post.publishAt || post.createdAt || post.timestamp)}
           </Text>
         </Flex>
+        {/* Placeholder spazio per futuro badge follow se disponibile uid autore */}
       </HStack>
       {/* Immagine */}
       <Box cursor="pointer" onClick={goProfile}>

@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import { Box, Flex, IconButton, Avatar, Icon } from '@chakra-ui/react'
 import { FaBirthdayCake, FaHome, FaPlusSquare } from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
+import { IoNotificationsOutline } from 'react-icons/io5'
 
 interface MobileBarProps {
   bg: string
@@ -14,6 +15,7 @@ interface MobileBarProps {
   onProfile: () => void
   userProfilePic?: string | null
   renderBirthdayBadge?: () => ReactNode
+  notifications?: { count: number; onOpen: () => void }
 }
 
 const MobileBar: React.FC<MobileBarProps> = ({
@@ -27,6 +29,7 @@ const MobileBar: React.FC<MobileBarProps> = ({
   onProfile,
   userProfilePic,
   renderBirthdayBadge,
+  notifications,
 }) => {
   return (
     <Flex
@@ -88,6 +91,37 @@ const MobileBar: React.FC<MobileBarProps> = ({
         fontSize="28px"
         onClick={onRefresh}
       />
+      {notifications && (
+        <Box position="relative">
+          <IconButton
+            aria-label="Notifiche"
+            icon={<IoNotificationsOutline />}
+            variant="ghost"
+            size="lg"
+            fontSize="28px"
+            onClick={notifications.onOpen}
+          />
+          {notifications.count > 0 && (
+            <Box
+              position="absolute"
+              top={1}
+              right={1}
+              bg="red.500"
+              color="white"
+              borderRadius="full"
+              fontSize="10px"
+              minW="16px"
+              h="16px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              px={1}
+            >
+              {notifications.count > 9 ? '9+' : notifications.count}
+            </Box>
+          )}
+        </Box>
+      )}
       <Box
         as="button"
         aria-label="Profilo"

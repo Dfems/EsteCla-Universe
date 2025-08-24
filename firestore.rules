@@ -22,6 +22,22 @@ service cloud.firestore {
           && request.resource.data.ownerUid == request.auth.uid;
         allow update, delete: if request.auth != null && request.auth.uid == userId;
       }
+
+      // Sottocollezioni followers/following
+      // Documento id = uid dell'altro utente. Payload minimale: { uid: string, createdAt: int }
+      match /followers/{followerUid} {
+        allow read: if true; // visibile pubblicamente
+  // Mirror gestito da Cloud Functions: blocca creazione/eliminazione dal client
+  allow create: if false;
+  allow delete: if false;
+        allow update: if false; // nessun update parziale; add/remove only
+      }
+      match /following/{followingUid} {
+        allow read: if true;
+  // Solo il proprietario del profilo può modificare la propria following
+        allow create, delete: if request.auth != null && request.auth.uid == userId;
+        allow update: if false;
+      }
     }
   }
 }

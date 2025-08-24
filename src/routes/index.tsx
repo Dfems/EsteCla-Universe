@@ -42,6 +42,13 @@ export const router = createBrowserRouter([
           return { Component: Countdown }
         },
       },
+      {
+        path: '/notifications',
+        async lazy() {
+          const { default: Notifications } = await import('@pages/Notifications')
+          return { Component: Notifications }
+        },
+      },
     ],
   },
   {

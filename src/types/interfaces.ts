@@ -7,6 +7,8 @@ export interface UserInfo {
   bio?: string
   followers?: string[]
   following?: string[]
+  followersCount?: number
+  followingCount?: number
   email?: string
   // Optional birthday stored as ISO date string (YYYY-MM-DD)
   birthday?: string

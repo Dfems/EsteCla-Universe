@@ -17,6 +17,7 @@ interface NavbarDesktopProps {
   onProfile: () => void
   onLogout: () => void
   secsToBirthday: number | null
+  notifications?: { count: number; onOpen: () => void }
 }
 
 const NavbarDesktop: React.FC<NavbarDesktopProps> = ({
@@ -34,6 +35,7 @@ const NavbarDesktop: React.FC<NavbarDesktopProps> = ({
   onProfile,
   onLogout,
   secsToBirthday,
+  notifications,
 }) => (
   <DesktopBar
     bg={bg}
@@ -50,6 +52,7 @@ const NavbarDesktop: React.FC<NavbarDesktopProps> = ({
     onProfile={onProfile}
     onLogout={onLogout}
     renderBirthdayBadge={() => <BirthdayBadge secsToBirthday={secsToBirthday} />}
+    notifications={notifications}
   />
 )
 

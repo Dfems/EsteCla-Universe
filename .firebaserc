@@ -5,7 +5,9 @@
   "targets": {
     "estecla-universe": {
       "hosting": {
-        "production": ["estecla-universe"]
+        "production": [
+          "estecla-universe"
+        ]
       }
     }
   }
