@@ -1,0 +1,12 @@
+{
+  "name": "@estecla/config-eslint",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "type": "module",
+  "peerDependencies": {
+    "eslint": ">=9",
+    "typescript": ">=5",
+    "typescript-eslint": ">=8"
+  }
+}

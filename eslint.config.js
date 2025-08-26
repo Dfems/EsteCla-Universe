@@ -7,7 +7,7 @@ import prettierConfig from 'eslint-config-prettier'
 import pluginPrettier from 'eslint-plugin-prettier'
 
 export default tseslint.config(
-  { ignores: ['dist', 'functions/**'] },
+  { ignores: ['dist', 'functions/**', 'packages/**', 'apps/**', 'firebase/**'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierConfig],
     files: ['**/*.{ts,tsx}'],
