@@ -1,18 +1,18 @@
 /// <reference lib="webworker" />
 
-declare const self: ServiceWorkerGlobalScope
+const sw = self as unknown as ServiceWorkerGlobalScope
 
-self.addEventListener('install', (event) => {
+sw.addEventListener('install', (event) => {
   console.log('Service Worker installed')
   console.log(event)
 })
 
-self.addEventListener('activate', (event) => {
+sw.addEventListener('activate', (event) => {
   console.log('Service Worker activated')
   console.log(event)
 })
 
-self.addEventListener('fetch', (event) => {
+sw.addEventListener('fetch', (event) => {
   // Logica custom per il caching
   console.log(event)
 })

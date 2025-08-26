@@ -4,7 +4,7 @@ import type {
   QueryDocumentSnapshot,
   SnapshotOptions,
 } from 'firebase/firestore'
-import type { Post, UserInfo } from '@types/interfaces'
+import type { Post, UserInfo } from '@estecla/types'
 
 export const userConverter: FirestoreDataConverter<UserInfo> = {
   toFirestore(user: UserInfo): DocumentData {
