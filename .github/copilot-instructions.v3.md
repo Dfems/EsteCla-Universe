@@ -9,6 +9,7 @@ applyTo: '**'
 ## 1) Architettura & Struttura cartelle
 
 ### Monorepo (Lerna + npm workspaces)
+
 ```
 /apps/
   estecla-universe/     # app principale (tipo Instagram)
@@ -25,9 +26,10 @@ applyTo: '**'
 /firebase/              # rules/indexes/emulators/seed/snapshots/script + config hosting
 ```
 
-> **Firebase selezionato:** *Progetto unico + Hosting Multisito*. Ogni app ha un **sito Hosting** dedicato nello **stesso progetto Firebase**.
+> **Firebase selezionato:** _Progetto unico + Hosting Multisito_. Ogni app ha un **sito Hosting** dedicato nello **stesso progetto Firebase**.
 
 ### FSD dentro ogni app
+
 ```
 src/
   app/                 # entrypoint, providers, layout, error boundaries
@@ -42,28 +44,33 @@ src/
 ```
 
 **Dipendenze consentite (FSD-like):**
+
 - `pages` → usa `features`, `shared`, `@packages/*`.
 - `features` → usa `shared`, `@packages/*` (mai dipendere da `pages`).
 - `shared` → solo utilities, nessun side-effect d’avvio app.
 
 ## 2) Naming & Convenzioni
 
-- **Directory:** `kebab-case` (es. `user-profile`, `infinite-feed`).  
+- **Directory:** `kebab-case` (es. `user-profile`, `infinite-feed`).
 - **Cartelle/file in `/firebase`** (rules, indexes, emulators, seed, snapshots, script): **solo `kebab-case`**. **Rinomina** path non conformi.
-- **File componenti React:** `PascalCase.tsx` (es. `UserCard.tsx`).  
-- **File hook:** `useXxx.ts` (es. `useInfiniteFeed.ts`).  
-- **File types:** `*.types.ts` oppure per dominio (es. `user.ts`) in `packages/types/src`.  
-- **Test:** `*.test.ts[x]`, **mocks** in `__mocks__/`.  
-- **Barrel:** `packages/types/src/index.ts` esporta tutto ciò che è pubblico.  
-- **Esportazioni:** **named exports** (no `default` dove possibile) per tree‑shaking.  
-- **Componenti:** *un componente principale per file*; sottocomponenti estratti in file propri.  
+- **File componenti React:** `PascalCase.tsx` (es. `UserCard.tsx`).
+- **File hook:** `useXxx.ts` (es. `useInfiniteFeed.ts`).
+- **File types:** `*.types.ts` oppure per dominio (es. `user.ts`) in `packages/types/src`.
+- **Test:** `*.test.ts[x]`, **mocks** in `__mocks__/`.
+- **Barrel:** `packages/types/src/index.ts` esporta tutto ciò che è pubblico.
+- **Esportazioni:** **named exports** (no `default` dove possibile) per tree‑shaking.
+- **Componenti:** _un componente principale per file_; sottocomponenti estratti in file propri.
 
 ## 3) React & Chakra
 
 - **Function Components only.** **Non usare `React.FC<Props>`** → usa:
   ```ts
-  type Props = { /* ... */ }
-  export function ComponentName(props: Props) { /* ... */ }
+  type Props = {
+    /* ... */
+  }
+  export function ComponentName(props: Props) {
+    /* ... */
+  }
   ```
 - **Niente side‑effect nel render**; usa `useEffect` con deps corrette. Evita `useEffect` superflui.
 - **Props:** se >5 props o JSX molto annidato → estrai sottocomponente/hook.
@@ -101,6 +108,7 @@ src/
 ## 6) Firebase
 
 ### Hosting multisito (stesso progetto)
+
 - Ogni app ha un **target** Hosting (es. `estecla`, `glufri-travelers`). I **site‑id** devono essere `kebab-case`.
 - `.firebaserc` associa target → site‑id; `firebase.json` contiene l’array `hosting` con due voci (una per app).
 - Comandi tipici:
@@ -114,6 +122,7 @@ src/
   ```
 
 ### Integrazione codice
+
 - **Integrazioni** per feature in `features/<feature>/api` che **chiamano adapter** da `@firebase`.
 - Credenziali/env **solo** via `.env*` (mai hardcodate). Per Vite usa prefisso `VITE_`.
 - Se modifichi `firestore.rules` o `storage.rules`: fornisci patch, aggiorna test emulator (se presenti) e **pubblica**:
@@ -151,6 +160,7 @@ src/
 npm run format && npm run lint && npm run type-check && npm run build
 # (facoltativo) npm run preview
 ```
+
 **Tutti i comandi devono passare senza errori.** Se falliscono, **applica patch** finché tornano verdi.
 
 ## 12) Cose da EVITARE

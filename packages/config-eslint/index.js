@@ -14,7 +14,7 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/consistent-type-definitions': ['error', 'interface']
-    }
+      '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+    },
   }
 )

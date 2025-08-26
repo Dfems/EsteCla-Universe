@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@ui/*": ["../../packages/ui/src/*"],
+      "@hooks/*": ["../../packages/hooks/src/*"],
+      "@types/*": ["../../packages/types/src/*"],
+      "@firebase/*": ["../../packages/firebase/src/*"],
+      "@utils/*": ["../../packages/utils/src/*"],
+      "@theme/*": ["../../packages/theme/src/*"]
+    }
+  },
+  "include": ["src"]
+}

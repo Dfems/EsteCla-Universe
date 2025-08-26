@@ -1,6 +1,6 @@
 # Monorepo setup (Lerna + Workspaces)
 
-Workspaces: apps/*, packages/*
+Workspaces: apps/_, packages/_
 Shared tsconfig at tsconfig.base.json with strict rules (noImplicitAny)
 Firebase hosting multi-sito: estecla, glufri-travelers
 
