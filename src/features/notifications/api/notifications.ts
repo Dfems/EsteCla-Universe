@@ -43,7 +43,19 @@ export function observeNotifications(cb: (count: number) => void) {
     orderBy('createdAt', 'desc'),
     limit(100)
   )
-  return onSnapshot(q, (snap) => cb(snap.size))
+  return onSnapshot(
+    q,
+    (snap) => cb(snap.size),
+    (err) => {
+      const code = (err as { code?: string }).code
+      if (code === 'permission-denied') {
+        cb(0)
+        return
+      }
+      console.error('Errore notifications listener:', err)
+      cb(0)
+    }
+  )
 }
 
 export interface NotificationsPage {

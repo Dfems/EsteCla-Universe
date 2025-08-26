@@ -14,7 +14,7 @@ import {
   Spacer,
   Tooltip,
 } from '@chakra-ui/react'
-import { FaBirthdayCake, FaHome, FaMoon, FaPlusSquare, FaSun, FaUser } from 'react-icons/fa'
+import { FaHome, FaPlusSquare, FaUser } from 'react-icons/fa'
 import { IoNotificationsOutline } from 'react-icons/io5'
 import { TbRefresh } from 'react-icons/tb'
 
@@ -22,17 +22,13 @@ interface DesktopBarProps {
   bg: string
   borderColor: string
   textColor: string
-  colorMode: 'light' | 'dark'
-  toggleColorMode: () => void
   userProfilePic?: string
   uploading: boolean
   onHome: () => void
-  onCountdown: () => void
   onUpload: () => void
   onRefresh: () => void
   onProfile: () => void
   onLogout: () => void
-  renderBirthdayBadge?: () => React.ReactNode
   notifications?: { count: number; onOpen: () => void }
 }
 
@@ -40,17 +36,13 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
   bg,
   borderColor,
   textColor,
-  colorMode,
-  toggleColorMode,
   userProfilePic,
   uploading,
   onHome,
-  onCountdown,
   onUpload,
   onRefresh,
   onProfile,
   onLogout,
-  renderBirthdayBadge,
   notifications,
 }) => {
   return (
@@ -79,17 +71,6 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
           <Tooltip label="Home">
             <IconButton aria-label="Home" icon={<FaHome />} variant="ghost" onClick={onHome} />
           </Tooltip>
-          <Tooltip label="Countdown">
-            <Box position="relative">
-              <IconButton
-                aria-label="Countdown"
-                icon={<FaBirthdayCake />}
-                variant="ghost"
-                onClick={onCountdown}
-              />
-              {renderBirthdayBadge?.()}
-            </Box>
-          </Tooltip>
           <Tooltip label="Upload">
             <IconButton
               aria-label="Upload"
@@ -111,7 +92,7 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
             <Tooltip label="Notifiche">
               <Box position="relative">
                 <IconButton
-                  aria-label="Notifiche"
+                  aria-label={`Notifiche${notifications.count ? `, ${notifications.count} non lette` : ''}`}
                   icon={<IoNotificationsOutline />}
                   variant="ghost"
                   onClick={notifications.onOpen}
@@ -131,6 +112,8 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
                     alignItems="center"
                     justifyContent="center"
                     px={1}
+                    aria-live="polite"
+                    aria-atomic="true"
                   >
                     {notifications.count > 9 ? '9+' : notifications.count}
                   </Box>
@@ -138,14 +121,6 @@ const DesktopBar: React.FC<DesktopBarProps> = ({
               </Box>
             </Tooltip>
           )}
-          <Tooltip label={colorMode === 'light' ? 'Dark mode' : 'Light mode'}>
-            <IconButton
-              aria-label="Toggle theme"
-              icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
-              variant="ghost"
-              onClick={toggleColorMode}
-            />
-          </Tooltip>
           <Menu>
             <MenuButton as={Button} variant="ghost" p={0} minW={0} aria-label="User menu">
               <Avatar size="sm" src={userProfilePic} />

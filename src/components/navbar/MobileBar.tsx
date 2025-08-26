@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react'
-import { Box, Flex, IconButton, Avatar, Icon } from '@chakra-ui/react'
-import { FaBirthdayCake, FaHome, FaPlusSquare } from 'react-icons/fa'
+import React from 'react'
+import { Box, Flex, IconButton, Avatar } from '@chakra-ui/react'
+import { FaHome, FaPlusSquare } from 'react-icons/fa'
 import { TbRefresh } from 'react-icons/tb'
 import { IoNotificationsOutline } from 'react-icons/io5'
 
@@ -9,12 +9,10 @@ interface MobileBarProps {
   borderColor: string
   uploading: boolean
   onHome: () => void
-  onCountdown: () => void
   onUpload: () => void
   onRefresh: () => void
   onProfile: () => void
   userProfilePic?: string | null
-  renderBirthdayBadge?: () => ReactNode
   notifications?: { count: number; onOpen: () => void }
 }
 
@@ -23,16 +21,16 @@ const MobileBar: React.FC<MobileBarProps> = ({
   borderColor,
   uploading,
   onHome,
-  onCountdown,
   onUpload,
   onRefresh,
   onProfile,
   userProfilePic,
-  renderBirthdayBadge,
   notifications,
 }) => {
   return (
     <Flex
+      as="nav"
+      aria-label="Barra di navigazione mobile"
       display={{ base: 'flex', md: 'none' }}
       position="fixed"
       bottom={0}
@@ -58,31 +56,6 @@ const MobileBar: React.FC<MobileBarProps> = ({
         fontSize="28px"
         onClick={onHome}
       />
-      <Box position="relative">
-        <IconButton
-          aria-label="Countdown"
-          icon={<FaBirthdayCake />}
-          variant="ghost"
-          size="lg"
-          fontSize="28px"
-          onClick={onCountdown}
-        />
-        {renderBirthdayBadge?.()}
-      </Box>
-      <Box position="relative">
-        <IconButton
-          aria-label="Upload"
-          icon={<FaPlusSquare />}
-          variant="solid"
-          colorScheme="blue"
-          boxShadow="0 8px 20px rgba(0,0,0,0.25)"
-          borderRadius="full"
-          size="lg"
-          fontSize="28px"
-          onClick={onUpload}
-          isLoading={uploading}
-        />
-      </Box>
       <IconButton
         aria-label="Refresh"
         icon={<TbRefresh />}
@@ -91,10 +64,22 @@ const MobileBar: React.FC<MobileBarProps> = ({
         fontSize="28px"
         onClick={onRefresh}
       />
+      <IconButton
+        aria-label="Upload"
+        icon={<FaPlusSquare />}
+        variant="solid"
+        colorScheme="blue"
+        boxShadow="0 8px 20px rgba(0,0,0,0.25)"
+        borderRadius="full"
+        size="lg"
+        fontSize="28px"
+        onClick={onUpload}
+        isLoading={uploading}
+      />
       {notifications && (
         <Box position="relative">
           <IconButton
-            aria-label="Notifiche"
+            aria-label={`Notifiche${notifications.count ? `, ${notifications.count} non lette` : ''}`}
             icon={<IoNotificationsOutline />}
             variant="ghost"
             size="lg"
@@ -116,6 +101,8 @@ const MobileBar: React.FC<MobileBarProps> = ({
               alignItems="center"
               justifyContent="center"
               px={1}
+              aria-live="polite"
+              aria-atomic="true"
             >
               {notifications.count > 9 ? '9+' : notifications.count}
             </Box>
@@ -138,13 +125,7 @@ const MobileBar: React.FC<MobileBarProps> = ({
         borderRadius="full"
         _focus={{ boxShadow: 'outline' }}
       >
-        <Avatar
-          size="md"
-          name="Profilo"
-          src={userProfilePic || undefined}
-          bg="gray.200"
-          icon={<Icon viewBox="0 0 24 24" as={undefined} />}
-        />
+        <Avatar size="md" name="Profilo" src={userProfilePic || undefined} bg="gray.200" />
       </Box>
     </Flex>
   )

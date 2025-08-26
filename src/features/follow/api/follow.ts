@@ -54,7 +54,19 @@ export function observeIsFollowing(
   const u = requireAuth()
   if (u.uid === targetUid) return () => {}
   const ref = doc(db, 'users', u.uid, 'following', targetUid)
-  return onSnapshot(ref, (snap) => cb(snap.exists()))
+  return onSnapshot(
+    ref,
+    (snap) => cb(snap.exists()),
+    (err) => {
+      const code = (err as { code?: string }).code
+      if (code === 'permission-denied') {
+        cb(false)
+        return
+      }
+      console.error('Errore observeIsFollowing:', err)
+      cb(false)
+    }
+  )
 }
 
 export async function getFollowersOf(uid: string): Promise<string[]> {

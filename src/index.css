@@ -37,9 +37,9 @@ body {
   overflow-x: hidden;
 }
 
-/* Ensure space for mobile bottom bar without affecting desktop */
+/* Spazio per la bottom navbar su mobile (altezza ~88px + safe area) */
 .content {
-  padding-bottom: 72px;
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 @media (min-width: 768px) {
   .content {

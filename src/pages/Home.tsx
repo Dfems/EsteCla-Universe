@@ -11,7 +11,7 @@ export default function Home() {
   const { users: suggested } = useSuggestedUsers(6)
 
   return (
-    <Box p={4} bg={containerBg} color={textColor} mt={{ base: 6, md: 6 }}>
+    <Box p={4} bg={containerBg} color={textColor} mt={{ base: 2, md: 16 }} pb={{ base: 24, md: 4 }}>
       <Container maxW="container.xl" px={{ base: 0, md: 4 }}>
         <Grid templateColumns={{ base: '1fr', md: '2fr 1fr' }} gap={{ base: 4, md: 8 }}>
           <GridItem>

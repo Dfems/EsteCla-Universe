@@ -49,6 +49,13 @@ export const router = createBrowserRouter([
           return { Component: Notifications }
         },
       },
+      {
+        path: '/settings',
+        async lazy() {
+          const { default: Settings } = await import('@pages/Settings')
+          return { Component: Settings }
+        },
+      },
     ],
   },
   {

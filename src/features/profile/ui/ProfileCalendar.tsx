@@ -67,8 +67,8 @@ function CalendarHeader({
 function CalendarWeekHeader({ weekLabels }: { weekLabels: string[] }) {
   return (
     <Grid templateColumns="repeat(7, 1fr)" gap={1} mb={1}>
-      {weekLabels.map((w) => (
-        <GridItem key={w} textAlign="center" fontSize="xs" color="gray.500">
+      {weekLabels.map((w, i) => (
+        <GridItem key={`${w}-${i}`} textAlign="center" fontSize="xs" color="gray.500">
           {w}
         </GridItem>
       ))}

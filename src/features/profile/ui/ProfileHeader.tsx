@@ -1,9 +1,21 @@
 import React from 'react'
-import { Box, Avatar, Flex, Grid, Text, Button, Tooltip, Link as CLink } from '@chakra-ui/react'
+import {
+  Box,
+  Avatar,
+  Flex,
+  Grid,
+  Text,
+  Button,
+  Tooltip,
+  Link as CLink,
+  IconButton,
+} from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { UserInfo } from '@models/interfaces'
 import { useFollow } from '@features/follow/hooks/useFollow'
 import { useFollowCounts } from '@features/follow/hooks/useFollowCounts'
+import { IoSettingsOutline } from 'react-icons/io5'
+import { useNavigate } from 'react-router-dom'
 
 interface ProfileHeaderProps {
   profileUser: UserInfo
@@ -25,6 +37,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onOpenFollowing,
 }) => {
   const { followers, following } = useFollowCounts(profileUser.uid)
+  const navigate = useNavigate()
   return (
     <Grid
       templateColumns={{ base: '80px 1fr', md: 'min-content 1fr' }}
@@ -47,11 +60,22 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             {profileUser.username}
           </Text>
           {isOwnProfile ? (
-            <Tooltip label="Modifica profilo" hasArrow>
-              <Button size="sm" variant="outline" onClick={onEdit} leftIcon={<EditIcon />}>
-                Modifica profilo
-              </Button>
-            </Tooltip>
+            <Flex gap={2} align="center">
+              <Tooltip label="Modifica profilo" hasArrow>
+                <Button size="sm" variant="outline" onClick={onEdit} leftIcon={<EditIcon />}>
+                  Modifica profilo
+                </Button>
+              </Tooltip>
+              <Tooltip label="Impostazioni" hasArrow>
+                <IconButton
+                  aria-label="Impostazioni"
+                  icon={<IoSettingsOutline />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => navigate('/settings')}
+                />
+              </Tooltip>
+            </Flex>
           ) : (
             <FollowSection targetUid={profileUser.uid} />
           )}
@@ -74,13 +98,21 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         )}
         {profileUser.bio && <Text whiteSpace="pre-wrap">{profileUser.bio}</Text>}
         {profileUser.birthday && (
-          <Text fontSize="sm" color="gray.500" mt={2}>
-            🎂{' '}
-            {new Date(profileUser.birthday).toLocaleDateString('it-IT', {
-              day: 'numeric',
-              month: 'long',
-            })}
-          </Text>
+          <Tooltip label="Vedi countdown compleanno" hasArrow>
+            <CLink
+              onClick={() => navigate('/countdown')}
+              cursor="pointer"
+              _hover={{ textDecoration: 'underline' }}
+            >
+              <Text as="span" fontSize="sm" color="gray.500" mt={2} display="inline-block">
+                🎂{' '}
+                {new Date(profileUser.birthday).toLocaleDateString('it-IT', {
+                  day: 'numeric',
+                  month: 'long',
+                })}
+              </Text>
+            </CLink>
+          </Tooltip>
         )}
       </Box>
     </Grid>

@@ -1,9 +1,8 @@
 import React from 'react'
-import { useColorMode, VisuallyHidden, Input } from '@chakra-ui/react'
+import { VisuallyHidden, Input } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@context/AuthContext'
 import useThemeColors from '@hooks/useThemeColors'
-import { useBirthdayCountdown } from '@/features/birthday/hooks/useBirthdayCountdown'
 
 import NavbarDesktop from '@components/navbar/NavbarDesktop'
 import NavbarMobile from '@components/navbar/NavbarMobile'
@@ -14,9 +13,7 @@ import useUnreadNotifications from '@features/notifications/hooks/useUnreadNotif
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const { colorMode, toggleColorMode } = useColorMode()
   const { containerBg, borderColor, textColor } = useThemeColors()
-  const secsToBirthday = useBirthdayCountdown(user?.birthday)
   const bg = containerBg
   const refresh = () => window.location.reload()
   const {
@@ -37,7 +34,6 @@ const Navbar: React.FC = () => {
   } = useNavbarUpload(user)
 
   const goHome = () => navigate('/')
-  const goCountdown = () => navigate('/countdown')
   const goNotifications = () => navigate('/notifications')
   const goProfile = () =>
     user ? navigate(`/profile/${user.username || 'me'}`) : navigate('/login')
@@ -48,19 +44,15 @@ const Navbar: React.FC = () => {
       bg={bg}
       borderColor={borderColor}
       textColor={textColor}
-      colorMode={colorMode as 'light' | 'dark'}
-      toggleColorMode={toggleColorMode}
       userProfilePic={user?.profilePic}
       uploading={uploading}
       onHome={goHome}
-      onCountdown={goCountdown}
       onUpload={() => {
         if (!openFilePicker()) navigate('/login')
       }}
       onRefresh={refresh}
       onProfile={goProfile}
       onLogout={logout}
-      secsToBirthday={secsToBirthday}
       notifications={{ count: unread, onOpen: goNotifications }}
     />
   )
@@ -71,14 +63,12 @@ const Navbar: React.FC = () => {
       borderColor={borderColor}
       uploading={uploading}
       onHome={goHome}
-      onCountdown={goCountdown}
       onUpload={() => {
         if (!openFilePicker()) navigate('/login')
       }}
       onRefresh={refresh}
       onProfile={goProfile}
       userProfilePic={user?.profilePic}
-      secsToBirthday={secsToBirthday}
       notifications={{ count: unread, onOpen: goNotifications }}
     />
   )

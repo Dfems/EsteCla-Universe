@@ -38,6 +38,14 @@ service cloud.firestore {
         allow create, delete: if request.auth != null && request.auth.uid == userId;
         allow update: if false;
       }
+
+      // Sottocollezione notifications
+      // Lettura e aggiornamento consentiti solo al proprietario; creazione gestita da Functions (admin bypass)
+      match /notifications/{notificationId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow update: if request.auth != null && request.auth.uid == userId;
+        allow create, delete: if false;
+      }
     }
   }
 }
