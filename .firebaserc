@@ -5,8 +5,12 @@
   "targets": {
     "your-project-id-dev": {
       "hosting": {
-        "estecla": ["estecla-dev"],
-        "glufri-travelers": ["glufri-travelers-dev"]
+        "estecla": [
+          "estecla-dev"
+        ],
+        "glufri-travelers": [
+          "glufri-travelers-dev"
+        ]
       }
     }
   }

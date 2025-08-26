@@ -16,8 +16,8 @@
     }
   },
   "peerDependencies": {
-  "react": ">=18",
-  "react-dom": ">=18",
-  "@chakra-ui/react": ">=2"
+    "react": ">=18",
+    "react-dom": ">=18",
+    "@chakra-ui/react": ">=2"
   }
 }
