@@ -2,15 +2,26 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from '@/App'
 import ErrorPage from '@pages/Error'
-import { ProtectedRoute } from '@components/ProtectedRoute'
+import { ProtectedRoute } from '@estecla/ui/navigation'
+import { useAuth } from '@context/AuthContext'
+import { LoadingSpinner } from '@estecla/ui/feedback'
+
+const RootProtected: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+  const { user, loading } = useAuth()
+  return (
+    <ProtectedRoute isAllowed={!!user} loading={loading} loadingFallback={<LoadingSpinner />}>
+      {children}
+    </ProtectedRoute>
+  )
+}
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      <ProtectedRoute>
+      <RootProtected>
         <App />
-      </ProtectedRoute>
+      </RootProtected>
     ),
     errorElement: <ErrorPage />,
     children: [
