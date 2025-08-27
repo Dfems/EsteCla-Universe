@@ -21,3 +21,21 @@ export function initFirebase(config: object): FirebaseServices {
 }
 
 export const googleProvider = new GoogleAuthProvider()
+
+// Ottiene i servizi dall'app Firebase già inizializzata.
+// Nota: richiede che l'app sia stata inizializzata altrove (es. nell'app consumer).
+export function getServices(): FirebaseServices {
+  const apps = getApps()
+  if (!apps.length) {
+    throw new Error(
+      "Firebase non inizializzato: chiama initFirebase nell'app prima di usare i hook condivisi"
+    )
+  }
+  const app = apps[0]
+  return {
+    app,
+    auth: getAuth(app),
+    db: getFirestore(app),
+    storage: getStorage(app),
+  }
+}

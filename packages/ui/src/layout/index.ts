@@ -1,2 +1,2 @@
 // Barrel per @estecla/ui/layout
-export {}
+export { ContainerSection } from './primitives'

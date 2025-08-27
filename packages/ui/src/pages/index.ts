@@ -1,2 +1,2 @@
 // Barrel per @estecla/ui/pages
-export {}
+export { TitleOnly } from './primitives'

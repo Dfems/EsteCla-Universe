@@ -1,2 +1,2 @@
 // Barrel per @estecla/ui/profile
-export {}
+export { PlaceholderBadge } from './primitives'

@@ -124,3 +124,56 @@ export async function getUsersByUids(db: Firestore, uids: string[], batchSize = 
   }
   return results
 }
+
+function dedupeAndTrim(users: UserInfo[], limitCount: number): UserInfo[] {
+  const seen = new Set<string>()
+  const out: UserInfo[] = []
+  for (const it of users) {
+    if (seen.has(it.uid)) continue
+    seen.add(it.uid)
+    out.push(it)
+    if (out.length >= limitCount) break
+  }
+  return out
+}
+
+export async function getSuggestedUsers(
+  services: { auth: Auth; db: Firestore },
+  limitCount = 8
+): Promise<UserInfo[]> {
+  const u = requireAuth(services.auth)
+  const myFollowing = await getFollowingOf(services.db, u.uid)
+  const followingSet = new Set(myFollowing)
+
+  // friends-of-friends sampling
+  const candidatesMap = new Map<string, { user: UserInfo; score: number }>()
+  const sampleFriends = myFollowing.slice(0, 12)
+  for (const fid of sampleFriends) {
+    try {
+      const page = await listFollowingPage(services.db, fid, 20)
+      for (const docSnap of page.docs) {
+        const cid = docSnap.id
+        if (cid === u.uid || followingSet.has(cid)) continue
+        const cand = await getUsersByUids(services.db, [cid], 1)
+        const user = cand[0]
+        if (!user) continue
+        const cur = candidatesMap.get(cid)
+        candidatesMap.set(cid, { user, score: (cur?.score || 0) + 1 })
+      }
+    } catch {
+      // ignora errori singoli
+    }
+  }
+
+  let ranked = Array.from(candidatesMap.values())
+    .sort((a, b) => b.score - a.score)
+    .map((x) => x.user)
+
+  if (ranked.length < limitCount) {
+    const snap = await getDocs(query(collection(services.db, 'users'), limit(60)))
+    const pool = snap.docs.map((d) => d.data() as UserInfo)
+    const extra = pool.filter((usr) => usr.uid !== u.uid && !followingSet.has(usr.uid))
+    ranked = [...ranked, ...extra]
+  }
+  return dedupeAndTrim(ranked, limitCount)
+}
