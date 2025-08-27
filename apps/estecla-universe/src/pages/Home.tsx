@@ -2,7 +2,7 @@ import { Box, Container, Grid, GridItem, Text, Show, VStack } from '@chakra-ui/r
 import { useThemeColors } from '@estecla/hooks'
 import { PostListItem } from '@components/index'
 import { useGlobalFeed } from '@hooks/useGlobalFeed'
-import { useSuggestedUsers } from '@features/follow/hooks/useSuggestedUsers'
+import { useSuggestedUsers } from '@estecla/hooks'
 import SuggestedUsers from '@features/follow/ui/SuggestedUsers'
 
 export default function Home() {

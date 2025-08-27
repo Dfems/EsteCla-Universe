@@ -8,7 +8,7 @@ import NavbarDesktop from '@components/navbar/NavbarDesktop'
 import NavbarMobile from '@components/navbar/NavbarMobile'
 import UploadModal from '@components/navbar/UploadModal'
 import { useNavbarUpload } from '@hooks/useNavbarUpload'
-import useUnreadNotifications from '@features/notifications/hooks/useUnreadNotifications'
+import { useUnreadNotifications } from '@estecla/hooks'
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth()

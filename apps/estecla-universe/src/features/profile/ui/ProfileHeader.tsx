@@ -12,8 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
 import { UserInfo } from '@estecla/types'
-import { useFollow } from '@features/follow/hooks/useFollow'
-import { useFollowCounts } from '@features/follow/hooks/useFollowCounts'
+import { useFollow, useFollowCounts } from '@estecla/hooks'
 import { IoSettingsOutline } from 'react-icons/io5'
 import { useNavigate } from 'react-router-dom'
 
