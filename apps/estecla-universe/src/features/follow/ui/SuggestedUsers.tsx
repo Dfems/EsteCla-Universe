@@ -1,6 +1,6 @@
 import React from 'react'
 import { Avatar, Box, Button, Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 import type { UserInfo } from '@estecla/types'
 import { useFollow } from '@features/follow/hooks/useFollow'
 import { Link } from 'react-router-dom'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@chakra-ui/react'
-import PostListItem from '@components/ui/PostListItem'
+import { PostListItem } from '@estecla/ui/social'
 import { Post, UserInfo } from '@estecla/types'
 
 interface ProfilePostListProps {

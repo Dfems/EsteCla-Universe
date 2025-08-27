@@ -1,5 +1,3 @@
-export { default as GoogleLoginButton } from './ui/GoogleLoginButton'
-export { default as LoadingSpinner } from './ui/LoadingSpinner'
-export { default as PostCard } from './ui/PostCard'
-export { PostListItem } from '@estecla/ui'
+export { GoogleLoginButton } from '@estecla/ui/auth'
+export { PostCard, PostListItem } from '@estecla/ui/social'
 export { ProtectedRoute } from './ProtectedRoute'

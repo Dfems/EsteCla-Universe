@@ -1,6 +1,5 @@
 export { Button } from './primitives/Button'
 export * from './primitives/Button'
 export { default as GoogleLoginButton } from './components/GoogleLoginButton'
-export { default as LoadingSpinner } from './components/LoadingSpinner'
 export { default as PostCard } from './components/PostCard'
 export { default as PostListItem } from './components/PostListItem'

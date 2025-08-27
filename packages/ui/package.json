@@ -13,8 +13,21 @@
     ".": {
       "types": "./src/index.ts",
       "import": "./src/index.ts"
+    },
+    "./feedback": {
+      "types": "./src/feedback/index.ts",
+      "import": "./src/feedback/index.ts"
+    },
+    "./auth": {
+      "types": "./src/auth/index.ts",
+      "import": "./src/auth/index.ts"
+    },
+    "./social": {
+      "types": "./src/social/index.ts",
+      "import": "./src/social/index.ts"
     }
   },
+  "sideEffects": false,
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",

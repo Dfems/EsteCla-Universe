@@ -1,10 +1,2 @@
-// src/components/ui/LoadingSpinner.tsx
-import { Spinner } from '@chakra-ui/react'
-
-export default function LoadingSpinner() {
-  return (
-    <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
-      <Spinner size="xl" />
-    </div>
-  )
-}
+// Deprecated: use { LoadingSpinner } from '@estecla/ui/feedback'
+export { LoadingSpinner as default } from '@estecla/ui/feedback'

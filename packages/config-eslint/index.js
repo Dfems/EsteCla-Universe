@@ -27,6 +27,30 @@ export default tseslint.config(
       'prettier/prettier': ['error', { endOfLine: 'auto' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@estecla/ui',
+              message:
+                'Importa dai sotto-path (es. @estecla/ui/feedback), non dal root @estecla/ui.',
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                '@estecla/ui/src',
+                '@estecla/ui/src/*',
+                '@estecla/ui/*/src',
+                '@estecla/ui/*/src/*',
+              ],
+              message:
+                'Evita import interni alla sorgente: usa solo gli entrypoint pubblici (subpath exports).',
+            },
+          ],
+        },
+      ],
     },
   }
 )

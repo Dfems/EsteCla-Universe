@@ -2,7 +2,7 @@ import React from 'react'
 import { VisuallyHidden, Input } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@context/AuthContext'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 
 import NavbarDesktop from '@components/navbar/NavbarDesktop'
 import NavbarMobile from '@components/navbar/NavbarMobile'

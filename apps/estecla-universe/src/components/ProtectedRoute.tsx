@@ -2,7 +2,7 @@
 import React, { JSX } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '@context/AuthContext'
-import LoadingSpinner from '@components/ui/LoadingSpinner'
+import { LoadingSpinner } from '@estecla/ui/feedback'
 
 interface ProtectedRouteProps {
   children: JSX.Element

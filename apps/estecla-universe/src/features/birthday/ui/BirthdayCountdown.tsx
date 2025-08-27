@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Box, Flex, Text, Heading, useColorMode } from '@chakra-ui/react'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 import Confetti from 'react-confetti'
 
 interface TimeLeft {

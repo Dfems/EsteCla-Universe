@@ -1,7 +1,7 @@
 import Navbar from '@components/Navbar'
 import { Outlet } from 'react-router-dom'
 import { Suspense } from 'react'
-import LoadingSpinner from '@components/ui/LoadingSpinner'
+import { LoadingSpinner } from '@estecla/ui/feedback'
 import WelcomeGate from '@components/WelcomeGate'
 
 export default function App() {

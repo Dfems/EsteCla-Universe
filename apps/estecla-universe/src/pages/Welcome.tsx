@@ -2,7 +2,7 @@ import { Box, Button, Container, Heading, HStack, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
 import { useAuth } from '@context/AuthContext'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 import { useNavigate } from 'react-router-dom'
 import { useWelcomeGate } from '@hooks/useWelcomeGate'
 

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
 import { registerWithEmailPassword } from '@features/auth/api/auth'
 import type { UserInfo } from '@estecla/types'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 
 const Register: React.FC = () => {
   const navigate = useNavigate()

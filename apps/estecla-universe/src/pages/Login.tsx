@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
 import { loginWithEmailPassword, loginWithGoogleAndEnsureUser } from '@features/auth/api/auth'
-import GoogleLoginButton from '@components/ui/GoogleLoginButton'
-import useThemeColors from '@hooks/useThemeColors'
+import { GoogleLoginButton } from '@estecla/ui/auth'
+import { useThemeColors } from '@estecla/hooks'
 // import { useColorMode } from '@chakra-ui/react'
 
 const Login: React.FC = () => {

@@ -11,7 +11,7 @@ import {
   Icon,
 } from '@chakra-ui/react'
 import { FaMoon, FaSun } from 'react-icons/fa'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 import ClearCacheButton from '@components/ui/ClearCacheButton'
 
 const SettingsPage: React.FC = () => {

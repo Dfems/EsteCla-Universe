@@ -22,7 +22,7 @@ import ProfilePostGrid from './ProfilePostGrid'
 import ProfilePostList from './ProfilePostList'
 import ProfileCalendar from './ProfileCalendar'
 import { UserInfo, Post } from '@estecla/types'
-import useThemeColors from '@hooks/useThemeColors'
+import { useThemeColors } from '@estecla/hooks'
 import { useProfileViewMode } from '@features/profile/hooks/useProfileViewMode'
 
 interface ProfileDetailsProps {
