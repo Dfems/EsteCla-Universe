@@ -25,6 +25,26 @@
     "./social": {
       "types": "./src/social/index.ts",
       "import": "./src/social/index.ts"
+    },
+    "./navigation": {
+      "types": "./src/navigation/index.ts",
+      "import": "./src/navigation/index.ts"
+    },
+    "./forms": {
+      "types": "./src/forms/index.ts",
+      "import": "./src/forms/index.ts"
+    },
+    "./layout": {
+      "types": "./src/layout/index.ts",
+      "import": "./src/layout/index.ts"
+    },
+    "./profile": {
+      "types": "./src/profile/index.ts",
+      "import": "./src/profile/index.ts"
+    },
+    "./pages": {
+      "types": "./src/pages/index.ts",
+      "import": "./src/pages/index.ts"
     }
   },
   "sideEffects": false,
