@@ -1,11 +1,10 @@
 import { Badge } from '@chakra-ui/react'
-import React from 'react'
 
 interface BirthdayBadgeProps {
   secsToBirthday: number | null
 }
 
-const BirthdayBadge: React.FC<BirthdayBadgeProps> = ({ secsToBirthday }) => {
+function BirthdayBadge({ secsToBirthday }: BirthdayBadgeProps) {
   if (secsToBirthday == null || secsToBirthday >= 86_400) return null
   const hours = Math.floor(secsToBirthday / 3600)
   const minutes = Math.floor((secsToBirthday % 3600) / 60)

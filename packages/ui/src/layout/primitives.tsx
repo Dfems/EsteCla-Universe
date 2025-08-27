@@ -1,16 +1,17 @@
-import React from 'react'
 import { Container, Heading } from '@chakra-ui/react'
+import React from 'react'
 
-export const ContainerSection: React.FC<{ title?: string; children?: React.ReactNode }> = ({
-  title,
-  children,
-}) => (
-  <Container maxW="container.md" py={4}>
-    {title ? (
-      <Heading as="h2" size="md" mb={2} textAlign="left">
-        {title}
-      </Heading>
-    ) : null}
-    {children}
-  </Container>
-)
+type ContainerSectionProps = { title?: string; children?: React.ReactNode }
+
+export function ContainerSection({ title, children }: ContainerSectionProps) {
+  return (
+    <Container maxW="container.md" py={4}>
+      {title ? (
+        <Heading as="h2" size="md" mb={2} textAlign="left">
+          {title}
+        </Heading>
+      ) : null}
+      {children}
+    </Container>
+  )
+}

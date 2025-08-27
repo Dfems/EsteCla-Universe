@@ -12,11 +12,11 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { useProfileCalendar } from '@estecla/hooks'
-import { Post } from '@estecla/types'
+import type { Post } from '@estecla/types'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 import ProfileCalendarModal from './ProfileCalendarModal'
 
-interface ProfileCalendarProps {
+export interface ProfileCalendarProps {
   posts: Post[]
   isLoading?: boolean
 }

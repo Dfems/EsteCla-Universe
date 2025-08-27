@@ -1,9 +1,8 @@
-import React from 'react'
 import { IconButton, useToast } from '@chakra-ui/react'
-import { FaTrashAlt } from 'react-icons/fa'
 import { clearCaches } from '@estecla/pwa'
+import { FaTrashAlt } from 'react-icons/fa'
 
-const ClearCacheButton: React.FC = () => {
+function ClearCacheButton() {
   const toast = useToast()
 
   const handleClearCache = async () => {

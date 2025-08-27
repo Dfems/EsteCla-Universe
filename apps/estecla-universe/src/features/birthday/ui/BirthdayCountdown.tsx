@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Box, Flex, Text, Heading, useColorMode } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text, useColorMode } from '@chakra-ui/react'
 import { useThemeColors } from '@estecla/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Confetti from 'react-confetti'
 
 interface TimeLeft {
@@ -16,7 +16,7 @@ interface Props {
   bio?: string
 }
 
-const BirthdayCountdown: React.FC<Props> = ({ birthday, fullName, bio }) => {
+function BirthdayCountdown({ birthday, fullName, bio }: Props) {
   // Data di riferimento (solo mese/giorno dalla stringa birthday)
   const targetDate = useMemo(() => new Date(`${birthday}T00:00:00`), [birthday])
   const { colorMode } = useColorMode()
@@ -154,24 +154,26 @@ interface TimeBoxProps {
   color: string
 }
 
-const TimeBox: React.FC<TimeBoxProps> = ({ value, label, bg, color }) => (
-  <Box
-    p={4}
-    minW="100px"
-    borderRadius="lg"
-    bg={bg}
-    color={color}
-    boxShadow="md"
-    transition="all 0.3s"
-    _hover={{ transform: 'translateY(-4px)' }}
-  >
-    <Text fontSize="3xl" fontWeight="bold">
-      {value.toString().padStart(2, '0')}
-    </Text>
-    <Text fontSize="sm" mt={1}>
-      {label}
-    </Text>
-  </Box>
-)
+function TimeBox({ value, label, bg, color }: TimeBoxProps) {
+  return (
+    <Box
+      p={4}
+      minW="100px"
+      borderRadius="lg"
+      bg={bg}
+      color={color}
+      boxShadow="md"
+      transition="all 0.3s"
+      _hover={{ transform: 'translateY(-4px)' }}
+    >
+      <Text fontSize="3xl" fontWeight="bold">
+        {value.toString().padStart(2, '0')}
+      </Text>
+      <Text fontSize="sm" mt={1}>
+        {label}
+      </Text>
+    </Box>
+  )
+}
 
 export default BirthdayCountdown

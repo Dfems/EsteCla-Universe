@@ -1,20 +1,19 @@
-import React from 'react'
 import {
   Box,
+  Button,
   Container,
   Heading,
   HStack,
+  Icon,
   Stack,
   Text,
   useColorMode,
-  Button,
-  Icon,
 } from '@chakra-ui/react'
-import { FaMoon, FaSun } from 'react-icons/fa'
 import { useThemeColors } from '@estecla/hooks'
 import { ClearCacheButton } from '@estecla/ui/feedback'
+import { FaMoon, FaSun } from 'react-icons/fa'
 
-const SettingsPage: React.FC = () => {
+function SettingsPage() {
   const { containerBg, textColor, borderColor } = useThemeColors()
   const { colorMode, toggleColorMode } = useColorMode()
 

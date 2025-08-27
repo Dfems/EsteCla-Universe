@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import {
   Avatar,
   Box,
@@ -17,6 +16,7 @@ import {
 } from '@chakra-ui/react'
 import { UserInfo } from '@estecla/types'
 import { updateUserProfile } from '@features/profile/api/profile'
+import React, { useEffect, useMemo, useState } from 'react'
 
 interface Props {
   isOpen: boolean
@@ -24,7 +24,7 @@ interface Props {
   user: UserInfo
 }
 
-const EditProfileModal: React.FC<Props> = ({ isOpen, onClose, user }) => {
+function EditProfileModal({ isOpen, onClose, user }: Props) {
   const toast = useToast()
   const [fullName, setFullName] = useState(user.fullName || '')
   const [bio, setBio] = useState(user.bio || '')

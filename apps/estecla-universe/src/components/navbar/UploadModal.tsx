@@ -1,19 +1,18 @@
-import React from 'react'
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Button,
-  Textarea,
-  Image,
+  Checkbox,
   FormControl,
   FormLabel,
+  Image,
   Input,
-  Checkbox,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Textarea,
   VStack,
 } from '@chakra-ui/react'
 
@@ -31,7 +30,7 @@ interface UploadModalProps {
   onSameAsPublishChange: (v: boolean) => void
 }
 
-const UploadModal: React.FC<UploadModalProps> = ({
+function UploadModal({
   isOpen,
   previewUrl,
   caption,
@@ -43,7 +42,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
   onImageDateChange,
   sameAsPublish,
   onSameAsPublishChange,
-}) => {
+}: UploadModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onCancel} isCentered>
       <ModalOverlay />

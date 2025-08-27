@@ -1,6 +1,7 @@
-import React from 'react'
 import { Badge } from '@chakra-ui/react'
 
-export const PlaceholderBadge: React.FC<{ label?: string }> = ({ label = 'Profile' }) => (
-  <Badge colorScheme="purple">{label}</Badge>
-)
+type PlaceholderBadgeProps = { label?: string }
+
+export function PlaceholderBadge({ label = 'Profile' }: PlaceholderBadgeProps) {
+  return <Badge colorScheme="purple">{label}</Badge>
+}

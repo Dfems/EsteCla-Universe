@@ -1,12 +1,12 @@
 // src/pages/Register.tsx
+import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
+import { useThemeColors } from '@estecla/hooks'
+import type { UserInfo } from '@estecla/types'
+import { registerWithEmailPassword } from '@features/auth/api/auth'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { registerWithEmailPassword } from '@features/auth/api/auth'
-import type { UserInfo } from '@estecla/types'
-import { useThemeColors } from '@estecla/hooks'
 
-const Register: React.FC = () => {
+function Register() {
   const navigate = useNavigate()
   const { containerBg, textColor } = useThemeColors()
   // const { toggleColorMode } = useColorMode()

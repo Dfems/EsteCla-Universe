@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react'
 import BirthdayCountdown from '@/features/birthday/ui/BirthdayCountdown'
-import { Box, Image, Spinner, Alert, AlertIcon, Button } from '@chakra-ui/react'
-import Slider, { Settings } from 'react-slick'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+import { Alert, AlertIcon, Box, Button, Image, Spinner } from '@chakra-ui/react'
 import { useAuth } from '@context/AuthContext'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Slider, { Settings } from 'react-slick'
+import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
 
 interface UnsplashResponse {
   urls: {
@@ -22,7 +22,7 @@ interface CacheData {
 const CACHE_KEY = 'unsplashImagesCache'
 const CACHE_EXPIRATION = 24 * 60 * 60 * 1000 // 1 giorno in millisecondi
 
-const Countdown: React.FC = () => {
+function Countdown() {
   const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const [imageUrls, setImageUrls] = useState<string[]>([])

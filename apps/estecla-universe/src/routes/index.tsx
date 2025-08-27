@@ -1,12 +1,12 @@
 // src/routes/Routes.tsx
-import { createBrowserRouter } from 'react-router-dom'
 import App from '@/App'
-import ErrorPage from '@pages/Error'
-import { ProtectedRoute } from '@estecla/ui/navigation'
 import { useAuth } from '@context/AuthContext'
 import { LoadingSpinner } from '@estecla/ui/feedback'
+import { ProtectedRoute } from '@estecla/ui/navigation'
+import ErrorPage from '@pages/Error'
+import { createBrowserRouter } from 'react-router-dom'
 
-const RootProtected: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+function RootProtected({ children }: { children: React.ReactElement }) {
   const { user, loading } = useAuth()
   return (
     <ProtectedRoute isAllowed={!!user} loading={loading} loadingFallback={<LoadingSpinner />}>

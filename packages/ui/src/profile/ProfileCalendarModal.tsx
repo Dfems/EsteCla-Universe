@@ -1,21 +1,21 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
+  Box,
   Flex,
   IconButton,
-  Box,
   Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Text,
 } from '@chakra-ui/react'
-import { Post } from '@estecla/types'
+import type { Post } from '@estecla/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 
-interface ProfileCalendarModalProps {
+export interface ProfileCalendarModalProps {
   isOpen: boolean
   onClose: () => void
   dateKey: string | null
@@ -54,7 +54,6 @@ export default function ProfileCalendarModal({
       })
     : ''
 
-  // Scorciatoie tastiera: ←/→ per navigare, Esc per chiudere
   useEffect(() => {
     if (!isOpen) return
     const onKey = (e: KeyboardEvent) => {
@@ -73,7 +72,6 @@ export default function ProfileCalendarModal({
     return () => window.removeEventListener('keydown', onKey)
   }, [isOpen, prev, next, onClose])
 
-  // Swipe su mobile: rileva tocco sinistra/destra
   const onTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       touchStartX.current = e.touches[0].clientX
@@ -82,7 +80,7 @@ export default function ProfileCalendarModal({
   const onTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current == null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
-    const threshold = 40 // px
+    const threshold = 40
     if (dx > threshold) {
       prev()
     } else if (dx < -threshold) {

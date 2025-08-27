@@ -1,13 +1,13 @@
 // src/pages/Login.tsx
+import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
+import { useThemeColors } from '@estecla/hooks'
+import { GoogleLoginButton } from '@estecla/ui/auth'
+import { loginWithEmailPassword, loginWithGoogleAndEnsureUser } from '@features/auth/api/auth'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Box, Button, Center, FormControl, FormLabel, Heading, Input } from '@chakra-ui/react'
-import { loginWithEmailPassword, loginWithGoogleAndEnsureUser } from '@features/auth/api/auth'
-import { GoogleLoginButton } from '@estecla/ui/auth'
-import { useThemeColors } from '@estecla/hooks'
 // import { useColorMode } from '@chakra-ui/react'
 
-const Login: React.FC = () => {
+function Login() {
   const navigate = useNavigate()
   const { containerBg, textColor } = useThemeColors()
   // const { toggleColorMode } = useColorMode()

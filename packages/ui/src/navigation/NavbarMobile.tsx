@@ -1,8 +1,7 @@
-import React from 'react'
-import { Box, Flex, IconButton, Avatar } from '@chakra-ui/react'
+import { Avatar, Box, Flex, IconButton } from '@chakra-ui/react'
 import { FaHome, FaPlusSquare } from 'react-icons/fa'
-import { TbRefresh } from 'react-icons/tb'
 import { IoNotificationsOutline } from 'react-icons/io5'
+import { TbRefresh } from 'react-icons/tb'
 
 export interface NavbarMobileProps {
   bg: string
@@ -16,7 +15,7 @@ export interface NavbarMobileProps {
   notifications?: { count: number; onOpen: () => void }
 }
 
-const NavbarMobile: React.FC<NavbarMobileProps> = ({
+function NavbarMobile({
   bg,
   borderColor,
   uploading,
@@ -26,7 +25,7 @@ const NavbarMobile: React.FC<NavbarMobileProps> = ({
   onProfile,
   userProfilePic,
   notifications,
-}) => {
+}: NavbarMobileProps) {
   return (
     <Flex
       as="nav"

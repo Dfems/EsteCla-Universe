@@ -1,4 +1,3 @@
-// src/features/profile/ui/ProfileDetails.tsx
 import {
   Box,
   Flex,
@@ -12,10 +11,9 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react'
-import { useMemo } from 'react'
-
 import { useProfileViewMode, useThemeColors } from '@estecla/hooks'
-import { Post, UserInfo } from '@estecla/types'
+import type { Post, UserInfo } from '@estecla/types'
+import { useMemo } from 'react'
 import { BsBookmark, BsCalendarEvent, BsGrid3X3 } from 'react-icons/bs'
 import { FaList } from 'react-icons/fa'
 import { MdOutlineRestaurant } from 'react-icons/md'
@@ -24,7 +22,7 @@ import ProfileHeader from './ProfileHeader'
 import ProfilePostGrid from './ProfilePostGrid'
 import ProfilePostList from './ProfilePostList'
 
-interface ProfileDetailsProps {
+export interface ProfileDetailsProps {
   profileUser: UserInfo
   posts: Post[]
   isOwnProfile?: boolean
@@ -34,7 +32,7 @@ interface ProfileDetailsProps {
   onOpenFollowing?: () => void
 }
 
-function ProfileDetails({
+export default function ProfileDetails({
   profileUser,
   posts,
   isOwnProfile,
@@ -47,7 +45,6 @@ function ProfileDetails({
   const { viewMode, setGrid, setList } = useProfileViewMode('grid')
 
   const postsSorted = useMemo(() => {
-    // Ordina per publishAt/createdAt/timestamp disc
     const key = (p: Post) => (p.publishAt || p.createdAt || p.timestamp || new Date(0)).getTime()
     return [...posts].sort((a, b) => key(b) - key(a))
   }, [posts])
@@ -63,7 +60,6 @@ function ProfileDetails({
       color={textColor}
       mt={{ base: 6, md: 6 }}
     >
-      {/* Header profilo estratto in componente */}
       <ProfileHeader
         profileUser={profileUser}
         postsCount={posts.length}
@@ -74,7 +70,6 @@ function ProfileDetails({
         onOpenFollowing={onOpenFollowing}
       />
 
-      {/* Tabs stile Instagram */}
       <Tabs variant="instagram">
         <TabList borderColor={borderColor}>
           <Tab>
@@ -147,13 +142,11 @@ function ProfileDetails({
             <Flex justify="center" py={12}>
               <Text color="gray.500">Contenuti salvati</Text>
             </Flex>
-            {/* Inserisci qui il contenuto relativo ai ristoranti/elementi salvati */}
           </TabPanel>
           <TabPanel p={0}>
             <Flex justify="center" py={12}>
               <Text color="gray.500">Ristoranti</Text>
             </Flex>
-            {/* Elenco ristoranti o griglia; integra quando i dati saranno disponibili */}
           </TabPanel>
           <TabPanel p={0}>
             <ProfileCalendar
@@ -166,5 +159,3 @@ function ProfileDetails({
     </Box>
   )
 }
-
-export default ProfileDetails

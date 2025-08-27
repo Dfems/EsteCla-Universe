@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect } from 'react'
+import { PropsWithChildren, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export interface GateProps {
@@ -12,12 +12,7 @@ export interface GateProps {
  * Generic Gate: evaluates a predicate on route changes; if true, navigates to fallbackPath.
  * No app-specific state. Caller owns any persistence (e.g., localStorage snooze/lastSeen).
  */
-const Gate: React.FC<PropsWithChildren<GateProps>> = ({
-  children,
-  predicate,
-  fallbackPath,
-  onAllowedVisit,
-}) => {
+function Gate({ children, predicate, fallbackPath, onAllowedVisit }: PropsWithChildren<GateProps>) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 

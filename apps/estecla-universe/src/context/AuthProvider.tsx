@@ -1,17 +1,17 @@
 // src/context/AuthProvider.tsx
-import React, { useEffect, useState } from 'react'
-import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth'
-import { doc, onSnapshot, getDoc } from 'firebase/firestore'
-import { FirebaseError } from 'firebase/app'
-import { auth, db } from '@services/firebase'
 import { AuthContext } from '@context/AuthContext'
 import { UserInfo } from '@estecla/types'
+import { auth, db } from '@services/firebase'
+import { FirebaseError } from 'firebase/app'
+import { User as FirebaseUser, onAuthStateChanged, signOut } from 'firebase/auth'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import React, { useEffect, useState } from 'react'
 
 interface AuthProviderProps {
   children: React.ReactNode
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<UserInfo | null>(null)
   const [loading, setLoading] = useState(true)
 

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Heading, List, ListItem, Spinner, Button, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Heading, List, ListItem, Spinner, Text, VStack } from '@chakra-ui/react'
 import {
   listNotificationsPage,
   markAllNotificationsRead,
   NotificationItem,
 } from '@features/notifications/api/notifications'
 import type { Timestamp } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
 
-const NotificationsPage: React.FC = () => {
+function NotificationsPage() {
   const [items, setItems] = useState<NotificationItem[]>([])
   const [cursor, setCursor] = useState<Timestamp | null>(null)
   const [loading, setLoading] = useState(false)

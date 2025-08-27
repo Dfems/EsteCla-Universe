@@ -1,4 +1,4 @@
-import React, { JSX } from 'react'
+import { JSX } from 'react'
 import { Navigate } from 'react-router-dom'
 
 export interface ProtectedRouteProps {
@@ -13,13 +13,13 @@ export interface ProtectedRouteProps {
  * Generic ProtectedRoute: stateless, no auth coupling.
  * Decide outside: isAllowed and loading state; provide fallbacks via props.
  */
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+function ProtectedRoute({
   children,
   isAllowed,
   loading = false,
   fallbackPath = '/login',
   loadingFallback = null,
-}) => {
+}: ProtectedRouteProps) {
   if (loading) return loadingFallback
   if (!isAllowed) return <Navigate to={fallbackPath} replace />
   return children

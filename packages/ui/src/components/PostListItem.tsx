@@ -1,6 +1,5 @@
-import React from 'react'
 import { Avatar, Box, Flex, HStack, Image, Text } from '@chakra-ui/react'
-import type { UserInfo, Post } from '@estecla/types'
+import type { Post, UserInfo } from '@estecla/types'
 
 export interface PostListItemProps {
   user: Pick<UserInfo, 'username' | 'profilePic'>
@@ -18,7 +17,7 @@ function formatDate(d?: Date) {
   }
 }
 
-const PostListItem: React.FC<PostListItemProps> = ({ user, post, onOpenProfile, onOpenPost }) => {
+function PostListItem({ user, post, onOpenProfile, onOpenPost }: PostListItemProps) {
   return (
     <Box borderWidth="1px" borderRadius="md" overflow="hidden" mb={4} bg="chakra-body-bg">
       <HStack spacing={3} px={3} py={2}>

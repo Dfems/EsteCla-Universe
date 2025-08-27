@@ -1,8 +1,6 @@
-import React from 'react'
 import { Avatar, Box, Button, Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react'
-import { useThemeColors } from '@estecla/hooks'
+import { useFollow, useThemeColors } from '@estecla/hooks'
 import type { UserInfo } from '@estecla/types'
-import { useFollow } from '@estecla/hooks'
 import { Link } from 'react-router-dom'
 
 interface SuggestedUsersProps {
@@ -11,11 +9,7 @@ interface SuggestedUsersProps {
   max?: number
 }
 
-const SuggestedUsers: React.FC<SuggestedUsersProps> = ({
-  users,
-  title = 'Suggeriti per te',
-  max = 8,
-}) => {
+function SuggestedUsers({ users, title = 'Suggeriti per te', max = 8 }: SuggestedUsersProps) {
   const { containerBg, borderColor, textColor } = useThemeColors()
 
   const sliced = users?.slice(0, max) || []
@@ -41,7 +35,7 @@ const SuggestedUsers: React.FC<SuggestedUsersProps> = ({
   )
 }
 
-const UserRow: React.FC<{ user: UserInfo }> = ({ user }) => {
+function UserRow({ user }: { user: UserInfo }) {
   const { isFollowing, follow, loading } = useFollow(user.uid)
   if (isFollowing) return null
   return (

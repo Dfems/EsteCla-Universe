@@ -1,3 +1,13 @@
-// Profile UI entrypoint (to be populated in Heavy step 12)
-export {} // Barrel per @estecla/ui/profile
 export { PlaceholderBadge } from './primitives'
+export { default as ProfileCalendar } from './ProfileCalendar'
+export type { ProfileCalendarProps } from './ProfileCalendar'
+export { default as ProfileCalendarModal } from './ProfileCalendarModal'
+export type { ProfileCalendarModalProps } from './ProfileCalendarModal'
+export { default as ProfileDetails } from './ProfileDetails'
+export type { ProfileDetailsProps } from './ProfileDetails'
+export { default as ProfileHeader } from './ProfileHeader'
+export type { ProfileHeaderProps } from './ProfileHeader'
+export { default as ProfilePostGrid } from './ProfilePostGrid'
+export type { ProfilePostGridProps } from './ProfilePostGrid'
+export { default as ProfilePostList } from './ProfilePostList'
+export type { ProfilePostListProps } from './ProfilePostList'

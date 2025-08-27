@@ -1,7 +1,7 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   resolve: {
@@ -59,7 +59,6 @@ export default defineConfig({
           }
           if (id.includes('/packages/ui/')) {
             if (id.includes('/navigation/')) return 'ui-navigation'
-            if (id.includes('/social/')) return 'ui-social'
             if (id.includes('/feedback/')) return 'ui-feedback'
             return 'ui'
           }

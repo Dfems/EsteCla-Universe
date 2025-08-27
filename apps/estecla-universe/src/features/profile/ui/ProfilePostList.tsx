@@ -1,7 +1,6 @@
-import React from 'react'
 import { Box } from '@chakra-ui/react'
-import { PostListItem } from '@estecla/ui/social'
 import { Post, UserInfo } from '@estecla/types'
+import { PostListItem } from '@estecla/ui/social'
 import { useNavigate } from 'react-router-dom'
 
 interface ProfilePostListProps {
@@ -9,7 +8,7 @@ interface ProfilePostListProps {
   user: Pick<UserInfo, 'username' | 'profilePic'>
 }
 
-const ProfilePostList: React.FC<ProfilePostListProps> = ({ posts, user }) => {
+function ProfilePostList({ posts, user }: ProfilePostListProps) {
   const navigate = useNavigate()
   return (
     <Box px={1}>

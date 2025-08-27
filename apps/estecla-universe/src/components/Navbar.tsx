@@ -1,15 +1,14 @@
-import React from 'react'
-import { VisuallyHidden, Input } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
+import { Input, VisuallyHidden } from '@chakra-ui/react'
 import { useAuth } from '@context/AuthContext'
 import { useThemeColors } from '@estecla/hooks'
+import { useNavigate } from 'react-router-dom'
 
-import { NavbarDesktop, NavbarMobile } from '@estecla/ui/navigation'
 import UploadModal from '@components/navbar/UploadModal'
-import { useNavbarUpload } from '@hooks/useNavbarUpload'
 import { useUnreadNotifications } from '@estecla/hooks'
+import { NavbarDesktop, NavbarMobile } from '@estecla/ui/navigation'
+import { useNavbarUpload } from '@hooks/useNavbarUpload'
 
-const Navbar: React.FC = () => {
+function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const { containerBg, borderColor, textColor } = useThemeColors()

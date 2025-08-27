@@ -1,8 +1,12 @@
-import React from 'react'
 import { Text } from '@chakra-ui/react'
+import React from 'react'
 
-export const FieldHelp: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
-  <Text fontSize="sm" color="gray.500">
-    {children}
-  </Text>
-)
+type FieldHelpProps = { children?: React.ReactNode }
+
+export function FieldHelp({ children }: FieldHelpProps) {
+  return (
+    <Text fontSize="sm" color="gray.500">
+      {children}
+    </Text>
+  )
+}

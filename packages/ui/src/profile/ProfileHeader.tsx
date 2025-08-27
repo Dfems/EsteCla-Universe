@@ -11,11 +11,10 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { useFollow, useFollowCounts } from '@estecla/hooks'
-import { UserInfo } from '@estecla/types'
+import type { UserInfo } from '@estecla/types'
 import { IoSettingsOutline } from 'react-icons/io5'
-import { useNavigate } from 'react-router-dom'
 
-interface ProfileHeaderProps {
+export interface ProfileHeaderProps {
   profileUser: UserInfo
   postsCount: number
   isOwnProfile?: boolean
@@ -23,8 +22,10 @@ interface ProfileHeaderProps {
   borderColor: string
   onOpenFollowers?: () => void
   onOpenFollowing?: () => void
+  onOpenSettings?: () => void
 }
-function ProfileHeader({
+
+export default function ProfileHeader({
   profileUser,
   postsCount,
   isOwnProfile,
@@ -32,9 +33,9 @@ function ProfileHeader({
   borderColor,
   onOpenFollowers,
   onOpenFollowing,
+  onOpenSettings,
 }: ProfileHeaderProps) {
   const { followers, following } = useFollowCounts(profileUser.uid)
-  const navigate = useNavigate()
   return (
     <Grid
       templateColumns={{ base: '80px 1fr', md: 'min-content 1fr' }}
@@ -69,7 +70,7 @@ function ProfileHeader({
                   icon={<IoSettingsOutline />}
                   size="sm"
                   variant="ghost"
-                  onClick={() => navigate('/settings')}
+                  onClick={onOpenSettings}
                 />
               </Tooltip>
             </Flex>
@@ -94,29 +95,10 @@ function ProfileHeader({
           </Text>
         )}
         {profileUser.bio && <Text whiteSpace="pre-wrap">{profileUser.bio}</Text>}
-        {profileUser.birthday && (
-          <Tooltip label="Vedi countdown compleanno" hasArrow>
-            <CLink
-              onClick={() => navigate('/countdown')}
-              cursor="pointer"
-              _hover={{ textDecoration: 'underline' }}
-            >
-              <Text as="span" fontSize="sm" color="gray.500" mt={2} display="inline-block">
-                🎂{' '}
-                {new Date(profileUser.birthday).toLocaleDateString('it-IT', {
-                  day: 'numeric',
-                  month: 'long',
-                })}
-              </Text>
-            </CLink>
-          </Tooltip>
-        )}
       </Box>
     </Grid>
   )
 }
-
-export default ProfileHeader
 
 function FollowSection({ targetUid }: { targetUid: string }) {
   const { isFollowing, follow, unfollow, loading } = useFollow(targetUid)

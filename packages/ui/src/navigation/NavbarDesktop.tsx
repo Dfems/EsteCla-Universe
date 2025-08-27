@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   Avatar,
   Box,
@@ -32,7 +31,7 @@ export interface NavbarDesktopProps {
   notifications?: { count: number; onOpen: () => void }
 }
 
-const NavbarDesktop: React.FC<NavbarDesktopProps> = ({
+function NavbarDesktop({
   bg,
   borderColor,
   textColor,
@@ -44,7 +43,7 @@ const NavbarDesktop: React.FC<NavbarDesktopProps> = ({
   onProfile,
   onLogout,
   notifications,
-}) => {
+}: NavbarDesktopProps) {
   return (
     <>
       <Flex

@@ -1,8 +1,12 @@
-import React from 'react'
 import { Heading } from '@chakra-ui/react'
+import React from 'react'
 
-export const TitleOnly: React.FC<{ children?: React.ReactNode }> = ({ children }) => (
-  <Heading size="lg" mb={6} textAlign="left">
-    {children}
-  </Heading>
-)
+type TitleOnlyProps = { children?: React.ReactNode }
+
+export function TitleOnly({ children }: TitleOnlyProps) {
+  return (
+    <Heading size="lg" mb={6} textAlign="left">
+      {children}
+    </Heading>
+  )
+}
