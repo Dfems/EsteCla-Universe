@@ -51,8 +51,9 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-  "@chakra-ui/react": ">=2",
-  "react-router-dom": ">=6.4"
+    "@chakra-ui/react": ">=2",
+    "react-router-dom": ">=6.4",
+    "react-icons": ">=5"
   },
   "dependencies": {
     "@estecla/pwa": "^0.1.0"
