@@ -1,5 +1,5 @@
-export { Button } from './primitives/Button'
-export * from './primitives/Button'
-export { default as GoogleLoginButton } from './components/GoogleLoginButton'
-export { default as PostCard } from './components/PostCard'
-export { default as PostListItem } from './components/PostListItem'
+// Root barrel intentionally empty. Use subpath imports only, e.g.:
+//   - @estecla/ui/navigation
+//   - @estecla/ui/social
+//   - @estecla/ui/feedback
+export {}

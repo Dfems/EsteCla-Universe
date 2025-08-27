@@ -10,10 +10,7 @@
     "format": "prettier --write . --ignore-path ../../.prettierignore"
   },
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
+    ".": false,
     "./feedback": {
       "types": "./dist/feedback/index.d.ts",
       "import": "./dist/feedback/index.js"

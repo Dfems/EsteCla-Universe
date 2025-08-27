@@ -1,1 +1,2 @@
-export { NavbarDesktop as default } from '@estecla/ui/navigation'
+// Removed: import NavbarDesktop directly from '@estecla/ui/navigation'
+export {}

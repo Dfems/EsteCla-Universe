@@ -1,1 +1,2 @@
-export { NavbarMobile as default } from '@estecla/ui/navigation'
+// Removed: import NavbarMobile directly from '@estecla/ui/navigation'
+export {}

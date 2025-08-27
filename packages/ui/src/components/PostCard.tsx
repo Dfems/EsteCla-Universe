@@ -1,19 +1,18 @@
 import { Box, Image, Flex, Text } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
 
-interface PostCardProps {
+export interface PostCardProps {
   post: {
     id: string
     imageUrl: string
     caption: string
   }
   username?: string
+  onOpen?: () => void
 }
 
-export default function PostCard({ post, username }: PostCardProps) {
-  const navigate = useNavigate()
-  const handleClick = username ? () => navigate(`/profile/${username}`) : undefined
-  const clickable = Boolean(handleClick)
+export default function PostCard({ post, username, onOpen }: PostCardProps) {
+  const handleClick = onOpen
+  const clickable = Boolean(onOpen)
   return (
     <Box
       position="relative"

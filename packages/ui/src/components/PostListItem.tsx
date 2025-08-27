@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Avatar, Box, Flex, HStack, Image, Text } from '@chakra-ui/react'
 import type { UserInfo, Post } from '@estecla/types'
 
-interface PostListItemProps {
+export interface PostListItemProps {
   user: Pick<UserInfo, 'username' | 'profilePic'>
   post: Post & { publishAt?: Date; imageUrl: string; caption: string }
 }

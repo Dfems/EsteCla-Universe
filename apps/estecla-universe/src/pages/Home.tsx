@@ -1,6 +1,6 @@
 import { Box, Container, Grid, GridItem, Text, Show, VStack } from '@chakra-ui/react'
 import { useThemeColors } from '@estecla/hooks'
-import { PostListItem } from '@components/index'
+import { PostListItem } from '@estecla/ui/social'
 import { useGlobalFeed } from '@hooks/useGlobalFeed'
 import { useSuggestedUsers } from '@estecla/hooks'
 import SuggestedUsers from '@features/follow/ui/SuggestedUsers'
