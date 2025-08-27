@@ -16,9 +16,8 @@
       "@hooks/*": ["packages/hooks/src/*"],
       "@types/*": ["packages/types/src/*"],
       "@utils/*": ["packages/utils/src/*"],
-  "@theme/*": ["packages/theme/src/*"],
-  "@pwa/*": ["packages/pwa/src/*"]
-      
+      "@theme/*": ["packages/theme/src/*"],
+      "@pwa/*": ["packages/pwa/src/*"]
     }
   }
 }

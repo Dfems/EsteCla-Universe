@@ -11,40 +11,40 @@
   },
   "exports": {
     ".": {
-  "types": "./dist/index.d.ts",
-  "import": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./feedback": {
-  "types": "./dist/feedback/index.d.ts",
-  "import": "./dist/feedback/index.js"
+      "types": "./dist/feedback/index.d.ts",
+      "import": "./dist/feedback/index.js"
     },
     "./auth": {
-  "types": "./dist/auth/index.d.ts",
-  "import": "./dist/auth/index.js"
+      "types": "./dist/auth/index.d.ts",
+      "import": "./dist/auth/index.js"
     },
     "./social": {
-  "types": "./dist/social/index.d.ts",
-  "import": "./dist/social/index.js"
+      "types": "./dist/social/index.d.ts",
+      "import": "./dist/social/index.js"
     },
     "./navigation": {
-  "types": "./dist/navigation/index.d.ts",
-  "import": "./dist/navigation/index.js"
+      "types": "./dist/navigation/index.d.ts",
+      "import": "./dist/navigation/index.js"
     },
     "./forms": {
-  "types": "./dist/forms/index.d.ts",
-  "import": "./dist/forms/index.js"
+      "types": "./dist/forms/index.d.ts",
+      "import": "./dist/forms/index.js"
     },
     "./layout": {
-  "types": "./dist/layout/index.d.ts",
-  "import": "./dist/layout/index.js"
+      "types": "./dist/layout/index.d.ts",
+      "import": "./dist/layout/index.js"
     },
     "./profile": {
-  "types": "./dist/profile/index.d.ts",
-  "import": "./dist/profile/index.js"
+      "types": "./dist/profile/index.d.ts",
+      "import": "./dist/profile/index.js"
     },
     "./pages": {
-  "types": "./dist/pages/index.d.ts",
-  "import": "./dist/pages/index.js"
+      "types": "./dist/pages/index.d.ts",
+      "import": "./dist/pages/index.js"
     }
   },
   "sideEffects": false,
@@ -54,6 +54,6 @@
     "@chakra-ui/react": ">=2"
   },
   "dependencies": {
-  "@estecla/pwa": "^0.1.0"
+    "@estecla/pwa": "^0.1.0"
   }
 }

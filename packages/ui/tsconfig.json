@@ -2,12 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-  "rootDir": ".",
+    "rootDir": ".",
     "declaration": true,
     "jsx": "react-jsx"
   },
   "include": ["src"],
-  "references": [
-    { "path": "../pwa" }
-  ]
+  "references": [{ "path": "../pwa" }]
 }
