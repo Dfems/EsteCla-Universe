@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react'
 import { FaMoon, FaSun } from 'react-icons/fa'
 import { useThemeColors } from '@estecla/hooks'
-import ClearCacheButton from '@components/ui/ClearCacheButton'
+import { ClearCacheButton } from '@estecla/ui/feedback'
 
 const SettingsPage: React.FC = () => {
   const { containerBg, textColor, borderColor } = useThemeColors()
