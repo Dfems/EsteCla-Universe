@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getSuggestedUsers } from '@features/follow/api/follow'
-import type { UserInfo } from '@models/interfaces'
+import type { UserInfo } from '@estecla/types'
 
 export function useSuggestedUsers(count = 6) {
   const [users, setUsers] = useState<UserInfo[]>([])

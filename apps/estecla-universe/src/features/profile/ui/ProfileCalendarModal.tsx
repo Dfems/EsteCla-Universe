@@ -11,7 +11,7 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react'
-import { Post } from '@models/interfaces'
+import { Post } from '@estecla/types'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 

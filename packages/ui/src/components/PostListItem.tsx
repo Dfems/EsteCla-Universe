@@ -22,7 +22,6 @@ const PostListItem: React.FC<PostListItemProps> = ({ user, post }) => {
   const goProfile = () => navigate(`/profile/${user.username}`)
   return (
     <Box borderWidth="1px" borderRadius="md" overflow="hidden" mb={4} bg="chakra-body-bg">
-      {/* Header */}
       <HStack spacing={3} px={3} py={2}>
         <Avatar
           size="sm"
@@ -39,13 +38,10 @@ const PostListItem: React.FC<PostListItemProps> = ({ user, post }) => {
             {formatDate(post.publishAt || post.createdAt || post.timestamp)}
           </Text>
         </Flex>
-        {/* Placeholder spazio per futuro badge follow se disponibile uid autore */}
       </HStack>
-      {/* Immagine */}
       <Box cursor="pointer" onClick={goProfile}>
         <Image src={post.imageUrl} alt={post.caption} w="100%" objectFit="cover" />
       </Box>
-      {/* Descrizione */}
       {post.caption ? (
         <Box px={3} py={2}>
           <Text whiteSpace="pre-wrap">{post.caption}</Text>

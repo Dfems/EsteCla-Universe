@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { collection, query, where, getDocs, orderBy, onSnapshot, doc } from 'firebase/firestore'
 import { db } from '@services/firebase'
-import { Post, UserInfo } from '@models/interfaces'
+import { Post, UserInfo } from '@estecla/types'
 
 export const useProfile = () => {
   const { username } = useParams<{ username: string }>()

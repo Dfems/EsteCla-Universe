@@ -21,7 +21,7 @@ import ProfileHeader from './ProfileHeader'
 import ProfilePostGrid from './ProfilePostGrid'
 import ProfilePostList from './ProfilePostList'
 import ProfileCalendar from './ProfileCalendar'
-import { UserInfo, Post } from '@models/interfaces'
+import { UserInfo, Post } from '@estecla/types'
 import useThemeColors from '@hooks/useThemeColors'
 import { useProfileViewMode } from '@features/profile/hooks/useProfileViewMode'
 

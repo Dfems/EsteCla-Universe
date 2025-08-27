@@ -13,7 +13,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import { getUsersByUids, listFollowersPage, listFollowingPage } from '@features/follow/api/follow'
-import type { UserInfo } from '@models/interfaces'
+import type { UserInfo } from '@estecla/types'
 import { Link } from 'react-router-dom'
 import { FixedSizeList as List, ListOnScrollProps, ListChildComponentProps } from 'react-window'
 import type { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore'

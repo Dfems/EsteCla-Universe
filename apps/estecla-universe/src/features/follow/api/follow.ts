@@ -5,16 +5,20 @@ import {
   getDoc,
   getDocs,
   limit,
-  onSnapshot,
   query,
-  where,
-  type Unsubscribe,
-  orderBy,
-  startAfter,
   type QueryDocumentSnapshot,
-  writeBatch,
 } from 'firebase/firestore'
-import type { UserInfo } from '@models/interfaces'
+import type { UserInfo } from '@estecla/types'
+import {
+  followUser as followUserShared,
+  unfollowUser as unfollowUserShared,
+  observeIsFollowing as observeIsFollowingShared,
+  getFollowersOf as getFollowersOfShared,
+  getFollowingOf as getFollowingOfShared,
+  listFollowersPage as listFollowersPageShared,
+  listFollowingPage as listFollowingPageShared,
+  getUsersByUids as getUsersByUidsShared,
+} from '@estecla/firebase'
 
 function requireAuth(): NonNullable<typeof auth.currentUser> {
   const u = auth.currentUser
@@ -22,63 +26,27 @@ function requireAuth(): NonNullable<typeof auth.currentUser> {
   return u
 }
 
-export function followDocRefs(targetUid: string) {
-  const u = requireAuth()
-  const followingRef = doc(db, 'users', u.uid, 'following', targetUid)
-  const followersRef = doc(db, 'users', targetUid, 'followers', u.uid)
-  return { followingRef, followersRef, selfUid: u.uid }
-}
-
 export async function followUser(targetUid: string): Promise<void> {
-  const { followingRef, selfUid } = followDocRefs(targetUid)
-  if (selfUid === targetUid) return
-  const batch = writeBatch(db)
-  const now = Date.now()
-  batch.set(followingRef, { uid: targetUid, createdAt: now })
-  // Mirror e contatori gestiti da Cloud Functions
-  await batch.commit()
+  await followUserShared({ auth, db }, targetUid)
 }
 
 export async function unfollowUser(targetUid: string): Promise<void> {
-  const { followingRef, selfUid } = followDocRefs(targetUid)
-  if (selfUid === targetUid) return
-  const batch = writeBatch(db)
-  batch.delete(followingRef)
-  await batch.commit()
+  await unfollowUserShared({ auth, db }, targetUid)
 }
 
 export function observeIsFollowing(
   targetUid: string,
   cb: (isFollowing: boolean) => void
-): Unsubscribe {
-  const u = requireAuth()
-  if (u.uid === targetUid) return () => {}
-  const ref = doc(db, 'users', u.uid, 'following', targetUid)
-  return onSnapshot(
-    ref,
-    (snap) => cb(snap.exists()),
-    (err) => {
-      const code = (err as { code?: string }).code
-      if (code === 'permission-denied') {
-        cb(false)
-        return
-      }
-      console.error('Errore observeIsFollowing:', err)
-      cb(false)
-    }
-  )
+): () => void {
+  return observeIsFollowingShared({ auth, db }, targetUid, cb)
 }
 
 export async function getFollowersOf(uid: string): Promise<string[]> {
-  const q = query(collection(db, 'users', uid, 'followers'))
-  const snap = await getDocs(q)
-  return snap.docs.map((d) => d.id)
+  return getFollowersOfShared(db, uid)
 }
 
 export async function getFollowingOf(uid: string): Promise<string[]> {
-  const q = query(collection(db, 'users', uid, 'following'))
-  const snap = await getDocs(q)
-  return snap.docs.map((d) => d.id)
+  return getFollowingOfShared(db, uid)
 }
 
 export async function listFollowersPage(
@@ -86,14 +54,7 @@ export async function listFollowersPage(
   pageSize = 20,
   cursor?: QueryDocumentSnapshot
 ) {
-  const base = query(
-    collection(db, 'users', uid, 'followers'),
-    orderBy('createdAt', 'desc'),
-    limit(pageSize)
-  )
-  const q2 = cursor ? query(base, startAfter(cursor)) : base
-  const snap = await getDocs(q2)
-  return { docs: snap.docs, nextCursor: snap.docs[snap.docs.length - 1] }
+  return listFollowersPageShared(db, uid, pageSize, cursor)
 }
 
 export async function listFollowingPage(
@@ -101,27 +62,11 @@ export async function listFollowingPage(
   pageSize = 20,
   cursor?: QueryDocumentSnapshot
 ) {
-  const base = query(
-    collection(db, 'users', uid, 'following'),
-    orderBy('createdAt', 'desc'),
-    limit(pageSize)
-  )
-  const q2 = cursor ? query(base, startAfter(cursor)) : base
-  const snap = await getDocs(q2)
-  return { docs: snap.docs, nextCursor: snap.docs[snap.docs.length - 1] }
+  return listFollowingPageShared(db, uid, pageSize, cursor)
 }
 
 export async function getUsersByUids(uids: string[], batchSize = 10): Promise<UserInfo[]> {
-  const results: UserInfo[] = []
-  for (let i = 0; i < uids.length; i += batchSize) {
-    const batch = uids.slice(i, i + batchSize)
-    if (!batch.length) continue
-    // where('uid','in', batch) richiede un indice ma batch ≤ 10
-    const q = query(collection(db, 'users'), where('uid', 'in', batch))
-    const snap = await getDocs(q)
-    results.push(...snap.docs.map((d) => d.data() as UserInfo))
-  }
-  return results
+  return getUsersByUidsShared(db, uids, batchSize)
 }
 
 async function buildFoFCandidates(

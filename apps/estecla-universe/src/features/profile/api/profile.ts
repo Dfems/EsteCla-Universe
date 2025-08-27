@@ -2,8 +2,8 @@ import { auth, db, storage } from '@services/firebase'
 import { updateProfile } from 'firebase/auth'
 import { deleteField, doc, updateDoc, type FieldValue } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import type { UserInfo } from '@models/interfaces'
-import { ensureUsernameAvailable } from '@/lib/users'
+import type { UserInfo } from '@estecla/types'
+import { ensureUsernameAvailable } from '@estecla/firebase'
 
 function calculateAge(dateStr: string): number {
   const d = new Date(dateStr)
@@ -35,7 +35,7 @@ async function ensureUsernameIfChanged(
 ): Promise<void> {
   const currentLower = current.usernameLowercase || current.username.toLowerCase()
   if (usernameLowercase !== currentLower) {
-    const available = await ensureUsernameAvailable(usernameLowercase)
+    const available = await ensureUsernameAvailable(db, usernameLowercase)
     if (!available) throw new Error('Username già in uso.')
   }
 }

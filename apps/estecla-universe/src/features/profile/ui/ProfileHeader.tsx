@@ -11,7 +11,7 @@ import {
   IconButton,
 } from '@chakra-ui/react'
 import { EditIcon } from '@chakra-ui/icons'
-import { UserInfo } from '@models/interfaces'
+import { UserInfo } from '@estecla/types'
 import { useFollow } from '@features/follow/hooks/useFollow'
 import { useFollowCounts } from '@features/follow/hooks/useFollowCounts'
 import { IoSettingsOutline } from 'react-icons/io5'

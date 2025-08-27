@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { Post } from '@models/interfaces'
+import { Post } from '@estecla/types'
 
 function toISODate(d: Date): string {
   const y = d.getFullYear()

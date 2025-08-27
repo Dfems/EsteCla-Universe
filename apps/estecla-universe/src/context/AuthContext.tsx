@@ -1,6 +1,6 @@
 // src/context/AuthContext.ts
 import { createContext, useContext } from 'react'
-import { UserInfo } from '@models/interfaces'
+import { UserInfo } from '@estecla/types'
 
 interface AuthContextValue {
   user: UserInfo | null

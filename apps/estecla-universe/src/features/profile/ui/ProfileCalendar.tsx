@@ -11,7 +11,7 @@ import {
   Skeleton,
   Badge,
 } from '@chakra-ui/react'
-import { Post } from '@models/interfaces'
+import { Post } from '@estecla/types'
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'
 import { useProfileCalendar } from '@features/profile/hooks/useProfileCalendar'
 import ProfileCalendarModal from './ProfileCalendarModal'

@@ -6,7 +6,11 @@
   "storage": {
     "rules": "firebase/rules/storage.rules"
   },
-  "functions": [],
+  "functions": [
+    {
+      "source": "firebase/functions"
+    }
+  ],
   "hosting": [
     {
       "target": "estecla",

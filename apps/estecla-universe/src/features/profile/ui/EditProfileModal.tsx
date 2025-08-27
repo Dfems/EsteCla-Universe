@@ -15,7 +15,7 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react'
-import { UserInfo } from '@models/interfaces'
+import { UserInfo } from '@estecla/types'
 import { updateUserProfile } from '@features/profile/api/profile'
 
 interface Props {

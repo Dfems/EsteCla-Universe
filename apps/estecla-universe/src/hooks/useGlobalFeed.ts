@@ -11,7 +11,7 @@ import {
   type QueryDocumentSnapshot,
 } from 'firebase/firestore'
 import { db } from '@services/firebase'
-import type { Post, UserInfo } from '@models/interfaces'
+import type { Post, UserInfo } from '@estecla/types'
 
 type FeedUser = Pick<UserInfo, 'username' | 'profilePic'>
 

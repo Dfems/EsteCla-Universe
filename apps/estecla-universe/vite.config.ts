@@ -15,7 +15,6 @@ export default defineConfig({
       '@features': fileURLToPath(new URL('./src/features', import.meta.url)),
       '@services': fileURLToPath(new URL('./src/lib', import.meta.url)),
       '@theme': fileURLToPath(new URL('./src/styles/theme.ts', import.meta.url)),
-      '@models': fileURLToPath(new URL('./src/types', import.meta.url)),
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
       '@ui': fileURLToPath(new URL('../../packages/ui/src', import.meta.url)),
       '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),

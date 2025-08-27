@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
-import { uploadImageAndCreatePost } from '@services/posts'
+import { uploadImageAndCreatePost } from '@estecla/firebase'
+import { db, storage } from '@services/firebase'
 
 export function useUploadPost() {
   const [isOpen, setIsOpen] = useState(false)
@@ -33,13 +34,16 @@ export function useUploadPost() {
       if (!uid || !file) throw new Error('Missing file or user')
       setUploading(true)
       try {
-        const { imageUrl } = await uploadImageAndCreatePost({
-          uid,
-          file,
-          caption,
-          imageDateISO: sameAsPublish ? undefined : imageDateISO || undefined,
-          sameAsPublish,
-        })
+        const { imageUrl } = await uploadImageAndCreatePost(
+          { db, storage },
+          {
+            uid,
+            file,
+            caption,
+            imageDateISO: sameAsPublish ? undefined : imageDateISO || undefined,
+            sameAsPublish,
+          }
+        )
         return imageUrl
       } finally {
         setUploading(false)

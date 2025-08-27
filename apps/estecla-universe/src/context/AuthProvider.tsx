@@ -5,7 +5,7 @@ import { doc, onSnapshot, getDoc } from 'firebase/firestore'
 import { FirebaseError } from 'firebase/app'
 import { auth, db } from '@services/firebase'
 import { AuthContext } from '@context/AuthContext'
-import { UserInfo } from '@models/interfaces'
+import { UserInfo } from '@estecla/types'
 
 interface AuthProviderProps {
   children: React.ReactNode

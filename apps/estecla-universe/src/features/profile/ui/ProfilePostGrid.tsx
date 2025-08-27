@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid } from '@chakra-ui/react'
 import PostCard from '@components/ui/PostCard'
-import { Post } from '@models/interfaces'
+import { Post } from '@estecla/types'
 
 interface ProfilePostGridProps {
   posts: Post[]

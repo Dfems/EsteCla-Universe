@@ -1,7 +1,4 @@
-import { initializeApp } from 'firebase/app'
-import { getAuth, GoogleAuthProvider } from 'firebase/auth'
-import { getFirestore, setLogLevel } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
+import { initFirebase } from '@estecla/firebase'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,18 +9,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const app = initializeApp(firebaseConfig)
-export const auth = getAuth(app)
-export const db = getFirestore(app)
-export const storage = getStorage(app)
-export const googleProvider = new GoogleAuthProvider()
+const { app, auth, db, storage } = initFirebase(firebaseConfig)
+export { app, auth, db, storage }
+export { googleProvider } from '@estecla/firebase'
 
 // Opzionale: riduci la verbosità dei log Firestore in ambienti di sviluppo o test
 // Usa VITE_FIRESTORE_LOG_LEVEL = 'silent' | 'error' | 'debug'
 const desiredLogLevel = (import.meta.env.VITE_FIRESTORE_LOG_LEVEL ?? '').toLowerCase()
 if (desiredLogLevel === 'silent' || desiredLogLevel === 'error' || desiredLogLevel === 'debug') {
-  setLogLevel(desiredLogLevel as 'silent' | 'error' | 'debug')
-} else if (import.meta.env.MODE !== 'production') {
-  // Default in dev: riduci a 'error' per evitare log rumorosi di listener falliti
-  setLogLevel('error')
+  // Firestore log level ora è controllato dentro i servizi se necessario
 }

@@ -1,2 +1,8 @@
 export * from './sdk'
 export * from './converters'
+export { default as defaultTheme } from '@estecla/theme'
+export * from './posts'
+export * from './users'
+export * from './follow'
+export * from './notifications'
+export * from './auth'
