@@ -47,4 +47,27 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@chakra-ui')) return 'chakra'
+            if (id.includes('firebase')) return 'firebase'
+            if (id.includes('react-router')) return 'router'
+            return 'vendor'
+          }
+          if (id.includes('/packages/ui/')) {
+            if (id.includes('/navigation/')) return 'ui-navigation'
+            if (id.includes('/social/')) return 'ui-social'
+            if (id.includes('/feedback/')) return 'ui-feedback'
+            return 'ui'
+          }
+          if (id.includes('/packages/firebase/')) return 'sdk'
+          return undefined
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1500,
+  },
 })
