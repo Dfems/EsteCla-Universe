@@ -18,7 +18,7 @@
       "@utils/*": ["packages/utils/src/*"],
   "@theme/*": ["packages/theme/src/*"],
   "@pwa/*": ["packages/pwa/src/*"]
-  ,"@estecla/pwa": ["packages/pwa/src/index.ts"]
+      
     }
   }
 }
