@@ -109,3 +109,176 @@ Deliverables per ciascun livello
 - Code diff con file spostati/creati e import aggiornati.
 - README aggiornato nei pacchetti toccati.
 - Issue/PR checklist spuntata (Build verde, Imports aggiornati, Docs aggiornate).
+
+\n## Appendice: esempi pronti all'uso
+
+### ESLint: vietare l'import dal root `@estecla/ui`
+
+Ambiente: config ESLint flat condiviso (`packages/config-eslint/index.js`). Aggiungi la regola `no-restricted-imports` con pattern che vietano il root e i deep import non supportati.
+
+Snippet (aggiungi dentro `rules` del config condiviso):
+
+```js
+'no-restricted-imports': [
+   'error',
+   {
+      patterns: [
+         {
+            group: ['@estecla/ui'],
+            message: 'Importa dai sotto-path (es. @estecla/ui/feedback), non dal root @estecla/ui.',
+         },
+         {
+            group: ['@estecla/ui/src', '@estecla/ui/src/*', '@estecla/ui/*/src', '@estecla/ui/*/src/*'],
+            message: 'Evita import interni alla sorgente: usa solo gli entrypoint pubblici (subpath exports).',
+         },
+      ],
+   },
+]
+```
+
+Opzionale (per i consumer che non usano il config condiviso):
+
+```js
+// eslint.config.js del progetto consumer
+import shared from '@estecla/config-eslint'
+export default [
+   ...shared,
+   {
+      rules: {
+         'no-restricted-imports': [
+            'error',
+            {
+               patterns: [
+                  { group: ['@estecla/ui'], message: 'Usa @estecla/ui/<sottopacchetto>.' },
+                  { group: ['@estecla/ui/src', '@estecla/ui/*/src/*'], message: 'Usa solo API pubbliche.' },
+               ],
+            },
+         ],
+      },
+   },
+]
+```
+
+Verifica rapida:
+- Caso OK: `import { LoadingSpinner } from '@estecla/ui/feedback'`.
+- Caso KO: `import { LoadingSpinner } from '@estecla/ui'` → errore ESLint.
+
+### `@estecla/ui`: exports per sotto-path e tree-shaking
+
+Obiettivo: esporre entry separati per cartella per favorire tree-shaking, code-splitting e DX pulita.
+
+`packages/ui/package.json` (esempio completo):
+
+```json
+{
+   "name": "@estecla/ui",
+   "version": "0.1.0",
+   "private": true,
+   "type": "module",
+   "sideEffects": false,
+   "scripts": {
+      "build": "tsc -b",
+      "type-check": "tsc --noEmit",
+      "lint": "echo no-lint",
+      "format": "prettier --write . --ignore-path ../../.prettierignore"
+   },
+   "exports": {
+      ".": false,
+      "./primitives": {
+         "types": "./dist/primitives/index.d.ts",
+         "import": "./dist/primitives/index.js"
+      },
+      "./layout": {
+         "types": "./dist/layout/index.d.ts",
+         "import": "./dist/layout/index.js"
+      },
+      "./forms": {
+         "types": "./dist/forms/index.d.ts",
+         "import": "./dist/forms/index.js"
+      },
+      "./feedback": {
+         "types": "./dist/feedback/index.d.ts",
+         "import": "./dist/feedback/index.js"
+      },
+      "./navigation": {
+         "types": "./dist/navigation/index.d.ts",
+         "import": "./dist/navigation/index.js"
+      },
+      "./social": {
+         "types": "./dist/social/index.d.ts",
+         "import": "./dist/social/index.js"
+      },
+      "./profile": {
+         "types": "./dist/profile/index.d.ts",
+         "import": "./dist/profile/index.js"
+      },
+      "./pages": {
+         "types": "./dist/pages/index.d.ts",
+         "import": "./dist/pages/index.js"
+      }
+   },
+   "peerDependencies": {
+      "react": ">=18",
+      "react-dom": ">=18",
+      "@chakra-ui/react": ">=2"
+   }
+}
+```
+
+Note operative:
+- Imposta `outDir` del build TS su `dist/` e crea un `index.ts` per ciascuna cartella (barrel per cartella, non al root).
+- Mantieni i CSS modulari importati solo all’interno delle cartelle dove servono.
+- Evita side-effect top-level (registrazioni globali o polyfill) nei moduli esportati.
+
+Esempio struttura `packages/ui/src`:
+
+```
+src/
+   feedback/
+      index.ts
+      LoadingSpinner.tsx
+      ClearCacheButton.tsx
+   navigation/
+      index.ts
+      NavbarDesktop.tsx
+      NavbarMobile.tsx
+   social/
+      index.ts
+      PostCard.tsx
+      PostListItem.tsx
+   profile/
+      index.ts
+      ProfileHeader.tsx
+      ...
+```
+
+Import consigliati nei consumer:
+
+```ts
+import { LoadingSpinner } from '@estecla/ui/feedback'
+import { NavbarDesktop } from '@estecla/ui/navigation'
+```
+
+Vite (consumer): splitting opzionale per subpath UI
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+   plugins: [react()],
+   build: {
+      rollupOptions: {
+         output: {
+            manualChunks: {
+               'ui-feedback': ['@estecla/ui/feedback'],
+               'ui-social': ['@estecla/ui/social'],
+               'ui-profile': ['@estecla/ui/profile'],
+               'ui-navigation': ['@estecla/ui/navigation']
+            },
+         },
+      },
+   },
+})
+```
