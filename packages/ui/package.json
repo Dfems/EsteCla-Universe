@@ -54,6 +54,6 @@
     "@chakra-ui/react": ">=2"
   },
   "dependencies": {
-    "@estecla/pwa": "workspace:*"
+  "@estecla/pwa": "^0.1.0"
   }
 }
