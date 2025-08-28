@@ -23,9 +23,9 @@
     "lint:all": "lerna run lint --stream || echo 'ok'",
     "type-check:all": "lerna run type-check --stream || echo 'ok'",
     "format:all": "lerna run format --stream || echo 'ok'",
-  "clean": "rimraf **/dist **/.turbo node_modules **/node_modules",
-  "deploy:estecla": "npm run build -w apps/estecla-universe && firebase deploy --only hosting:estecla -P estecla-universe",
-  "deploy:glufri": "npm run build -w apps/glufri-travelers && firebase deploy --only hosting:glufri-travelers -P estecla-universe"
+    "clean": "rimraf **/dist **/.turbo node_modules **/node_modules",
+    "deploy:estecla": "npm run build -w apps/estecla-universe && firebase deploy --only hosting:estecla -P estecla-universe",
+    "deploy:glufri": "npm run build -w apps/glufri-travelers && firebase deploy --only hosting:glufri-travelers -P estecla-universe"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
