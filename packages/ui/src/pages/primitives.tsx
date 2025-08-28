@@ -1,7 +1,9 @@
 import { Heading } from '@chakra-ui/react'
 import React from 'react'
 
-type TitleOnlyProps = { children?: React.ReactNode }
+interface TitleOnlyProps {
+  children?: React.ReactNode
+}
 
 export function TitleOnly({ children }: TitleOnlyProps) {
   return (

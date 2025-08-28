@@ -2,7 +2,6 @@ import type { Firestore, QueryDocumentSnapshot } from 'firebase/firestore'
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   limit,
   onSnapshot,

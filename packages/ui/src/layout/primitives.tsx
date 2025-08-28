@@ -1,7 +1,10 @@
 import { Container, Heading } from '@chakra-ui/react'
 import React from 'react'
 
-type ContainerSectionProps = { title?: string; children?: React.ReactNode }
+interface ContainerSectionProps {
+  title?: string
+  children?: React.ReactNode
+}
 
 export function ContainerSection({ title, children }: ContainerSectionProps) {
   return (
