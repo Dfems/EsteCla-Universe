@@ -1,13 +1,13 @@
 import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
 import prettierConfig from 'eslint-config-prettier'
 import pluginPrettier from 'eslint-plugin-prettier'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import globals from 'globals'
+import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist', 'functions/**', 'packages/**', 'apps/**', 'firebase/**'] },
+  { ignores: ['dist', 'functions/**', 'firebase/**', 'node_modules/**'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierConfig],
     files: ['**/*.{ts,tsx}'],
@@ -38,6 +38,35 @@ export default tseslint.config(
       // tipi più rigorosi & riuso sensato
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
+
+      // Enforce subpath-only imports for @estecla/ui and forbid source deep imports
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: '@estecla/ui',
+              message:
+                'Import from subpaths (e.g., @estecla/ui/feedback), not the root @estecla/ui.',
+            },
+          ],
+          patterns: [
+            {
+              group: [
+                '@estecla/ui/src',
+                '@estecla/ui/src/*',
+                '@estecla/ui/*/src',
+                '@estecla/ui/*/src/*',
+                '@ui/*',
+                '**/packages/ui/src',
+                '**/packages/ui/src/*',
+              ],
+              message:
+                'Do not import UI package source files directly. Use only public subpath entrypoints.',
+            },
+          ],
+        },
+      ],
     },
   }
 )

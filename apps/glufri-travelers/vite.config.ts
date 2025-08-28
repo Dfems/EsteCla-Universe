@@ -1,14 +1,13 @@
-import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   publicDir: fileURLToPath(new URL('../../public', import.meta.url)),
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@ui': fileURLToPath(new URL('../../packages/ui/src', import.meta.url)),
       '@hooks': fileURLToPath(new URL('../../packages/hooks/src', import.meta.url)),
       '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
       '@utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),

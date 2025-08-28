@@ -16,7 +16,6 @@ export default defineConfig({
       '@services': fileURLToPath(new URL('./src/lib', import.meta.url)),
       '@theme': fileURLToPath(new URL('./src/styles/theme.ts', import.meta.url)),
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
-      '@ui': fileURLToPath(new URL('../../packages/ui/src', import.meta.url)),
       '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
       '@utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),
       '@theme-pkg': fileURLToPath(new URL('../../packages/theme/src', import.meta.url)),
@@ -60,6 +59,7 @@ export default defineConfig({
           if (id.includes('/packages/ui/')) {
             if (id.includes('/navigation/')) return 'ui-navigation'
             if (id.includes('/feedback/')) return 'ui-feedback'
+            if (id.includes('/profile/')) return 'ui-profile'
             return 'ui'
           }
           if (id.includes('/packages/firebase/')) return 'sdk'

@@ -1,11 +1,11 @@
 // src/pages/Profile.tsx
 import { Box, useDisclosure } from '@chakra-ui/react'
 import { useAuth } from '@context/AuthContext'
+import { updateUserProfile } from '@estecla/firebase'
 import { LoadingSpinner } from '@estecla/ui/feedback'
 import { EditProfileModal, ProfileDetails } from '@estecla/ui/profile'
 import FollowersModal from '@features/follow/ui/FollowersModal'
 import { useProfile } from '@features/profile/hooks/useProfile'
-import { updateUserProfile } from '@estecla/firebase'
 
 const Profile = () => {
   const { profileUser, posts, loading, loadingPosts } = useProfile()
