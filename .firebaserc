@@ -1,15 +1,15 @@
 {
   "projects": {
-    "default": "your-project-id-dev"
+    "default": "estecla-universe"
   },
   "targets": {
-    "your-project-id-dev": {
+    "estecla-universe": {
       "hosting": {
         "estecla": [
-          "estecla-dev"
+          "estecla-universe"
         ],
         "glufri-travelers": [
-          "glufri-travelers-dev"
+          "glufri-travelers"
         ]
       }
     }
