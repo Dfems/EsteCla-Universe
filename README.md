@@ -1,54 +1,59 @@
-# React + TypeScript + Vite
+# EsteCla‑Universe Monorepo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Multi-app, multi-package monorepo managed with npm workspaces + Lerna. Tech stack: Vite, React, TypeScript 5, ESLint flat, Prettier, Firebase Hosting (multi-site), Chakra UI.
 
-Currently, two official plugins are available:
+## Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- apps/
+  - estecla-universe
+  - glufri-travelers
+- packages/
+  - ui, hooks, firebase, firebase-react, types, utils, theme, pwa, config-eslint, config-prettier
 
-## Expanding the ESLint configuration
+Each package builds to dist and exports from dist using export maps. UI exposes only subpath entrypoints like `@estecla/ui/feedback`.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Scripts (root)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- dev:estecla – run dev server for EsteCla app
+- dev:glufri – run dev server for Glufri app
+- format:all – run Prettier in all workspaces
+- lint:all – run ESLint in all workspaces
+- type-check:all – run TypeScript checks across workspaces
+- build:all – build apps and packages
+- clean – remove generated artifacts and node_modules
+- check – format + lint + type-check + build
+
+## Conventions
+
+- No imports from package sources. Use public exports only, e.g. `@estecla/ui/<subpath>`.
+- `sideEffects: false` in packages to enable tree-shaking.
+- No `any` added; strict TS and shared ESLint flat config in every workspace.
+- Commit messages follow Conventional Commits.
+
+## Firebase Hosting (multi-site)
+
+`firebase.json` defines two sites:
+
+- hosting:estecla -> apps/estecla-universe/dist
+- hosting:glufri-travelers -> apps/glufri-travelers/dist
+
+Deploy examples:
+
+```
+npm run build -w apps/estecla-universe && firebase deploy --only hosting:estecla
+npm run build -w apps/glufri-travelers && firebase deploy --only hosting:glufri-travelers
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## UI package usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Always import from subpaths, e.g.: `import { LoadingSpinner } from '@estecla/ui/feedback'`.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Development
+
+1. npm ci
+2. npm run check
+3. npm run dev:estecla or npm run dev:glufri
+
+## CI
+
+GitHub Actions runs format, lint, type-check, build on every push/PR.
