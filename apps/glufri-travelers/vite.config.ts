@@ -3,6 +3,25 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// Keep chunks small and cache-friendly by grouping popular deps
+function classifyChunk(id: string): string | undefined {
+  const inNodeModules = id.includes('node_modules')
+  if (inNodeModules) {
+    const vendors = [
+      { test: /@chakra-ui/, name: 'chakra' },
+      { test: /firebase/, name: 'firebase' },
+      { test: /react-router/, name: 'router' },
+    ] as const
+    const hit = vendors.find((v) => v.test.test(id))
+    return hit ? hit.name : 'vendor'
+  }
+
+  // Shared Estecla SDK split, if used here
+  const isSdk = /@estecla(?:\/)?firebase(?!-react)|[\\/]packages[\\/]firebase[\\/]/.test(id)
+  if (isSdk) return 'sdk'
+  return undefined
+}
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -35,4 +54,13 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => classifyChunk(id),
+      },
+    },
+    // Relax the warning threshold to align with Estecla; real fix is chunking above
+    chunkSizeWarningLimit: 1500,
+  },
 })
