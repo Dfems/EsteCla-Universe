@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -26,6 +25,4 @@ dist-ssr
 .env*
 .firebase
 
-# TypeScript incremental build info
 **/*.tsbuildinfo
-**/tsconfig.tsbuildinfo
