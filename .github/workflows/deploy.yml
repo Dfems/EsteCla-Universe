@@ -3,10 +3,13 @@ name: Deploy sites to Firebase (main)
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - '.gitignore'
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'firebase.json'
+      - 'package.json'
+      - 'tsconfig*.json'
+      - '.github/workflows/deploy.yml'
 
 permissions:
   contents: read

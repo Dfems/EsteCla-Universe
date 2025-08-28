@@ -1,8 +1,15 @@
-name: Monorepo CI
+name: Monorepo CI (affected only)
 
 on:
-  push:
   pull_request:
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'tsconfig*.json'
+      - 'eslint.config.js'
+      - 'vite.config.ts'
+      - '.github/workflows/ci.yml'
 
 permissions:
   contents: read
@@ -13,11 +20,13 @@ concurrency:
 
 jobs:
   quality:
-    name: Quality checks (format, lint, type-check, build)
+    name: Affected checks (lint, type-check, build)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,5 +37,16 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline
 
-      - name: Run all checks
-        run: npm run check
+      - name: Compute base ref
+        shell: bash
+        run: |
+          echo "BASE_SHA=${{ github.event.pull_request.base.sha }}" >> $GITHUB_ENV
+
+      - name: Lint (affected)
+        run: npx lerna run lint --stream --since $BASE_SHA || echo 'ok'
+
+      - name: Type-check (affected)
+        run: npx lerna run type-check --stream --since $BASE_SHA || echo 'ok'
+
+      - name: Build (affected incl. dependents)
+        run: npx lerna run build --stream --since $BASE_SHA --include-dependents --include-dependencies

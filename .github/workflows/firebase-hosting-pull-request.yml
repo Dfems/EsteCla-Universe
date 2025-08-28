@@ -3,6 +3,12 @@ name: Firebase Hosting Preview (PR)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'firebase.json'
+      - 'package.json'
+      - '.github/workflows/firebase-hosting-pull-request.yml'
 
 permissions:
   contents: read
@@ -21,6 +27,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,6 +38,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --prefer-offline
+
+      - name: Compute base ref
+        shell: bash
+        run: |
+          echo "BASE_SHA=${{ github.event.pull_request.base.sha }}" >> $GITHUB_ENV
 
       - name: Run checks
         run: npm run check
