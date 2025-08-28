@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite",
-  "build": "npm run build:all",
-  "lint": "npm run lint:all",
-  "format": "npm run format:all",
-  "check": "npm run format:all && npm run lint:all && npm run type-check:all && npm run build:all",
-  "preview": "vite preview",
+    "dev": "vite",
+    "build": "npm run build:all",
+    "lint": "npm run lint:all",
+    "format": "npm run format:all",
+    "check": "npm run format:all && npm run lint:all && npm run type-check:all && npm run build:all",
+    "preview": "vite preview",
     "prepare": "husky install",
     "deploy": "npm run build && firebase deploy",
     "deploy:rules": "firebase deploy --only firestore:rules,storage",
@@ -19,11 +19,11 @@
     "type-check": "npm run type-check:all",
     "dev:estecla": "npm run dev -w apps/estecla-universe",
     "dev:glufri": "npm run dev -w apps/glufri-travelers",
-  "build:all": "lerna run build --stream",
-  "lint:all": "lerna run lint --stream || echo 'ok'",
-  "type-check:all": "lerna run type-check --stream || echo 'ok'",
-  "format:all": "lerna run format --stream || echo 'ok'",
-  "clean": "rimraf **/dist **/.turbo node_modules **/node_modules"
+    "build:all": "lerna run build --stream",
+    "lint:all": "lerna run lint --stream || echo 'ok'",
+    "type-check:all": "lerna run type-check --stream || echo 'ok'",
+    "format:all": "lerna run format --stream || echo 'ok'",
+    "clean": "rimraf **/dist **/.turbo node_modules **/node_modules"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -74,8 +74,8 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.5",
-  "vite-plugin-pwa": "^1.0.0",
-  "workbox-window": "^7.3.0",
-  "rimraf": "^5.0.0"
+    "vite-plugin-pwa": "^1.0.0",
+    "workbox-window": "^7.3.0",
+    "rimraf": "^5.0.0"
   }
 }
