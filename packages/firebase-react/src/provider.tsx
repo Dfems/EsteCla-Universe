@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { getServices } from '@estecla/firebase'
+import type { UserInfo } from '@estecla/types'
 import type { User as FirebaseUser } from 'firebase/auth'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
-import type { UserInfo } from '@estecla/types'
-import { getServices } from '@estecla/firebase'
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 export interface AuthContextValue {
   user: UserInfo | null

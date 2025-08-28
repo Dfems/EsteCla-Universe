@@ -1,6 +1,6 @@
+import { AuthProvider, useAuth } from '@estecla/firebase-react'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { AuthProvider, useAuth } from '@estecla/firebase-react'
 
 function App() {
   const { user, loading } = useAuth()
