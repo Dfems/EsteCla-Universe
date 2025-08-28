@@ -19,6 +19,9 @@ export default defineConfig({
       '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
       '@utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),
       '@theme-pkg': fileURLToPath(new URL('../../packages/theme/src', import.meta.url)),
+      '@estecla/firebase-react': fileURLToPath(
+        new URL('../../packages/firebase-react/src', import.meta.url)
+      ),
     },
   },
   plugins: [
