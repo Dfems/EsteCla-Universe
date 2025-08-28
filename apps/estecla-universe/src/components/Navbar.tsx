@@ -1,5 +1,5 @@
 import { Input, VisuallyHidden } from '@chakra-ui/react'
-import { useAuth } from '@context/AuthContext'
+import { useAuth } from '@estecla/firebase-react'
 import { useThemeColors } from '@estecla/hooks'
 import { useNavigate } from 'react-router-dom'
 

@@ -10,9 +10,7 @@
       "@routes/*": ["./src/routes/*"],
       "@context/*": ["./src/context/*"],
       "@features/*": ["./src/features/*"],
-      "@services/*": ["./src/lib/*"],
-      "@theme": ["./src/styles/theme.ts"],
-      "@assets/*": ["./src/assets/*"],
+      "@services/*": ["./src/services/*"],
       "@hooks/*": ["./src/hooks/*"]
     }
   },

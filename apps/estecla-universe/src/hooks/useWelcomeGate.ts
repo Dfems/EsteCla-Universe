@@ -1,5 +1,5 @@
+import { useAuth } from '@estecla/firebase-react'
 import { useCallback, useMemo } from 'react'
-import { useAuth } from '@context/AuthContext'
 
 // Inactivity window in ms, configurable via env VITE_WELCOME_INACTIVITY_MS. Default: 1 day.
 const envMs = Number(import.meta.env.VITE_WELCOME_INACTIVITY_MS)

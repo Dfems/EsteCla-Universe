@@ -1,7 +1,7 @@
 // src/pages/Profile.tsx
 import { Box, useDisclosure } from '@chakra-ui/react'
-import { useAuth } from '@context/AuthContext'
 import { updateUserProfile } from '@estecla/firebase'
+import { useAuth } from '@estecla/firebase-react'
 import { LoadingSpinner } from '@estecla/ui/feedback'
 import { EditProfileModal, ProfileDetails } from '@estecla/ui/profile'
 import FollowersModal from '@features/follow/ui/FollowersModal'

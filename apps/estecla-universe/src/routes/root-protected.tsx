@@ -1,4 +1,4 @@
-import { useAuth } from '@context/AuthContext'
+import { useAuth } from '@estecla/firebase-react'
 import { LoadingSpinner } from '@estecla/ui/feedback'
 import { ProtectedRoute } from '@estecla/ui/navigation'
 

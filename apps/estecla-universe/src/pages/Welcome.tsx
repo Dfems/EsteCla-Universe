@@ -1,10 +1,10 @@
 import { Box, Button, Container, Heading, HStack, Text } from '@chakra-ui/react'
+import { useAuth } from '@estecla/firebase-react'
+import { useThemeColors } from '@estecla/hooks'
+import { useWelcomeGate } from '@hooks/useWelcomeGate'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
-import { useAuth } from '@context/AuthContext'
-import { useThemeColors } from '@estecla/hooks'
 import { useNavigate } from 'react-router-dom'
-import { useWelcomeGate } from '@hooks/useWelcomeGate'
 
 const MotionBox = motion(Box)
 
