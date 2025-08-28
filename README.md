@@ -1,59 +1,141 @@
 # EsteCla‑Universe Monorepo
 
-Multi-app, multi-package monorepo managed with npm workspaces + Lerna. Tech stack: Vite, React, TypeScript 5, ESLint flat, Prettier, Firebase Hosting (multi-site), Chakra UI.
+Monorepo multi‑app e multi‑package gestito con npm workspaces + Lerna. Stack: Vite, React, TypeScript 5, ESLint flat, Prettier, Firebase Hosting (multi‑site), Chakra UI.
 
-## Structure
+— Italiano —
 
+## Panoramica
+Questo repository contiene:
 - apps/
   - estecla-universe
   - glufri-travelers
 - packages/
-  - ui, hooks, firebase, firebase-react, types, utils, theme, pwa, config-eslint, config-prettier
+  - ui, hooks, firebase, firebase-react, types, utils, theme, pwa
 
-Each package builds to dist and exports from dist using export maps. UI exposes only subpath entrypoints like `@estecla/ui/feedback`.
+Ogni package espone un’API pubblica via export maps (da dist) e mantiene i confini interni: non importare dai loro src.
 
-## Scripts (root)
+## Per principiante (Beginner)
+- Requisiti: Node 18+ (LTS), npm 10+, Git.
+- Setup
+  1) Clona il repo
+  2) npm ci
+  3) Copia .env (vedi esempio in root) e compila le variabili
+- Sviluppo
+  - Se modifichi i packages: in una finestra avvia il watcher dei packages
+    - npm run dev:watch
+  - Avvia l’app desiderata
+    - npm run dev:estecla
+    - npm run dev:glufri
+- Regole d’oro
+  - Import solo da entrypoints pubblici, es: 
+    - @estecla/utils, @estecla/types, @estecla/theme, @estecla/firebase, @estecla/firebase-react
+    - per UI usa subpath: @estecla/ui/<subpath>
+  - Non importare da packages/*/src
+  - Esegui i check prima di commit: npm run check
 
-- dev:estecla – run dev server for EsteCla app
-- dev:glufri – run dev server for Glufri app
-- format:all – run Prettier in all workspaces
-- lint:all – run ESLint in all workspaces
-- type-check:all – run TypeScript checks across workspaces
-- build:all – build apps and packages
-- clean – remove generated artifacts and node_modules
-- check – format + lint + type-check + build
+## Per esperto (Expert)
+- TypeScript
+  - Packages: build composite, outDir dist, declarationMap; tsBuildInfo in node_modules/.tmp
+  - Entry points: definiti in "exports" dei package.json
+- Tooling
+  - ESLint flat centralizzato a root; Prettier centralizzato
+  - Scripts root: format, lint, type-check, build, clean, check; deploy:estecla, deploy:glufri
+- Apps
+  - Vite 6 con import dai package (no alias su src)
+  - UI: subpath exports per tree-shaking
+- Firebase Hosting (multi‑site)
+  - .firebaserc con target: hosting:estecla e hosting:glufri-travelers
+  - firebase.json mappa dist delle due app
 
-## Conventions
+## Comandi principali
+- Sviluppo
+  - npm run dev:watch        # build in watch dei packages
+  - npm run dev:estecla
+  - npm run dev:glufri
+- Qualità
+  - npm run format
+  - npm run lint
+  - npm run type-check
+  - npm run build
+  - npm run check            # tutti i precedenti in sequenza
+- Deploy (Firebase)
+  - npm run build -w apps/estecla-universe
+  - firebase deploy --only hosting:estecla -P estecla-universe
+  - npm run build -w apps/glufri-travelers
+  - firebase deploy --only hosting:glufri-travelers -P estecla-universe
 
-- No imports from package sources. Use public exports only, e.g. `@estecla/ui/<subpath>`.
-- `sideEffects: false` in packages to enable tree-shaking.
-- No `any` added; strict TS and shared ESLint flat config in every workspace.
-- Commit messages follow Conventional Commits.
+## Variabili d’ambiente (indicative)
+- VITE_FIREBASE_* per configurare SDK Firebase web
+- Altre chiavi (Unsplash, ecc.) come da .env di esempio
 
-## Firebase Hosting (multi-site)
+## Convenzioni
+- Strict TS; niente any non necessario
+- sideEffects: false nei packages
+- Conventional Commits
 
-`firebase.json` defines two sites:
+## Troubleshooting
+- Import dai src → errore ESLint: passare agli entrypoints pubblici
+- Tipi non trovati → assicurarsi che dev:watch sia attivo o che i packages siano buildati
+- Deploy Hosting fallisce → verificare Project ID e Site ID in .firebaserc
 
-- hosting:estecla -> apps/estecla-universe/dist
-- hosting:glufri-travelers -> apps/glufri-travelers/dist
+— English —
 
-Deploy examples:
+## Overview
+This repository hosts:
+- apps/
+  - estecla-universe
+  - glufri-travelers
+- packages/
+  - ui, hooks, firebase, firebase-react, types, utils, theme, pwa
 
-```
-npm run build -w apps/estecla-universe && firebase deploy --only hosting:estecla
-npm run build -w apps/glufri-travelers && firebase deploy --only hosting:glufri-travelers
-```
+Each package exposes a public API via export maps (from dist). Do not import from package sources.
 
-## UI package usage
+## Beginner
+- Requirements: Node 18+ (LTS), npm 10+, Git.
+- Setup
+  1) Clone the repo
+  2) npm ci
+  3) Copy .env and fill required variables
+- Development
+  - If you edit packages, run the packages watcher:
+    - npm run dev:watch
+  - Start your app:
+    - npm run dev:estecla
+    - npm run dev:glufri
+- Golden rules
+  - Import only from public entrypoints:
+    - @estecla/utils, @estecla/types, @estecla/theme, @estecla/firebase, @estecla/firebase-react
+    - UI uses subpaths: @estecla/ui/<subpath>
+  - Do not import from packages/*/src
+  - Run checks before committing: npm run check
 
-Always import from subpaths, e.g.: `import { LoadingSpinner } from '@estecla/ui/feedback'`.
+## Expert
+- TypeScript
+  - Packages: composite builds, outDir dist, declarationMap; tsBuildInfo under node_modules/.tmp
+  - Entry points: defined via package.json "exports"
+- Tooling
+  - Centralized flat ESLint and Prettier at repo root
+  - Root scripts: format, lint, type-check, build, clean, check; deploy:estecla, deploy:glufri
+- Apps
+  - Vite 6, imports resolved via package exports (no src aliases)
+  - UI exposes subpath entries for tree-shaking
+- Firebase Hosting (multi-site)
+  - .firebaserc targets: hosting:estecla and hosting:glufri-travelers
+  - firebase.json maps each app’s dist
 
-## Development
-
-1. npm ci
-2. npm run check
-3. npm run dev:estecla or npm run dev:glufri
-
-## CI
-
-GitHub Actions runs format, lint, type-check, build on every push/PR.
+## Commands
+- Development
+  - npm run dev:watch
+  - npm run dev:estecla
+  - npm run dev:glufri
+- Quality
+  - npm run format
+  - npm run lint
+  - npm run type-check
+  - npm run build
+  - npm run check
+- Deploy (Firebase)
+  - npm run build -w apps/estecla-universe
+  - firebase deploy --only hosting:estecla -P estecla-universe
+  - npm run build -w apps/glufri-travelers
+  - firebase deploy --only hosting:glufri-travelers -P estecla-universe
