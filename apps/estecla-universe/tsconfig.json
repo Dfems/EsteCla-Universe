@@ -13,13 +13,7 @@
       "@services/*": ["./src/lib/*"],
       "@theme": ["./src/styles/theme.ts"],
       "@assets/*": ["./src/assets/*"],
-      "@estecla/firebase-react": ["../../packages/firebase-react/src/index.ts"],
-      "@ui/*": ["../../packages/ui/src/*"],
-      "@hooks/*": ["../../packages/hooks/src/*", "./src/hooks/*"],
-      "@types": ["../../packages/types/src/index.ts"],
-      "@types/*": ["../../packages/types/src/*"],
-      "@utils/*": ["../../packages/utils/src/*"],
-      "@theme/*": ["../../packages/theme/src/*"]
+      "@hooks/*": ["./src/hooks/*"]
     }
   },
   "include": ["src"]

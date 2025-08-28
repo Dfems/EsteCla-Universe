@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:watch": "lerna run build --stream --parallel -- --watch",
     "build": "npm run build:all",
     "lint": "npm run lint:all",
     "format": "npm run format:all",

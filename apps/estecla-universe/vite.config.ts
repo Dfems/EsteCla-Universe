@@ -3,6 +3,31 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+function classifyChunk(id: string): string | undefined {
+  const inNodeModules = id.includes('node_modules')
+  if (inNodeModules) {
+    const vendors = [
+      { test: /@chakra-ui/, name: 'chakra' },
+      { test: /firebase/, name: 'firebase' },
+      { test: /react-router/, name: 'router' },
+    ] as const
+    const hit = vendors.find((v) => v.test.test(id))
+    return hit ? hit.name : 'vendor'
+  }
+
+  const isUi = /@estecla(?:\/)?ui|[\\/]packages[\\/]ui[\\/]/.test(id)
+  if (isUi) {
+    if (id.includes('/navigation/')) return 'ui-navigation'
+    if (id.includes('/feedback/')) return 'ui-feedback'
+    if (id.includes('/profile/')) return 'ui-profile'
+    return 'ui'
+  }
+
+  const isSdk = /@estecla(?:\/)?firebase(?!-react)|[\\/]packages[\\/]firebase[\\/]/.test(id)
+  if (isSdk) return 'sdk'
+  return undefined
+}
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -16,12 +41,6 @@ export default defineConfig({
       '@services': fileURLToPath(new URL('./src/lib', import.meta.url)),
       '@theme': fileURLToPath(new URL('./src/styles/theme.ts', import.meta.url)),
       '@assets': fileURLToPath(new URL('./src/assets', import.meta.url)),
-      '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
-      '@utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),
-      '@theme-pkg': fileURLToPath(new URL('../../packages/theme/src', import.meta.url)),
-      '@estecla/firebase-react': fileURLToPath(
-        new URL('../../packages/firebase-react/src', import.meta.url)
-      ),
     },
   },
   plugins: [
@@ -52,22 +71,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('@chakra-ui')) return 'chakra'
-            if (id.includes('firebase')) return 'firebase'
-            if (id.includes('react-router')) return 'router'
-            return 'vendor'
-          }
-          if (id.includes('/packages/ui/')) {
-            if (id.includes('/navigation/')) return 'ui-navigation'
-            if (id.includes('/feedback/')) return 'ui-feedback'
-            if (id.includes('/profile/')) return 'ui-profile'
-            return 'ui'
-          }
-          if (id.includes('/packages/firebase/')) return 'sdk'
-          return undefined
-        },
+        manualChunks: (id) => classifyChunk(id),
       },
     },
     chunkSizeWarningLimit: 1500,
