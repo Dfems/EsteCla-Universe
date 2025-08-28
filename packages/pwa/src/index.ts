@@ -47,10 +47,14 @@ export async function clearCaches(patterns: (string | RegExp)[] = [/./]): Promis
   // storage locali
   try {
     localStorage.clear()
-  } catch {}
+  } catch {
+    // ignore storage clearing errors
+  }
   try {
     sessionStorage.clear()
-  } catch {}
+  } catch {
+    // ignore storage clearing errors
+  }
   return removed
 }
 
@@ -73,4 +77,51 @@ export async function promptUpdate(): Promise<void> {
   if (!('serviceWorker' in navigator)) return
   const reg = await navigator.serviceWorker.getRegistration()
   await reg?.update()
+}
+
+// Optional Workbox integration (no runtime import to keep peer truly optional)
+// Minimal shape of a Workbox instance passed from the app (constructed via new Workbox('/sw.js'))
+export interface MinimalWorkbox {
+  addEventListener: (
+    type: 'waiting' | 'controlling' | 'message',
+    listener: (event: unknown) => void
+  ) => void
+  register: () => Promise<void>
+  messageSW: (data: unknown) => Promise<unknown>
+}
+
+/**
+ * Wire a standard Workbox update flow.
+ * The app is responsible for constructing the Workbox instance and passing it in.
+ * Returns an async "update" function that sends SKIP_WAITING and reloads when controlled.
+ */
+export function setupWorkboxUpdateFlow(
+  wb: MinimalWorkbox,
+  onNeedRefresh?: () => void,
+  onUpdated?: () => void
+) {
+  // When a new SW is waiting, notify the app UI so it can prompt the user
+  wb.addEventListener('waiting', () => {
+    onNeedRefresh?.()
+  })
+
+  // Once the new SW takes control, notify and optionally reload
+  wb.addEventListener('controlling', () => {
+    onUpdated?.()
+  })
+
+  // Start registration
+  void wb.register()
+
+  // Return an updater that asks the waiting SW to skip waiting, then reloads when controlled
+  const update = async () => {
+    try {
+      await wb.messageSW({ type: 'SKIP_WAITING' })
+      // The page will be reloaded by the app when receiving 'controlling' or manually here
+    } catch {
+      // ignore message errors
+    }
+  }
+
+  return { update }
 }

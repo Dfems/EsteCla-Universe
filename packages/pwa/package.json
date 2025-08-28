@@ -18,5 +18,10 @@
   },
   "peerDependencies": {
     "workbox-window": ">=7"
+  },
+  "peerDependenciesMeta": {
+    "workbox-window": {
+      "optional": true
+    }
   }
 }
