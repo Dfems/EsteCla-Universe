@@ -1,6 +1,6 @@
 import BirthdayCountdown from '@/features/birthday/ui/BirthdayCountdown'
 import { Alert, AlertIcon, Box, Button, Image, Spinner } from '@chakra-ui/react'
-import { useAuth } from '@context/AuthContext'
+import { useAuth } from '@estecla/firebase-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Slider, { Settings } from 'react-slick'

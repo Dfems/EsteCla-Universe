@@ -3,6 +3,12 @@ name: Firebase Hosting Preview (PR)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'apps/**'
+      - 'packages/**'
+      - 'firebase.json'
+      - 'package.json'
+      - '.github/workflows/firebase-hosting-pull-request.yml'
 
 permissions:
   contents: read
@@ -14,12 +20,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build_and_preview:
+  preview:
+    name: Build and deploy preview (both apps)
     if: ${{ github.event.pull_request.head.repo.fork == false }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,14 +39,13 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline
 
-      - name: Lint
-        run: npm run lint
+      - name: Compute base ref
+        shell: bash
+        run: |
+          echo "BASE_SHA=${{ github.event.pull_request.base.sha }}" >> $GITHUB_ENV
 
-      - name: Type check
-        run: npm run type-check
-
-      - name: Build
-        run: npm run build
+      - name: Run checks
+        run: npm run check
         env:
           VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
@@ -48,12 +56,20 @@ jobs:
           VITE_WELCOME_INACTIVITY_MS: ${{ secrets.FIREBASE_WELCOME_INACTIVITY_MS }}
           VITE_WELCOME_AUTO_CONTINUE_MS: ${{ secrets.FIREBASE_WELCOME_AUTO_CONTINUE_MS }}
 
-      - name: Deploy Preview
-        id: deploy
+      - name: Deploy Estecla Preview
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ESTECLA_UNIVERSE }}
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
-          channelId: preview-${{ github.event.pull_request.number }}
-          target: production
+          channelId: pr-${{ github.event.pull_request.number }}
+          target: estecla
+
+      - name: Deploy Glufri Preview
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ESTECLA_UNIVERSE }}
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          channelId: pr-${{ github.event.pull_request.number }}
+          target: glufri-travelers

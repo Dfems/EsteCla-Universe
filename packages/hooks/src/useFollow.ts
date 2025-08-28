@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
-import { followUser, observeIsFollowing, unfollowUser, getServices } from '@estecla/firebase'
+import { followUser, getServices, observeIsFollowing, unfollowUser } from '@estecla/firebase'
+import { useCallback, useEffect, useState } from 'react'
 
 export function useFollow(targetUid: string | undefined) {
   const [isFollowing, setIsFollowing] = useState(false)
@@ -9,7 +9,7 @@ export function useFollow(targetUid: string | undefined) {
     if (!targetUid) return
     setLoading(true)
     const { auth, db } = getServices()
-    const unsub = observeIsFollowing({ auth, db }, targetUid, (val) => {
+    const unsub = observeIsFollowing({ auth, db }, targetUid, (val: boolean) => {
       setIsFollowing(val)
       setLoading(false)
     })

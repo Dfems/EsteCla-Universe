@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:watch": "lerna run build --stream --parallel -- --watch",
     "build": "npm run build:all",
     "lint": "npm run lint:all",
     "format": "npm run format:all",
-    "check": "npm run format; npm run lint; npm run type-check; npm run build",
+    "check": "npm run format:all && npm run lint:all && npm run type-check:all && npm run build:all",
     "preview": "vite preview",
     "prepare": "husky install",
     "deploy": "npm run build && firebase deploy",
@@ -20,9 +21,12 @@
     "dev:estecla": "npm run dev -w apps/estecla-universe",
     "dev:glufri": "npm run dev -w apps/glufri-travelers",
     "build:all": "lerna run build --stream",
-    "lint:all": "lerna run lint --stream || echo 'some packages may not define lint'",
-    "type-check:all": "lerna run type-check --stream || echo 'some packages may not define type-check'",
-    "format:all": "lerna run format --stream || echo 'some packages may not define format'"
+    "lint:all": "lerna run lint --stream || echo 'ok'",
+    "type-check:all": "lerna run type-check --stream || echo 'ok'",
+    "format:all": "lerna run format --stream || echo 'ok'",
+    "clean": "rimraf **/dist **/.turbo node_modules **/node_modules",
+    "deploy:estecla": "npm run build -w apps/estecla-universe && firebase deploy --only hosting:estecla -P estecla-universe",
+    "deploy:glufri": "npm run build -w apps/glufri-travelers && firebase deploy --only hosting:glufri-travelers -P estecla-universe"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -70,6 +74,7 @@
     "lerna": "^8.1.8",
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
+    "rimraf": "^5.0.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.5",

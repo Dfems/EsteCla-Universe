@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc -b",
     "type-check": "tsc --noEmit",
-    "lint": "echo no-lint",
+    "lint": "eslint . --max-warnings=0",
     "format": "prettier --write . --ignore-path ../../.prettierignore"
   },
   "peerDependencies": {
@@ -21,7 +21,7 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./src/index.ts",
       "import": "./dist/index.js"
     }
   }

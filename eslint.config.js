@@ -7,7 +7,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['dist', 'functions/**', 'firebase/**', 'node_modules/**'] },
+  { ignores: ['**/dist/**', 'functions/**', 'firebase/**', 'node_modules/**'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettierConfig],
     files: ['**/*.{ts,tsx}'],
@@ -39,7 +39,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 
-      // Enforce subpath-only imports for @estecla/ui and forbid source deep imports
+      // Enforce subpath-only imports for @estecla/ui and forbid source deep imports across packages
       'no-restricted-imports': [
         'error',
         {
@@ -60,13 +60,22 @@ export default tseslint.config(
                 '@ui/*',
                 '**/packages/ui/src',
                 '**/packages/ui/src/*',
+                // generic deep imports into package sources
+                '**/packages/*/src',
+                '**/packages/*/src/*',
               ],
               message:
-                'Do not import UI package source files directly. Use only public subpath entrypoints.',
+                'Do not import package source files directly. Use only public entrypoints defined by exports.',
             },
           ],
         },
       ],
+    },
+  },
+  {
+    files: ['packages/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   }
 )

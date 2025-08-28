@@ -1,8 +1,9 @@
+import type { UserInfo } from '@estecla/types'
+import type { Auth } from 'firebase/auth'
 import type { Firestore, QueryDocumentSnapshot } from 'firebase/firestore'
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   limit,
   onSnapshot,
@@ -13,8 +14,6 @@ import {
   writeBatch,
   type Unsubscribe,
 } from 'firebase/firestore'
-import type { Auth } from 'firebase/auth'
-import type { UserInfo } from '@estecla/types'
 
 function requireAuth(auth: Auth): NonNullable<Auth['currentUser']> {
   const u = auth.currentUser

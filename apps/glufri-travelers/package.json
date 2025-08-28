@@ -9,5 +9,8 @@
     "lint": "eslint . --max-warnings=0",
     "format": "prettier --write . --ignore-path ../../.prettierignore",
     "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@estecla/firebase-react": "0.1.0"
   }
 }
