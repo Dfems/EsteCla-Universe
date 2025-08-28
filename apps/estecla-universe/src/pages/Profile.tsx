@@ -2,10 +2,10 @@
 import { Box, useDisclosure } from '@chakra-ui/react'
 import { useAuth } from '@context/AuthContext'
 import { LoadingSpinner } from '@estecla/ui/feedback'
-import { ProfileDetails } from '@estecla/ui/profile'
+import { EditProfileModal, ProfileDetails } from '@estecla/ui/profile'
 import FollowersModal from '@features/follow/ui/FollowersModal'
 import { useProfile } from '@features/profile/hooks/useProfile'
-import EditProfileModal from '@features/profile/ui/EditProfileModal'
+import { updateUserProfile } from '@estecla/firebase'
 
 const Profile = () => {
   const { profileUser, posts, loading, loadingPosts } = useProfile()
@@ -31,7 +31,22 @@ const Profile = () => {
         onOpenFollowers={followersDisc.onOpen}
         onOpenFollowing={followingDisc.onOpen}
       />
-      {isOwnProfile && <EditProfileModal isOpen={isOpen} onClose={onClose} user={profileUser} />}
+      {isOwnProfile && (
+        <EditProfileModal
+          isOpen={isOpen}
+          onClose={onClose}
+          user={profileUser}
+          onSave={async (updates: {
+            username: string
+            fullName?: string
+            bio?: string
+            birthday?: string
+            profilePicFile?: File | null
+          }) => {
+            await updateUserProfile({ current: profileUser, updates })
+          }}
+        />
+      )}
       <FollowersModal
         uid={profileUser.uid}
         type="followers"

@@ -12,6 +12,7 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
+  "@estecla/ui/*": ["packages/ui/src/*"],
       "@ui/*": ["packages/ui/src/*"],
       "@hooks/*": ["packages/hooks/src/*"],
       "@types/*": ["packages/types/src/*"],

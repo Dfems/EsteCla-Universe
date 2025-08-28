@@ -14,17 +14,25 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react'
-import { UserInfo } from '@estecla/types'
-import { updateUserProfile } from '@features/profile/api/profile'
+import type { UserInfo } from '@estecla/types'
 import React, { useEffect, useMemo, useState } from 'react'
 
-interface Props {
+export interface EditProfileUpdates {
+  username: string
+  fullName?: string
+  bio?: string
+  birthday?: string
+  profilePicFile?: File | null
+}
+
+export interface EditProfileModalProps {
   isOpen: boolean
   onClose: () => void
   user: UserInfo
+  onSave: (updates: EditProfileUpdates) => Promise<void> | void
 }
 
-function EditProfileModal({ isOpen, onClose, user }: Props) {
+export default function EditProfileModal({ isOpen, onClose, user, onSave }: EditProfileModalProps) {
   const toast = useToast()
   const [fullName, setFullName] = useState(user.fullName || '')
   const [bio, setBio] = useState(user.bio || '')
@@ -32,8 +40,6 @@ function EditProfileModal({ isOpen, onClose, user }: Props) {
   const [birthday, setBirthday] = useState(user.birthday || '')
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
   const [saving, setSaving] = useState(false)
-
-  // age calculation moved into API
 
   useEffect(() => {
     if (isOpen) {
@@ -57,16 +63,7 @@ function EditProfileModal({ isOpen, onClose, user }: Props) {
   const save = async () => {
     setSaving(true)
     try {
-      await updateUserProfile({
-        current: user,
-        updates: {
-          username,
-          fullName,
-          bio,
-          birthday,
-          profilePicFile,
-        },
-      })
+      await onSave({ username, fullName, bio, birthday, profilePicFile })
       toast({ status: 'success', title: 'Profilo aggiornato' })
       onClose()
     } catch (e: unknown) {
@@ -121,5 +118,3 @@ function EditProfileModal({ isOpen, onClose, user }: Props) {
     </Modal>
   )
 }
-
-export default EditProfileModal
