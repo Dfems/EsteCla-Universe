@@ -18,5 +18,9 @@
   "sideEffects": false,
   "peerDependencies": {
     "react": ">=18"
+  },
+  "dependencies": {
+    "@estecla/firebase": "*",
+    "@estecla/types": "*"
   }
 }
