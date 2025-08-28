@@ -1,8 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { AuthProvider, useAuth } from '@estecla/firebase-react'
 
 function App() {
-  return <div>Glufri Travelers</div>
+  const { user, loading } = useAuth()
+  return <div>Glufri Travelers {loading ? '(loading...)' : user ? `- ${user.username}` : ''}</div>
 }
 
 // Aggiungo un export per soddisfare react-refresh/only-export-components
@@ -10,6 +12,8 @@ export default App
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </React.StrictMode>
 )
