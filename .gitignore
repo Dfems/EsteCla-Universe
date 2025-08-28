@@ -25,3 +25,7 @@ dist-ssr
 
 .env*
 .firebase
+
+# TypeScript incremental build info
+**/*.tsbuildinfo
+**/tsconfig.tsbuildinfo
