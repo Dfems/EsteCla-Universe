@@ -13,7 +13,7 @@
   ],
   "hosting": [
     {
-      "target": "estecla",
+      "target": "estecla-universe",
       "public": "apps/estecla-universe/dist",
       "ignore": ["**/.*", "**/node_modules/**"],
       "rewrites": [{ "source": "**", "destination": "/index.html" }],

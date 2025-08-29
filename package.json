@@ -1,5 +1,6 @@
 {
   "name": "estecla-universe",
+  "author": "Francisco Esteban Mosquera Sancan",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -5,6 +5,8 @@ import { router } from '@routes'
 import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
+// Inizializza Firebase prima che AuthProvider chiami getServices()
+import '@services/firebase'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

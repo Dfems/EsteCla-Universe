@@ -2,7 +2,6 @@
 import { Box, useDisclosure } from '@chakra-ui/react'
 import { updateUserProfile } from '@estecla/firebase'
 import { useAuth } from '@estecla/firebase-react'
-import { LoadingSpinner } from '@estecla/ui/feedback'
 import { EditProfileModal, ProfileDetails } from '@estecla/ui/profile'
 import FollowersModal from '@features/follow/ui/FollowersModal'
 import { useProfile } from '@features/profile/hooks/useProfile'
@@ -14,9 +13,16 @@ const Profile = () => {
   const followersDisc = useDisclosure()
   const followingDisc = useDisclosure()
 
-  if (loading || !profileUser) {
-    return <LoadingSpinner />
-  }
+  // Evita spinner infinito: mostra spinner solo durante il caricamento iniziale.
+  // Se non c'è profilo e non stiamo più caricando, mostra un placeholder leggero.
+  // if (loading) return <LoadingSpinner />
+  if (loading)
+    return (
+      <>
+        <div>{user?.email}</div>
+      </>
+    )
+  if (!profileUser) return <Box p={6}>Profilo non trovato</Box>
 
   const isOwnProfile = user?.uid === profileUser.uid
 

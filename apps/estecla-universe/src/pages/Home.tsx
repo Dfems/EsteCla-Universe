@@ -1,9 +1,8 @@
-import { Box, Container, Grid, GridItem, Text, Show, VStack } from '@chakra-ui/react'
-import { useThemeColors } from '@estecla/hooks'
+import { Box, Container, Grid, GridItem, Show, Text, VStack } from '@chakra-ui/react'
+import { useSuggestedUsers, useThemeColors } from '@estecla/hooks'
 import { PostListItem } from '@estecla/ui/social'
-import { useGlobalFeed } from '@hooks/useGlobalFeed'
-import { useSuggestedUsers } from '@estecla/hooks'
 import SuggestedUsers from '@features/follow/ui/SuggestedUsers'
+import { useGlobalFeed } from '@hooks/useGlobalFeed'
 import { useNavigate } from 'react-router-dom'
 
 export default function Home() {
@@ -13,7 +12,7 @@ export default function Home() {
   const navigate = useNavigate()
 
   return (
-    <Box p={4} bg={containerBg} color={textColor} mt={{ base: 2, md: 16 }} pb={{ base: 24, md: 4 }}>
+    <Box p={4} bg={containerBg} color={textColor} mt={{ base: 2, md: 4 }} pb={{ base: 24, md: 4 }}>
       <Container maxW="container.xl" px={{ base: 0, md: 4 }}>
         <Grid templateColumns={{ base: '1fr', md: '2fr 1fr' }} gap={{ base: 4, md: 8 }}>
           <GridItem>
