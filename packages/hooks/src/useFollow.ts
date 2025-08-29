@@ -9,7 +9,7 @@ export function useFollow(targetUid: string | undefined) {
     if (!targetUid) return
     setLoading(true)
     const { auth, db } = getServices()
-    const unsub = observeIsFollowing({ auth, db }, targetUid, (val: boolean) => {
+    const unsub = observeIsFollowing({ auth, db }, targetUid, (val) => {
       setIsFollowing(val)
       setLoading(false)
     })
