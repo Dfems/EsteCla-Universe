@@ -15,5 +15,6 @@
       "import": "./dist/index.js"
     }
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "license": "SEE LICENSE IN LICENSE"
 }

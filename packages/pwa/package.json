@@ -23,5 +23,6 @@
     "workbox-window": {
       "optional": true
     }
-  }
+  },
+  "license": "SEE LICENSE IN LICENSE"
 }

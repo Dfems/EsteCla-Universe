@@ -27,5 +27,6 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1"
   },
-  "private": true
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE"
 }

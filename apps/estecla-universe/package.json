@@ -17,5 +17,6 @@
     "@estecla/theme": "0.1.0",
     "@estecla/types": "0.1.0",
     "@estecla/ui": "0.1.0"
-  }
+  },
+  "license": "SEE LICENSE IN LICENSE"
 }

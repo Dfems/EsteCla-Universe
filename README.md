@@ -78,6 +78,11 @@ Ogni package espone un’API pubblica via export maps (da dist) e mantiene i con
 - Tipi non trovati → assicurarsi che dev:watch sia attivo o che i packages siano buildati
 - Deploy Hosting fallisce → verificare Project ID e Site ID in .firebaserc
 
+## License / Licenza
+- Proprietary, permission-required. See `LICENSE` for full terms (IT/EN).
+- No use without written permission from the Author (Francisco Esteban Mosquera Sancan, "Dfems").
+- PRs must be submitted from a dedicated branch; see `CONTRIBUTING.md`.
+
 — English —
 
 ## Overview
@@ -139,3 +144,8 @@ Each package exposes a public API via export maps (from dist). Do not import fro
   - firebase deploy --only hosting:estecla -P estecla-universe
   - npm run build -w apps/glufri-travelers
   - firebase deploy --only hosting:glufri-travelers -P estecla-universe
+
+## License / Licenza
+- Proprietary, permission-required. See `LICENSE` for full terms (IT/EN).
+- No use without written permission from the Author (Francisco Esteban Mosquera Sancan, "Dfems").
+- PRs must be submitted from a dedicated branch; see `CONTRIBUTING.md`.

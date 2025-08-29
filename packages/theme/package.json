@@ -18,5 +18,6 @@
   "sideEffects": false,
   "peerDependencies": {
     "@chakra-ui/react": ">=2"
-  }
+  },
+  "license": "SEE LICENSE IN LICENSE"
 }

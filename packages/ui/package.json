@@ -54,5 +54,6 @@
   },
   "dependencies": {
     "@estecla/pwa": "^0.1.0"
-  }
+  },
+  "license": "SEE LICENSE IN LICENSE"
 }
