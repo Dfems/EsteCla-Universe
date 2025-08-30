@@ -5,12 +5,10 @@ import { GoogleLoginButton } from '@estecla/ui/auth'
 import { loginWithEmailPassword, loginWithGoogleAndEnsureUser } from '@features/auth/api/auth'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-// import { useColorMode } from '@chakra-ui/react'
 
 function Login() {
   const navigate = useNavigate()
   const { containerBg, textColor } = useThemeColors()
-  // const { toggleColorMode } = useColorMode()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -39,7 +37,18 @@ function Login() {
       await loginWithGoogleAndEnsureUser()
       navigate('/welcome')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google login failed')
+      const message = err instanceof Error ? err.message : 'Google login failed'
+      if (message.startsWith('auth/popup-timeout')) {
+        try {
+          const { auth, googleProvider } = await import('@services/firebase')
+          const { signInWithRedirect } = await import('firebase/auth')
+          await signInWithRedirect(auth, googleProvider)
+          return
+        } catch (redirErr) {
+          console.warn('Redirect fallback failed', redirErr)
+        }
+      }
+      setError(message)
     } finally {
       setLoading(false)
     }
@@ -66,10 +75,6 @@ function Login() {
             {error}
           </Box>
         )}
-
-        {/* <Button onClick={toggleColorMode} mb={4}>
-          Cambia Modalità
-        </Button> */}
 
         <FormControl isRequired mb={4}>
           <FormLabel>Email</FormLabel>

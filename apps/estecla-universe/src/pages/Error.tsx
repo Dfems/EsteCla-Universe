@@ -1,5 +1,5 @@
 import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react'
-import { useNavigate, useRouteError, isRouteErrorResponse } from 'react-router-dom'
+import { isRouteErrorResponse, useNavigate, useRouteError } from 'react-router-dom'
 
 export default function ErrorPage() {
   const navigate = useNavigate()

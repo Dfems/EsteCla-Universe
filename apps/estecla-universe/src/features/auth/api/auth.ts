@@ -1,10 +1,10 @@
-import { auth, db, storage, googleProvider } from '@services/firebase'
-import type { UserInfo } from '@estecla/types'
 import {
   loginWithEmailPassword as coreLoginWithEmailPassword,
   loginWithGoogleAndEnsureUser as coreLoginWithGoogleAndEnsureUser,
   registerWithEmailPassword as coreRegisterWithEmailPassword,
 } from '@estecla/firebase'
+import type { UserInfo } from '@estecla/types'
+import { auth, db, googleProvider, storage } from '@services/firebase'
 import type { User } from 'firebase/auth'
 
 export async function loginWithEmailPassword(email: string, password: string): Promise<User> {
@@ -12,6 +12,7 @@ export async function loginWithEmailPassword(email: string, password: string): P
 }
 
 export async function loginWithGoogleAndEnsureUser(): Promise<User> {
+  console.log('loginWithGoogleAndEnsureUser estecla-universe called')
   return coreLoginWithGoogleAndEnsureUser({ auth, db }, googleProvider)
 }
 
