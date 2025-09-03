@@ -37,32 +37,34 @@ export async function loginWithGoogleAndEnsureUser(
   provider: GoogleAuthProvider = defaultGoogleProvider
 ): Promise<User> {
   console.log('Starting Google login...')
-  
+
   // Check if user is already logged in
   if (services.auth.currentUser) {
     console.log('User is already logged in:', services.auth.currentUser.uid)
     return services.auth.currentUser
   }
-  
+
   try {
     const userCred = await signInWithPopup(services.auth, provider)
     console.log('Google popup login successful', userCred.user.uid)
-    
+
     const firebaseUser = userCred.user
     const userDocRef = doc(services.db, USERS_COLLECTION, firebaseUser.uid)
     const snap = await getDoc(userDocRef)
-    
+
     if (!snap.exists()) {
       console.log('Creating new user document for Google user', firebaseUser.uid)
-      const base = (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user') as string
+      const base = (firebaseUser.displayName ||
+        firebaseUser.email?.split('@')[0] ||
+        'user') as string
       const username = await pickAvailableUsername(services.db, base)
       const usernameLowercase = username.toLowerCase()
-      
+
       await updateProfile(firebaseUser, {
         displayName: username,
         photoURL: firebaseUser.photoURL || undefined,
       })
-      
+
       const newUser: UserInfo = {
         uid: firebaseUser.uid,
         username,
@@ -74,28 +76,30 @@ export async function loginWithGoogleAndEnsureUser(
         following: [],
         email: firebaseUser.email || undefined,
       }
-      
+
       await setDoc(userDocRef, newUser)
       console.log('New user document created successfully')
     } else {
       console.log('Existing user document found')
     }
-    
+
     return firebaseUser
   } catch (error: any) {
     console.error('Google login error:', error)
-    
+
     // Provide more specific error messages
     if (error.code === 'auth/popup-blocked') {
-      throw new Error('Il popup è stato bloccato dal browser. Controlla le impostazioni del popup blocker.')
+      throw new Error(
+        'Il popup è stato bloccato dal browser. Controlla le impostazioni del popup blocker.'
+      )
     } else if (error.code === 'auth/popup-closed-by-user') {
-      throw new Error('Login annullato dall\'utente.')
+      throw new Error("Login annullato dall'utente.")
     } else if (error.code === 'auth/cancelled-popup-request') {
       throw new Error('Richiesta popup annullata. Prova di nuovo.')
     } else if (error.code === 'auth/unauthorized-domain') {
-      throw new Error('Dominio non autorizzato. Contatta l\'amministratore.')
+      throw new Error("Dominio non autorizzato. Contatta l'amministratore.")
     } else if (error.code === 'auth/operation-not-allowed') {
-      throw new Error('Login Google non abilitato. Contatta l\'amministratore.')
+      throw new Error("Login Google non abilitato. Contatta l'amministratore.")
     } else if (error.code === 'auth/invalid-api-key') {
       throw new Error('Configurazione Firebase non valida.')
     } else if (error.code === 'auth/network-request-failed') {

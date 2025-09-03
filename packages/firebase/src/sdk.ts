@@ -12,23 +12,30 @@ export interface FirebaseServices {
 
 // Validate Firebase configuration
 function validateFirebaseConfig(config: any): void {
-  const requiredKeys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId']
-  const missing = requiredKeys.filter(key => !config[key])
-  
+  const requiredKeys = [
+    'apiKey',
+    'authDomain',
+    'projectId',
+    'storageBucket',
+    'messagingSenderId',
+    'appId',
+  ]
+  const missing = requiredKeys.filter((key) => !config[key])
+
   if (missing.length > 0) {
     console.error('Missing Firebase config keys:', missing)
     throw new Error(`Firebase configuration incomplete. Missing: ${missing.join(', ')}`)
   }
-  
+
   console.log('Firebase configuration validated successfully')
 }
 
 export function initFirebase(config: object): FirebaseServices {
   validateFirebaseConfig(config)
-  
+
   const app = getApps().length ? getApps()[0] : initializeApp(config)
   console.log('Firebase app initialized with project:', (config as any).projectId)
-  
+
   return {
     app,
     auth: getAuth(app),
@@ -43,7 +50,7 @@ export const googleProvider = new GoogleAuthProvider()
 googleProvider.addScope('email')
 googleProvider.addScope('profile')
 googleProvider.setCustomParameters({
-  prompt: 'select_account' // Always show account selection dialog
+  prompt: 'select_account', // Always show account selection dialog
 })
 
 console.log('Google provider configured with scopes:', googleProvider.getScopes())

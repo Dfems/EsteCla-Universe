@@ -8,5 +8,6 @@
     "emitDeclarationOnly": false,
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [{ "path": "../types" }, { "path": "../firebase" }]
 }

@@ -1,5 +1,14 @@
 // src/pages/Login.tsx
-import { Box, Button, Center, FormControl, FormLabel, Heading, Input, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  Button,
+  Center,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  useColorModeValue,
+} from '@chakra-ui/react'
 import { GoogleLoginButton } from '@estecla/ui/auth'
 import { loginWithEmailPassword, loginWithGoogleAndEnsureUser } from '@features/auth/api/auth'
 import React, { useState, useEffect } from 'react'
@@ -20,7 +29,7 @@ function Login() {
       try {
         const { auth } = await import('@services/firebase')
         const { getRedirectResult } = await import('firebase/auth')
-        
+
         const result = await getRedirectResult(auth)
         if (result) {
           console.log('Redirect login successful, navigating to welcome page')
@@ -57,26 +66,30 @@ function Login() {
 
     try {
       console.log('Attempting Google login...')
-      
+
       // Check network connectivity before attempting login
       if (!navigator.onLine) {
         throw new Error('Nessuna connessione internet. Controlla la tua connessione e riprova.')
       }
-      
+
       await loginWithGoogleAndEnsureUser()
       console.log('Google login successful, navigating to welcome page')
       navigate('/welcome')
     } catch (err) {
       console.error('Google login failed:', err)
       const message = err instanceof Error ? err.message : 'Google login failed'
-      
+
       // Handle specific error cases
-      if (message.includes('popup-blocked') || message.includes('popup-timeout') || message.includes('popup è stato bloccato')) {
+      if (
+        message.includes('popup-blocked') ||
+        message.includes('popup-timeout') ||
+        message.includes('popup è stato bloccato')
+      ) {
         console.log('Popup blocked or timed out, trying redirect fallback...')
         try {
           const { auth, googleProvider } = await import('@services/firebase')
           const { signInWithRedirect, getRedirectResult } = await import('firebase/auth')
-          
+
           // Check if there's a pending redirect result first
           const result = await getRedirectResult(auth)
           if (result) {
@@ -84,14 +97,16 @@ function Login() {
             navigate('/welcome')
             return
           }
-          
+
           // If no pending result, initiate redirect
           console.log('Initiating Google sign-in redirect...')
           await signInWithRedirect(auth, googleProvider)
           return // The page will redirect, so we don't need to handle anything else
         } catch (redirectErr) {
           console.warn('Redirect fallback also failed:', redirectErr)
-          setError('Login Google non disponibile. Prova con email e password o verifica le impostazioni del browser.')
+          setError(
+            'Login Google non disponibile. Prova con email e password o verifica le impostazioni del browser.'
+          )
         }
       } else {
         setError(message)
