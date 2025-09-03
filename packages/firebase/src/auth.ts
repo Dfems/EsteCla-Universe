@@ -36,32 +36,66 @@ export async function loginWithGoogleAndEnsureUser(
   services: { auth: Auth; db: Firestore },
   provider: GoogleAuthProvider = defaultGoogleProvider
 ): Promise<User> {
-  const userCred = await signInWithPopup(services.auth, provider)
-  const firebaseUser = userCred.user
-  const userDocRef = doc(services.db, USERS_COLLECTION, firebaseUser.uid)
-  const snap = await getDoc(userDocRef)
-  if (!snap.exists()) {
-    const base = (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user') as string
-    const username = await pickAvailableUsername(services.db, base)
-    const usernameLowercase = username.toLowerCase()
-    await updateProfile(firebaseUser, {
-      displayName: username,
-      photoURL: firebaseUser.photoURL || undefined,
-    })
-    const newUser: UserInfo = {
-      uid: firebaseUser.uid,
-      username,
-      usernameLowercase,
-      fullName: firebaseUser.displayName || undefined,
-      profilePic: firebaseUser.photoURL || undefined,
-      bio: '',
-      followers: [],
-      following: [],
-      email: firebaseUser.email || undefined,
+  console.log('Starting Google login...')
+  
+  try {
+    const userCred = await signInWithPopup(services.auth, provider)
+    console.log('Google popup login successful', userCred.user.uid)
+    
+    const firebaseUser = userCred.user
+    const userDocRef = doc(services.db, USERS_COLLECTION, firebaseUser.uid)
+    const snap = await getDoc(userDocRef)
+    
+    if (!snap.exists()) {
+      console.log('Creating new user document for Google user', firebaseUser.uid)
+      const base = (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user') as string
+      const username = await pickAvailableUsername(services.db, base)
+      const usernameLowercase = username.toLowerCase()
+      
+      await updateProfile(firebaseUser, {
+        displayName: username,
+        photoURL: firebaseUser.photoURL || undefined,
+      })
+      
+      const newUser: UserInfo = {
+        uid: firebaseUser.uid,
+        username,
+        usernameLowercase,
+        fullName: firebaseUser.displayName || undefined,
+        profilePic: firebaseUser.photoURL || undefined,
+        bio: '',
+        followers: [],
+        following: [],
+        email: firebaseUser.email || undefined,
+      }
+      
+      await setDoc(userDocRef, newUser)
+      console.log('New user document created successfully')
+    } else {
+      console.log('Existing user document found')
     }
-    await setDoc(userDocRef, newUser)
+    
+    return firebaseUser
+  } catch (error: any) {
+    console.error('Google login error:', error)
+    
+    // Provide more specific error messages
+    if (error.code === 'auth/popup-blocked') {
+      throw new Error('Il popup è stato bloccato dal browser. Controlla le impostazioni del popup blocker.')
+    } else if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Login annullato dall\'utente.')
+    } else if (error.code === 'auth/cancelled-popup-request') {
+      throw new Error('Richiesta popup annullata. Prova di nuovo.')
+    } else if (error.code === 'auth/unauthorized-domain') {
+      throw new Error('Dominio non autorizzato. Contatta l\'amministratore.')
+    } else if (error.code === 'auth/operation-not-allowed') {
+      throw new Error('Login Google non abilitato. Contatta l\'amministratore.')
+    } else if (error.code === 'auth/invalid-api-key') {
+      throw new Error('Configurazione Firebase non valida.')
+    } else {
+      throw new Error(`Errore durante il login Google: ${error.message || 'Errore sconosciuto'}`)
+    }
   }
-  return firebaseUser
 }
 
 export async function registerWithEmailPassword(

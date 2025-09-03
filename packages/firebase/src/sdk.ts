@@ -22,6 +22,13 @@ export function initFirebase(config: object): FirebaseServices {
 
 export const googleProvider = new GoogleAuthProvider()
 
+// Configure Google provider with proper scopes and custom parameters
+googleProvider.addScope('email')
+googleProvider.addScope('profile')
+googleProvider.setCustomParameters({
+  prompt: 'select_account' // Always show account selection dialog
+})
+
 // Ottiene i servizi dall'app Firebase già inizializzata.
 // Nota: richiede che l'app sia stata inizializzata altrove (es. nell'app consumer).
 export function getServices(): FirebaseServices {
