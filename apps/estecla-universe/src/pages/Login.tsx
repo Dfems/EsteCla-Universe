@@ -57,6 +57,12 @@ function Login() {
 
     try {
       console.log('Attempting Google login...')
+      
+      // Check network connectivity before attempting login
+      if (!navigator.onLine) {
+        throw new Error('Nessuna connessione internet. Controlla la tua connessione e riprova.')
+      }
+      
       await loginWithGoogleAndEnsureUser()
       console.log('Google login successful, navigating to welcome page')
       navigate('/welcome')
@@ -65,7 +71,7 @@ function Login() {
       const message = err instanceof Error ? err.message : 'Google login failed'
       
       // Handle specific error cases
-      if (message.includes('popup-blocked') || message.includes('popup-timeout')) {
+      if (message.includes('popup-blocked') || message.includes('popup-timeout') || message.includes('popup è stato bloccato')) {
         console.log('Popup blocked or timed out, trying redirect fallback...')
         try {
           const { auth, googleProvider } = await import('@services/firebase')
@@ -80,11 +86,12 @@ function Login() {
           }
           
           // If no pending result, initiate redirect
+          console.log('Initiating Google sign-in redirect...')
           await signInWithRedirect(auth, googleProvider)
           return // The page will redirect, so we don't need to handle anything else
         } catch (redirectErr) {
           console.warn('Redirect fallback also failed:', redirectErr)
-          setError('Login Google non disponibile. Prova con email e password.')
+          setError('Login Google non disponibile. Prova con email e password o verifica le impostazioni del browser.')
         }
       } else {
         setError(message)

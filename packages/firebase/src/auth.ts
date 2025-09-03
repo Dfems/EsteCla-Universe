@@ -38,6 +38,12 @@ export async function loginWithGoogleAndEnsureUser(
 ): Promise<User> {
   console.log('Starting Google login...')
   
+  // Check if user is already logged in
+  if (services.auth.currentUser) {
+    console.log('User is already logged in:', services.auth.currentUser.uid)
+    return services.auth.currentUser
+  }
+  
   try {
     const userCred = await signInWithPopup(services.auth, provider)
     console.log('Google popup login successful', userCred.user.uid)
@@ -92,6 +98,10 @@ export async function loginWithGoogleAndEnsureUser(
       throw new Error('Login Google non abilitato. Contatta l\'amministratore.')
     } else if (error.code === 'auth/invalid-api-key') {
       throw new Error('Configurazione Firebase non valida.')
+    } else if (error.code === 'auth/network-request-failed') {
+      throw new Error('Errore di connessione. Verifica la tua connessione internet.')
+    } else if (error.code === 'auth/too-many-requests') {
+      throw new Error('Troppi tentativi di login. Riprova più tardi.')
     } else {
       throw new Error(`Errore durante il login Google: ${error.message || 'Errore sconosciuto'}`)
     }
