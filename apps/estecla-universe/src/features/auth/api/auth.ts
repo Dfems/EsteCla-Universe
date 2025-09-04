@@ -12,7 +12,6 @@ export async function loginWithEmailPassword(email: string, password: string): P
 }
 
 export async function loginWithGoogleAndEnsureUser(): Promise<User> {
-  console.log('loginWithGoogleAndEnsureUser estecla-universe called')
   return coreLoginWithGoogleAndEnsureUser({ auth, db }, googleProvider)
 }
 
