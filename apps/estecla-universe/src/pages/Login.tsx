@@ -40,15 +40,11 @@ function Login() {
   const handleGoogleLogin = async () => {
     setError('')
     setLoading(true)
-    console.log('🎯 Google login button clicked')
 
     try {
-      console.log('📞 Calling loginWithGoogleAndEnsureUser')
       await loginWithGoogleAndEnsureUser()
-      console.log('✅ Login successful, navigating to welcome page')
       navigate('/welcome')
     } catch (err) {
-      console.error('❌ Login failed with error:', err)
       setError(err instanceof Error ? err.message : 'Google login failed')
     } finally {
       setLoading(false)

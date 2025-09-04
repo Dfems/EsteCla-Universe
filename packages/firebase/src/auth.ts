@@ -66,23 +66,14 @@ export async function loginWithGoogleAndEnsureUser(
 
 // Simplified version that matches main branch exactly
 export async function loginWithGoogleDirect(): Promise<User> {
-  console.log('🚀 Starting Google login with direct approach')
   try {
     const { auth, db } = getServices()
-    console.log('✅ Got Firebase services:', { auth: !!auth, db: !!db })
-    console.log('🔧 Auth config:', { projectId: auth.app.options.projectId })
-    console.log('🔑 Google provider ready:', { providerId: googleProvider.providerId })
-    
-    console.log('🔑 Starting Google popup sign-in')
     const userCred = await signInWithPopup(auth, googleProvider)
-    console.log('✅ Google sign-in successful, user:', userCred.user.email)
-    
     const firebaseUser = userCred.user
     const userDocRef = doc(db, USERS_COLLECTION, firebaseUser.uid)
     const snap = await getDoc(userDocRef)
     
     if (!snap.exists()) {
-      console.log('👤 Creating new user profile')
       const base = (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user') as string
       const username = await pickAvailableUsername(db, base)
       const usernameLowercase = username.toLowerCase()
@@ -102,20 +93,20 @@ export async function loginWithGoogleDirect(): Promise<User> {
         email: firebaseUser.email || undefined,
       }
       await setDoc(userDocRef, newUser)
-      console.log('✅ New user profile created:', username)
-    } else {
-      console.log('✅ Existing user found')
     }
     
-    console.log('🎉 Google login completed successfully')
     return firebaseUser
   } catch (error) {
-    console.error('❌ Google login failed:', error)
-    console.error('❌ Error details:', {
-      code: (error as any)?.code,
-      message: (error as any)?.message,
-      stack: (error as any)?.stack
-    })
+    // Provide helpful error messages for common Firebase config issues
+    const errorCode = (error as any)?.code
+    if (errorCode === 'auth/invalid-api-key') {
+      throw new Error('Firebase configurazione mancante. Crea un file .env.local con le chiavi VITE_FIREBASE_*. Vedi .env.example per i dettagli.')
+    } else if (errorCode === 'auth/operation-not-allowed') {
+      throw new Error('Google login non è abilitato nel progetto Firebase. Vai su Authentication > Sign-in method e abilita Google.')
+    } else if (errorCode === 'auth/unauthorized-domain') {
+      throw new Error('Dominio non autorizzato. Aggiungi il dominio in Firebase Authentication > Settings > Authorized domains.')
+    }
+    
     throw error
   }
 }
