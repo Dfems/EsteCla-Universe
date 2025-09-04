@@ -10,32 +10,39 @@ export interface FirebaseServices {
   storage: FirebaseStorage
 }
 
+let globalServices: FirebaseServices | null = null
+
 export function initFirebase(config: object): FirebaseServices {
   const app = getApps().length ? getApps()[0] : initializeApp(config)
-  return {
+  const services = {
     app,
     auth: getAuth(app),
     db: getFirestore(app),
     storage: getStorage(app),
   }
+  globalServices = services
+  return services
 }
 
+// Create and export a single Google provider instance
 export const googleProvider = new GoogleAuthProvider()
 
-// Ottiene i servizi dall'app Firebase già inizializzata.
-// Nota: richiede che l'app sia stata inizializzata altrove (es. nell'app consumer).
+// Simple getter for services without the complexity of service injection
 export function getServices(): FirebaseServices {
-  const apps = getApps()
-  if (!apps.length) {
-    throw new Error(
-      "Firebase non inizializzato: chiama initFirebase nell'app prima di usare i hook condivisi"
-    )
+  if (!globalServices) {
+    const apps = getApps()
+    if (!apps.length) {
+      throw new Error(
+        "Firebase non inizializzato: chiama initFirebase nell'app prima di usare i hook condivisi"
+      )
+    }
+    const app = apps[0]
+    globalServices = {
+      app,
+      auth: getAuth(app),
+      db: getFirestore(app),
+      storage: getStorage(app),
+    }
   }
-  const app = apps[0]
-  return {
-    app,
-    auth: getAuth(app),
-    db: getFirestore(app),
-    storage: getStorage(app),
-  }
+  return globalServices
 }

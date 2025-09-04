@@ -12,7 +12,7 @@ import type { FirebaseStorage } from 'firebase/storage'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import type { UserInfo } from '@estecla/types'
 import { ensureUsernameAvailable, pickAvailableUsername } from './users'
-import { googleProvider as defaultGoogleProvider } from './sdk'
+import { googleProvider, getServices } from './sdk'
 
 const USERS_COLLECTION = 'users'
 
@@ -32,11 +32,11 @@ export async function loginWithEmailPassword(
   return userCred.user
 }
 
+// Service injection version (for backwards compatibility)
 export async function loginWithGoogleAndEnsureUser(
-  services: { auth: Auth; db: Firestore },
-  provider: GoogleAuthProvider = defaultGoogleProvider
+  services: { auth: Auth; db: Firestore }
 ): Promise<User> {
-  const userCred = await signInWithPopup(services.auth, provider)
+  const userCred = await signInWithPopup(services.auth, googleProvider)
   const firebaseUser = userCred.user
   const userDocRef = doc(services.db, USERS_COLLECTION, firebaseUser.uid)
   const snap = await getDoc(userDocRef)
@@ -62,6 +62,62 @@ export async function loginWithGoogleAndEnsureUser(
     await setDoc(userDocRef, newUser)
   }
   return firebaseUser
+}
+
+// Simplified version that matches main branch exactly
+export async function loginWithGoogleDirect(): Promise<User> {
+  console.log('🚀 Starting Google login with direct approach')
+  try {
+    const { auth, db } = getServices()
+    console.log('✅ Got Firebase services:', { auth: !!auth, db: !!db })
+    console.log('🔧 Auth config:', { projectId: auth.app.options.projectId })
+    console.log('🔑 Google provider ready:', { providerId: googleProvider.providerId })
+    
+    console.log('🔑 Starting Google popup sign-in')
+    const userCred = await signInWithPopup(auth, googleProvider)
+    console.log('✅ Google sign-in successful, user:', userCred.user.email)
+    
+    const firebaseUser = userCred.user
+    const userDocRef = doc(db, USERS_COLLECTION, firebaseUser.uid)
+    const snap = await getDoc(userDocRef)
+    
+    if (!snap.exists()) {
+      console.log('👤 Creating new user profile')
+      const base = (firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'user') as string
+      const username = await pickAvailableUsername(db, base)
+      const usernameLowercase = username.toLowerCase()
+      await updateProfile(firebaseUser, {
+        displayName: username,
+        photoURL: firebaseUser.photoURL || undefined,
+      })
+      const newUser: UserInfo = {
+        uid: firebaseUser.uid,
+        username,
+        usernameLowercase,
+        fullName: firebaseUser.displayName || undefined,
+        profilePic: firebaseUser.photoURL || undefined,
+        bio: '',
+        followers: [],
+        following: [],
+        email: firebaseUser.email || undefined,
+      }
+      await setDoc(userDocRef, newUser)
+      console.log('✅ New user profile created:', username)
+    } else {
+      console.log('✅ Existing user found')
+    }
+    
+    console.log('🎉 Google login completed successfully')
+    return firebaseUser
+  } catch (error) {
+    console.error('❌ Google login failed:', error)
+    console.error('❌ Error details:', {
+      code: (error as any)?.code,
+      message: (error as any)?.message,
+      stack: (error as any)?.stack
+    })
+    throw error
+  }
 }
 
 export async function registerWithEmailPassword(
