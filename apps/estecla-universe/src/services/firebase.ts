@@ -10,18 +10,24 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-// Check for missing variables but warn instead of throwing
+// Fail-fast con messaggio chiaro se mancano variabili necessarie
 const missing = Object.entries(firebaseConfig)
   .filter(([, v]) => !v)
   .map(([k]) => k)
 
 if (missing.length) {
+  // Suggerisci come risolvere in locale con .env.local
+  // Nota: Vite legge automaticamente i file .env.* alla radice del progetto app
+  //       (es. apps/estecla-universe/.env.local)
   const hint =
-    `⚠️  Warning: Mancano variabili Firebase: ${missing.join(', ')}.\n` +
-    "Per testare il login Google, crea un file .env.local in apps/estecla-universe con le chiavi VITE_FIREBASE_* oppure imposta le variabili d'ambiente.\n" +
+    `Mancano variabili Firebase: ${missing.join(', ')}.\n` +
+    "Crea un file .env.local in apps/estecla-universe con le chiavi VITE_FIREBASE_* oppure imposta le variabili d'ambiente.\n" +
     'Vedi anche apps/estecla-universe/.env.example.'
-  console.warn('[Firebase config incompleta]\n' + hint)
-  // Don't throw - let Firebase itself handle invalid config
+  // Mostra in console per contesto più leggibile durante lo sviluppo
+  // e solleva un errore esplicito per evitare l'errore criptico auth/invalid-api-key
+  // senza bloccare i type-check
+  console.error('[Firebase config non valida]\n' + hint)
+  throw new Error('Firebase config non valida: variabili mancanti')
 }
 
 const { app, auth, db, storage } = initFirebase(firebaseConfig)
