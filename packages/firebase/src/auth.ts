@@ -1,18 +1,18 @@
+import type { UserInfo } from '@estecla/types'
 import type { Auth, User } from 'firebase/auth'
 import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
-  createUserWithEmailAndPassword,
   updateProfile,
-  GoogleAuthProvider,
 } from 'firebase/auth'
 import type { Firestore } from 'firebase/firestore'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import type { FirebaseStorage } from 'firebase/storage'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import type { UserInfo } from '@estecla/types'
 import { ensureUsernameAvailable, pickAvailableUsername } from './users'
-import { googleProvider as defaultGoogleProvider } from './sdk'
+// import { googleProvider as defaultGoogleProvider } from './sdk'
 
 const USERS_COLLECTION = 'users'
 
@@ -34,7 +34,7 @@ export async function loginWithEmailPassword(
 
 export async function loginWithGoogleAndEnsureUser(
   services: { auth: Auth; db: Firestore },
-  provider: GoogleAuthProvider = defaultGoogleProvider
+  provider: GoogleAuthProvider
 ): Promise<User> {
   const userCred = await signInWithPopup(services.auth, provider)
   const firebaseUser = userCred.user

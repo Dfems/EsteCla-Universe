@@ -34,11 +34,20 @@ function Login() {
     setLoading(true)
 
     try {
+      // const { auth, googleProvider } = await import('@services/firebase')
+      // const { signInWithPopup } = await import('firebase/auth')
+      // console.log('Using signInWithPopup for Google login')
+      // await signInWithPopup(auth, googleProvider)
       await loginWithGoogleAndEnsureUser()
       navigate('/welcome')
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Google login failed'
-      if (message.startsWith('auth/popup-timeout')) {
+      // Fallback to redirect if popup fails (e.g., due to popup blockers)
+      if (
+        message.startsWith('auth/popup-timeout') ||
+        message.startsWith('auth/cancelled-popup-request') ||
+        message.startsWith('auth/popup-blocked')
+      ) {
         try {
           const { auth, googleProvider } = await import('@services/firebase')
           const { signInWithRedirect } = await import('firebase/auth')
