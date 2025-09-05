@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react'
-import { collection, getCountFromServer } from 'firebase/firestore'
 import { getServices } from '@estecla/firebase'
+import { collection, getCountFromServer } from 'firebase/firestore'
+import { useEffect, useRef, useState } from 'react'
 
 export function useFollowCounts(uid?: string) {
   const [followers, setFollowers] = useState<number | undefined>(undefined)
   const [following, setFollowing] = useState<number | undefined>(undefined)
+  const lastUidRef = useRef<string | undefined>(undefined)
 
   useEffect(() => {
     let cancelled = false
     async function run() {
       if (!uid) return
+      if (lastUidRef.current === uid) return
+      lastUidRef.current = uid
       const { db } = getServices()
       try {
         const [fc, fg] = await Promise.all([
@@ -21,7 +24,11 @@ export function useFollowCounts(uid?: string) {
           setFollowing(fg.data().count)
         }
       } catch {
-        /* ignore */
+        if (!cancelled) {
+          // Fall back to zero to avoid UI waiting on undefined forever
+          setFollowers(0)
+          setFollowing(0)
+        }
       }
     }
     run()

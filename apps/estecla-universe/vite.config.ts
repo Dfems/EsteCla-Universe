@@ -46,6 +46,18 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/favicon.ico', 'icons/apple-touch-icon.png'],
+      // Important: don't intercept Firebase reserved paths like /__/auth/handler
+      workbox: {
+        navigateFallbackDenylist: [/^\/__/],
+        // Ensure we never cache the auth handler route
+        runtimeCaching: [
+          {
+            urlPattern: /^\/__\//,
+            handler: 'NetworkOnly',
+            options: { cacheName: 'bypass-firebase-reserved' },
+          },
+        ],
+      },
       manifest: {
         name: 'Estecla Universe',
         short_name: 'Estecla',

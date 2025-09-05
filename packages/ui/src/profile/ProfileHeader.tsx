@@ -13,6 +13,7 @@ import {
 import { useFollow, useFollowCounts } from '@estecla/hooks'
 import type { UserInfo } from '@estecla/types'
 import { IoSettingsOutline } from 'react-icons/io5'
+import { useNavigate } from 'react-router-dom'
 
 export interface ProfileHeaderProps {
   profileUser: UserInfo
@@ -36,6 +37,11 @@ export default function ProfileHeader({
   onOpenSettings,
 }: ProfileHeaderProps) {
   const { followers, following } = useFollowCounts(profileUser.uid)
+  const navigate = useNavigate()
+  const handleSettings = () => {
+    if (onOpenSettings) return onOpenSettings()
+    navigate('/settings')
+  }
   return (
     <Grid
       templateColumns={{ base: '80px 1fr', md: 'min-content 1fr' }}
@@ -70,7 +76,7 @@ export default function ProfileHeader({
                   icon={<IoSettingsOutline />}
                   size="sm"
                   variant="ghost"
-                  onClick={onOpenSettings}
+                  onClick={handleSettings}
                 />
               </Tooltip>
             </Flex>
@@ -95,6 +101,23 @@ export default function ProfileHeader({
           </Text>
         )}
         {profileUser.bio && <Text whiteSpace="pre-wrap">{profileUser.bio}</Text>}
+        {profileUser.birthday && (
+          <Tooltip label="Vedi countdown compleanno" hasArrow>
+            <CLink
+              onClick={() => navigate('/countdown')}
+              cursor="pointer"
+              _hover={{ textDecoration: 'underline' }}
+            >
+              <Text as="span" fontSize="sm" color="gray.500" mt={2} display="inline-block">
+                🎂{' '}
+                {new Date(profileUser.birthday).toLocaleDateString('it-IT', {
+                  day: 'numeric',
+                  month: 'long',
+                })}
+              </Text>
+            </CLink>
+          </Tooltip>
+        )}
       </Box>
     </Grid>
   )
