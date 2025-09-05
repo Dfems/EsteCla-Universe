@@ -1,0 +1,86 @@
+Proprietary License - Permission Required / Licenza Proprietaria - Uso Solo con Permesso
+Version 1.0 - 2025-08-29
+
+Copyright (c) 2025 Francisco Esteban Mosquera Sancan ("Dfems")
+Contact: dfems.fems@gmail.com - Repository: https://github.com/Dfems/EsteCla-Universe
+All rights reserved.
+
+IT - Licenza in Italiano
+
+1. Definizioni
+
+- "Autore": Francisco Esteban Mosquera Sancan (Dfems).
+- "Progetto": il repository "EsteCla-Universe" e tutto il relativo contenuto software, codice sorgente, documentazione e materiali associati.
+- "Uso": qualsiasi utilizzo del codice, inclusi esecuzione, copia, modifica, distribuzione, pubblicazione, incorporazione in altri progetti, fornitura come servizio, sublicenza o qualsiasi altro sfruttamento.
+- "Permesso Scritto": autorizzazione espressa, preventiva e documentata rilasciata dall'Autore (ad es. via email dall'indirizzo sopra indicato).
+
+2. Concessione di diritti
+   Senza Permesso Scritto, NON è concessa alcuna licenza d'uso. E' consentita esclusivamente la visualizzazione del codice e la creazione di fork su GitHub ai soli fini di revisione e proposta di modifiche tramite pull request (PR).
+
+3. Contributi e pull request
+
+- Le PR devono essere sottomesse da un branch dedicato (no push diretti su main o branch protetti).
+- Inviando una PR, l'autore del contributo concede all'Autore una licenza perpetua, irrevocabile, mondiale, esente da royalty per usare, riprodurre, modificare, distribuire e sublicenziare il contributo come parte del Progetto, sotto termini a discrezione dell'Autore.
+- L'accettazione di una PR è a sola discrezione dell'Autore; l'eventuale rifiuto non comporta obblighi.
+
+4. Uso consentito con Permesso Scritto
+   Se e solo se l'Autore rilascia Permesso Scritto, l'uso del Progetto è soggetto a tutte le seguenti condizioni minime (salvo indicazioni più restrittive nel permesso stesso):
+   a) Pubblicità del progetto utilizzatore: il progetto che integra il codice deve essere pubblico e accessibile a terzi.
+   b) Attribuzione e avvisi: mantenere l'avviso di copyright dell'Autore nella licenza del progetto utilizzatore; includere un credito visibile (p.es. README o pagina "About") con il nome "Francisco Esteban Mosquera Sancan (Dfems)" e un link al repository originale.
+   c) Ridistribuzioni binarie: includere un file NOTICE o sezione equivalente con i crediti di cui alla lettera b) e indicazione delle parti riutilizzate.
+   d) Divieto di sublicenza: non è consentita la sublicenza del codice dell'Autore se non espressamente autorizzata per iscritto.
+   e) Modifiche: le modifiche al codice dell'Autore devono mantenere gli avvisi e i crediti; su richiesta dell'Autore dovranno essere chiaramente identificate.
+   f) Conformità: su richiesta dell'Autore, fornire riscontro scritto delle misure adottate per rispettare le presenti condizioni.
+
+5. Divieti senza permesso
+   Senza Permesso Scritto sono vietati: uso privato o interno, uso commerciale, distribuzione, modifica, incorporazione in altri software, fornitura come servizio, pubblicazione su marketplace, sublicenza, o ogni altra forma di sfruttamento.
+
+6. Durata e risoluzione
+   Qualsiasi permesso si intende revocabile in caso di violazione delle condizioni. Alla violazione segue cessazione automatica del diritto d'uso; ogni copia o materiale derivato deve essere rimosso senza indugio.
+
+7. Esclusione di garanzia e limitazione di responsabilità
+   Il Progetto è fornito "così com'è", senza garanzie di alcun tipo, espresse o implicite. Nei limiti massimi consentiti dalla legge, l'Autore non sarà responsabile per danni diretti, indiretti, incidentali, consequenziali, speciali o esemplari derivanti dall'uso o impossibilità d'uso del Progetto.
+
+8. Varie
+   La nullità o inefficacia di una clausola non pregiudica la validità delle restanti. La mancata o ritardata applicazione di una clausola non costituisce rinuncia. Questo testo costituisce l'intero accordo di licenza tra le parti rispetto al Progetto, salvo permessi scritti specifici più restrittivi.
+
+EN - License in English
+
+1. Definitions
+
+- "Author": Francisco Esteban Mosquera Sancan (Dfems).
+- "Project": the "EsteCla-Universe" repository and all related software, source code, documentation, and associated materials.
+- "Use": any use of the code, including running, copying, modifying, distributing, publishing, incorporating into other projects, providing as a service, sublicensing, or any other exploitation.
+- "Written Permission": express, prior, documented authorization issued by the Author (e.g., via email from the address above).
+
+2. Grant of rights
+   Without Written Permission, NO license is granted. Only viewing the code and creating GitHub forks for the sole purpose of review and submitting pull requests (PR) is allowed.
+
+3. Contributions and pull requests
+
+- PRs must be submitted from a dedicated branch (no direct pushes to main or protected branches).
+- By submitting a PR, the contributor grants the Author a perpetual, irrevocable, worldwide, royalty-free license to use, reproduce, modify, distribute, and sublicense the contribution as part of the Project, under terms at the Author's discretion.
+- Acceptance of any PR is at the Author's sole discretion; rejection creates no obligations.
+
+4. Permitted Use with Written Permission
+   If and only if the Author issues Written Permission, use of the Project is subject to all of the following minimum conditions (unless stricter terms are stated in the permission itself):
+   a) Publicity of the using project: any project integrating the code must be public and accessible to third parties.
+   b) Attribution and notices: retain the Author's copyright notice in the using project's license; include a visible credit (e.g., README or "About" page) naming "Francisco Esteban Mosquera Sancan (Dfems)" and linking to the original repository.
+   c) Binary redistributions: include a NOTICE file or equivalent section with the credits in b) and identification of reused parts.
+   d) No sublicensing: sublicensing of the Author's code is not allowed unless expressly authorized in writing.
+   e) Modifications: modifications to the Author's code must keep notices and credits; upon the Author's request they must be clearly identified.
+   f) Compliance: upon the Author's request, provide written evidence of compliance with these conditions.
+
+5. Prohibitions without permission
+   Without Written Permission, the following are prohibited: private or internal use, commercial use, distribution, modification, incorporation into other software, provision as a service, publishing on marketplaces, sublicensing, or any other exploitation.
+
+6. Term and termination
+   Any permission is revocable upon breach of the conditions. Upon breach, the right to use automatically terminates; all copies or derivative materials must be promptly removed.
+
+7. Disclaimer of warranty and limitation of liability
+   The Project is provided "as is" without any warranties of any kind, express or implied. To the maximum extent permitted by law, the Author shall not be liable for any direct, indirect, incidental, consequential, special, or exemplary damages arising from the use or inability to use the Project.
+
+8. Miscellany
+   If any provision is held invalid or unenforceable, the remaining provisions shall remain in full force and effect. Failure or delay in enforcing any provision shall not constitute a waiver. This License constitutes the entire agreement between the parties regarding the Project, except for any specific written permissions that may impose stricter terms.
+
+NOTE FOR PACKAGE METADATA: use "license": "SEE LICENSE IN LICENSE" in package.json files.

@@ -1,0 +1,22 @@
+{
+  "name": "@estecla/app-estecla-universe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write . --ignore-path ../../.prettierignore",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@estecla/firebase": "0.1.0",
+    "@estecla/firebase-react": "0.1.0",
+    "@estecla/hooks": "0.1.0",
+    "@estecla/theme": "0.1.0",
+    "@estecla/types": "0.1.0",
+    "@estecla/ui": "0.1.0"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

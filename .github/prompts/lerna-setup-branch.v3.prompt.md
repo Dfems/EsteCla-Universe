@@ -6,13 +6,16 @@ description: 'Crea un branch e implementa Lerna + Workspaces + TS paths + alias 
 > Rispondi **sempre in italiano**. **Lavora su un branch dedicato** e consegna una PR pronta al merge.
 
 ### 0) Branch di lavoro
+
 ```bash
 git checkout -b chore/monorepo-lerna-setup
 ```
 
 ### 1) Struttura monorepo
+
 > **Nota naming:** tutte le directory/file dentro `firebase/` (rules, indexes, emulators, seed, snapshots, script) devono essere **kebab-case**; rinomina path non conformi.
-Crea cartelle:
+> Crea cartelle:
+
 ```
 apps/estecla-universe
 apps/glufri-travelers
@@ -28,17 +31,24 @@ firebase/
 ```
 
 ### 2) Configurazione root
+
 - `package.json`:
   - `"private": true`
   - `"workspaces": ["apps/*", "packages/*"]`
   - scripts: `build`, `lint`, `format`, `type-check`, `dev:<app>`
 - `lerna.json`:
   ```json
-  { "version": "independent", "npmClient": "npm", "useWorkspaces": true, "packages": ["apps/*", "packages/*"] }
+  {
+    "version": "independent",
+    "npmClient": "npm",
+    "useWorkspaces": true,
+    "packages": ["apps/*", "packages/*"]
+  }
   ```
 - `tsconfig.base.json` con `paths` per `@ui`, `@hooks`, `@types`, `@firebase`, `@utils`, `@theme`.
 
 ### 3) Config pacchetti condivisi
+
 - **Regole TypeScript/ESLint anti-`any`**: imposta `@typescript-eslint/no-explicit-any: error` nelle config condivise e `noImplicitAny: true` in `tsconfig.base.json`.
 - **config-eslint**: TS + react-hooks + import + sonarjs + prettier.
 - **config-prettier**: Prettier condiviso.
@@ -50,7 +60,9 @@ firebase/
 - **utils**: logger, formatters, validators.
 
 ### 4) Migrazione App
+
 Per ciascuna app:
+
 - sposta codice in `apps/<name>/src` organizzando per **FSD**.
 - aggiorna `vite.config.ts` con **alias** che puntano ai pacchetti condivisi.
 - aggiorna `tsconfig.json` per estendere `tsconfig.base.json`.
@@ -61,6 +73,7 @@ Per ciascuna app:
 - Husky + lint-staged (pre-commit: `format && lint`).
 
 ### 5b) Hosting multisito (PROGETTO UNICO)
+
 - **Obiettivo:** due siti di Hosting nello **stesso progetto Firebase**: `estecla` e `glufri-travelers` (kebab-case).
 - **Creazione Site ID**:
 
@@ -70,16 +83,20 @@ Per ciascuna app:
     firebase hosting:sites:create estecla-dev
     firebase hosting:sites:create glufri-travelers-dev
     ```
-  - **Console**: *Hosting → Aggiungi sito* (crea i due site-id).
+
+  - **Console**: _Hosting → Aggiungi sito_ (crea i due site-id).
+
 - **Associa target → site-id** (una tantum per alias di progetto in `.firebaserc`):
 
   ```bash
   firebase target:apply hosting estecla estecla-dev
   firebase target:apply hosting glufri-travelers glufri-travelers-dev
   ```
+
 - **Config file (ESEMPIO)**:
 
 **`.firebaserc`**
+
 ```json
 {
   "projects": { "default": "mioprogetto-dev", "prod": "mioprogetto-prod" },
@@ -93,7 +110,9 @@ Per ciascuna app:
   }
 }
 ```
+
 **`firebase.json`**
+
 ```json
 {
   "hosting": [
@@ -112,31 +131,41 @@ Per ciascuna app:
   ]
 }
 ```
+
 - **Deploy**:
+
 ```bash
 firebase deploy --only hosting:estecla
 firebase deploy --only hosting:glufri-travelers
 ```
+
 - **Preview per PR**:
+
 ```bash
 firebase hosting:channel:deploy pr-<numero> --only hosting:estecla
 firebase hosting:channel:deploy pr-<numero> --only hosting:glufri-travelers
 ```
+
 - **Se l’agent può procedere direttamente**: eseguire i comandi CLI di creazione/associazione/deploy. **In alternativa**, indicare i passaggi precisi in Console (menu da cliccare) e richiedere i **site-id** scelti.
 
 ### 6) Verifiche locali (dopo OGNI modifica)
+
 Per tutti i pacchetti/app:
+
 ```bash
 npm run format && npm run lint && npm run type-check && npm run build
 ```
+
 **Tutti i comandi devono passare senza errori.** Correggi fino a stato verde.
 
 ### 7) Consegna PR
+
 - Titolo: `chore: setup monorepo con Lerna + workspaces + hosting multisito`.
 - Descrizione: struttura creata, alias e TS paths, pacchetti condivisi, **hosting multisito** configurato, note di migrazione.
 - Checklist: comandi passati, import convertiti, doc breve in README root.
 
 ### 8) Commit atomici (suggeriti)
+
 - `chore(monorepo): add lerna + workspaces + base tsconfig`
 - `feat(packages): add types/firebase/ui/hooks/utils/theme`
 - `refactor(apps): migrate imports to aliases and FSD`

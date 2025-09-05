@@ -1,0 +1,25 @@
+{
+  "name": "@estecla/firebase",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write . --ignore-path ../../.prettierignore"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "firebase": "^11.6.0",
+    "@estecla/types": "*",
+    "@estecla/theme": "*"
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

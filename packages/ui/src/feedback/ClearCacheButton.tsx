@@ -1,0 +1,42 @@
+import { IconButton, useToast } from '@chakra-ui/react'
+import { clearCaches } from '@estecla/pwa'
+import { FaTrashAlt } from 'react-icons/fa'
+
+function ClearCacheButton() {
+  const toast = useToast()
+
+  const handleClearCache = async () => {
+    try {
+      await clearCaches([/./])
+      toast({
+        title: 'Cache pulita!',
+        description: 'La cache è stata svuotata. La pagina verrà ricaricata...',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      })
+      setTimeout(() => window.location.reload(), 2000)
+    } catch (error) {
+      console.error('Errore durante lo svuotamento della cache:', error)
+      toast({
+        title: 'Errore',
+        description: 'Impossibile svuotare la cache.',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      })
+    }
+  }
+
+  return (
+    <IconButton
+      aria-label="Svuota cache e ricarica pagina"
+      icon={<FaTrashAlt size={20} />}
+      variant="ghost"
+      onClick={handleClearCache}
+      _hover={{ transform: 'scale(1.1)', transition: 'transform 0.2s' }}
+    />
+  )
+}
+
+export default ClearCacheButton

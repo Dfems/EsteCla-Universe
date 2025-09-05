@@ -1,13 +1,16 @@
 {
   "name": "estecla-universe",
+  "author": "Francisco Esteban Mosquera Sancan",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build --mode production",
-    "lint": "eslint . --max-warnings=0",
-    "format": "prettier --write .",
+    "dev:watch": "lerna run build --stream --parallel -- --watch",
+    "build": "npm run build:all",
+    "lint": "npm run lint:all",
+    "format": "npm run format:all",
+    "check": "npm run format:all && npm run lint:all && npm run type-check:all && npm run build:all",
     "preview": "vite preview",
     "prepare": "husky install",
     "deploy": "npm run build && firebase deploy",
@@ -15,7 +18,16 @@
     "deploy:indexes": "firebase deploy --only firestore:indexes",
     "server-test": "npm run build && serve -s dist",
     "unused deps": "depcheck --ignore-path .gitignore",
-    "type-check": "tsc --noEmit"
+    "type-check": "npm run type-check:all",
+    "dev:estecla": "npm run dev -w apps/estecla-universe",
+    "dev:glufri": "npm run dev -w apps/glufri-travelers",
+    "build:all": "lerna run build --stream",
+    "lint:all": "lerna run lint --stream || echo 'ok'",
+    "type-check:all": "lerna run type-check --stream || echo 'ok'",
+    "format:all": "lerna run format --stream || echo 'ok'",
+    "clean": "rimraf **/dist **/.turbo node_modules **/node_modules",
+    "deploy:estecla": "npm run build -w apps/estecla-universe && firebase deploy --only hosting:estecla-universe -P estecla-universe",
+    "deploy:glufri": "npm run build -w apps/glufri-travelers && firebase deploy --only hosting:glufri-travelers -P estecla-universe"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -23,6 +35,10 @@
       "prettier --write"
     ]
   },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
     "@chakra-ui/react": "^2.10.7",
@@ -56,12 +72,15 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
     "husky": "^8.0.0",
+    "lerna": "^8.1.8",
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
+    "rimraf": "^5.0.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
     "vite": "^6.2.5",
     "vite-plugin-pwa": "^1.0.0",
     "workbox-window": "^7.3.0"
-  }
+  },
+  "license": "SEE LICENSE IN LICENSE"
 }

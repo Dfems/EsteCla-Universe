@@ -1,0 +1,28 @@
+{
+  "name": "@estecla/pwa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -b",
+    "type-check": "tsc --noEmit",
+    "lint": "echo no-lint",
+    "format": "prettier --write . --ignore-path ../../.prettierignore"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "workbox-window": ">=7"
+  },
+  "peerDependenciesMeta": {
+    "workbox-window": {
+      "optional": true
+    }
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}

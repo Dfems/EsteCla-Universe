@@ -5,8 +5,11 @@
   "targets": {
     "estecla-universe": {
       "hosting": {
-        "production": [
+        "estecla-universe": [
           "estecla-universe"
+        ],
+        "glufri-travelers": [
+          "glufri-travelers"
         ]
       }
     }

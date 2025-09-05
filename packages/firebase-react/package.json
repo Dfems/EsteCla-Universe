@@ -1,0 +1,29 @@
+{
+  "name": "@estecla/firebase-react",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -b",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write . --ignore-path ../../.prettierignore"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "firebase": ">=10"
+  },
+  "dependencies": {
+    "@estecla/firebase": "0.1.0",
+    "@estecla/types": "0.1.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "license": "SEE LICENSE IN LICENSE"
+}
