@@ -63,7 +63,7 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ESTECLA_UNIVERSE }}
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           channelId: pr-${{ github.event.pull_request.number }}
-          target: estecla
+          target: estecla-universe
 
       - name: Deploy Glufri Preview
         uses: FirebaseExtended/action-hosting-deploy@v0

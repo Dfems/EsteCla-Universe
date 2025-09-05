@@ -17,7 +17,9 @@
   },
   "sideEffects": false,
   "dependencies": {
-    "firebase": "^11.6.0"
+    "firebase": "^11.6.0",
+    "@estecla/types": "*",
+    "@estecla/theme": "*"
   },
   "license": "SEE LICENSE IN LICENSE"
 }

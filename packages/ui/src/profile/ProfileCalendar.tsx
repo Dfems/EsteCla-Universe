@@ -99,7 +99,7 @@ function CalendarGrid({
 
   return (
     <Grid templateColumns="repeat(7, 1fr)" gap={1}>
-      {cells.map((cell) => {
+      {cells.map((cell: ReturnType<typeof useProfileCalendar>['cells'][number]) => {
         const hasPosts = cell.posts.length > 0
         const preview = hasPosts ? cell.posts[0] : null
 
