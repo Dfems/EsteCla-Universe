@@ -12,14 +12,12 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["packages/ui/src/*"],
-      "@hooks/*": ["packages/hooks/src/*"],
-      "@types/*": ["packages/types/src/*"],
-      "@firebase/*": ["packages/firebase/src/*"],
-      "@firebase-react/*": ["packages/firebase-react/src/*"],
-      "@utils/*": ["packages/utils/src/*"],
-      "@theme/*": ["packages/theme/src/*"],
-      "@pwa/*": ["packages/pwa/src/*"]
+      "@estecla-ui/*": ["packages/ui/src/*"],
+      "@estecla-hooks/*": ["packages/hooks/src/*"],
+      "@estecla-types/*": ["packages/types/src/*"],
+      "@estecla-utils/*": ["packages/utils/src/*"],
+      "@estecla-theme/*": ["packages/theme/src/*"],
+      "@estecla-pwa/*": ["packages/pwa/src/*"]
     }
   }
 }
