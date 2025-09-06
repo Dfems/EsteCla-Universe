@@ -19,10 +19,10 @@ applyTo: '**'
   hooks/                # hook riusabili cross-app
   types/                # tipi/DTO/schemas + barrel exports
   firebase/             # init SDK + adapter tipizzati (auth/firestore/storage)
+  firebase-react/       #
   utils/                # pure utils (formatters, validators, logger)
   theme/                # tema Chakra condiviso (tokens, component styles)
-  config-eslint/        # ESLint condiviso
-  config-prettier/      # Prettier condiviso
+  pwa/                  # 
 /firebase/              # rules/indexes/emulators/seed/snapshots/script + config hosting
 ```
 
@@ -63,12 +63,15 @@ src/
 
 ## 3) React & Chakra
 
-- **Function Components only.** **Non usare `React.FC<Props>`** → usa:
+- **Arrow Function Components only.** **Non usare `React.FC<Props>`** **Ne `export function`** → usa:
   ```ts
-  type Props = {
+  // Props tipizzate (consigliato aggiungere Readonly)
+  type ComponentNameProps = Readonly<{
     /* ... */
-  }
-  export function ComponentName(props: Props) {
+  }>
+
+  // Named export + AFC
+  export const ComponentName = (props: ComponentNameProps) => {
     /* ... */
   }
   ```
