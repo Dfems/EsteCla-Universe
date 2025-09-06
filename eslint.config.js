@@ -4,6 +4,7 @@ import pluginPrettier from 'eslint-plugin-prettier'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import react from 'eslint-plugin-react'
+import imports from 'eslint-plugin-import'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
@@ -20,10 +21,14 @@ export default tseslint.config(
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       'react': react,
+      'import': imports,
       prettier: pluginPrettier,
     },
     settings: {
       react: { version: 'detect' },
+      'import/resolver': {
+        typescript: { project: ['./tsconfig.json'] },
+      },
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -36,6 +41,39 @@ export default tseslint.config(
         {
           namedComponents: 'arrow-function',
           unnamedComponents: 'arrow-function',
+        },
+      ],
+
+      // 🚫 Niente default export (preferisci named exports)
+      'import/no-default-export': 'error',
+
+      // 🚫 Blocca import relativi oltre ../../
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../../../../*', '../../../*/*', '../../../*/*/*'],
+              message: 'Usa alias invece di percorsi relativi oltre ../..',
+            },
+          ],
+        },
+      ],
+
+      // Ordine import coerente (opzionale ma consigliato)
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling', 'index'],
+            'object',
+            'type',
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],
 

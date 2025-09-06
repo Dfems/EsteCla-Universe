@@ -22,7 +22,7 @@ interface CacheData {
 const CACHE_KEY = 'unsplashImagesCache'
 const CACHE_EXPIRATION = 24 * 60 * 60 * 1000 // 1 giorno in millisecondi
 
-function Countdown() {
+const Countdown = () => {
   const { user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const [imageUrls, setImageUrls] = useState<string[]>([])
