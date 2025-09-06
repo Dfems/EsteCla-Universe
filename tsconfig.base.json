@@ -10,6 +10,16 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@ui/*": ["packages/ui/src/*"],
+      "@hooks/*": ["packages/hooks/src/*"],
+      "@types/*": ["packages/types/src/*"],
+      "@firebase/*": ["packages/firebase/src/*"],
+      "@firebase-react/*": ["packages/firebase-react/src/*"],
+      "@utils/*": ["packages/utils/src/*"],
+      "@theme/*": ["packages/theme/src/*"],
+      "@pwa/*": ["packages/pwa/src/*"]
+    }
   }
 }

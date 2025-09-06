@@ -9,7 +9,7 @@ interface SuggestedUsersProps {
   max?: number
 }
 
-function SuggestedUsers({ users, title = 'Suggeriti per te', max = 8 }: SuggestedUsersProps) {
+const SuggestedUsers = ({ users, title = 'Suggeriti per te', max = 8 }: SuggestedUsersProps) => {
   const { containerBg, borderColor, textColor } = useThemeColors()
 
   const sliced = users?.slice(0, max) || []
@@ -35,7 +35,7 @@ function SuggestedUsers({ users, title = 'Suggeriti per te', max = 8 }: Suggeste
   )
 }
 
-function UserRow({ user }: { user: UserInfo }) {
+const UserRow = ({ user }: { user: UserInfo }) => {
   const { isFollowing, follow, loading } = useFollow(user.uid)
   if (isFollowing) return null
   return (

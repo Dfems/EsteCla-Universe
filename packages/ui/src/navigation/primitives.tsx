@@ -4,6 +4,4 @@ interface NavbarSpacerProps {
   h?: number | string
 }
 
-export function NavbarSpacer({ h = 12 }: NavbarSpacerProps) {
-  return <Box as="div" h={h} />
-}
+export const NavbarSpacer = ({ h = 12 }: NavbarSpacerProps) => <Box as="div" h={h} />

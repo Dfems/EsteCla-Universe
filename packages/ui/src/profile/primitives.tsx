@@ -4,6 +4,6 @@ interface PlaceholderBadgeProps {
   label?: string
 }
 
-export function PlaceholderBadge({ label = 'Profile' }: PlaceholderBadgeProps) {
-  return <Badge colorScheme="purple">{label}</Badge>
-}
+export const PlaceholderBadge = ({ label = 'Profile' }: PlaceholderBadgeProps) => (
+  <Badge colorScheme="purple">{label}</Badge>
+)

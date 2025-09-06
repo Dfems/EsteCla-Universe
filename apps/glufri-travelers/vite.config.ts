@@ -26,6 +26,15 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      // Package aliases
+      '@ui': fileURLToPath(new URL('../../packages/ui/src', import.meta.url)),
+      '@hooks/*': fileURLToPath(new URL('../../packages/hooks/src', import.meta.url)),
+      '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
+      '@firebase': fileURLToPath(new URL('../../packages/firebase/src', import.meta.url)),
+      '@firebase-react': fileURLToPath(new URL('../../packages/firebase-react/src', import.meta.url)),
+      '@utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),
+      '@theme': fileURLToPath(new URL('../../packages/theme/src', import.meta.url)),
+      '@pwa': fileURLToPath(new URL('../../packages/pwa/src', import.meta.url)),
     },
   },
   plugins: [

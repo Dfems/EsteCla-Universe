@@ -39,6 +39,15 @@ export default defineConfig({
       '@context': fileURLToPath(new URL('./src/context', import.meta.url)),
       '@features': fileURLToPath(new URL('./src/features', import.meta.url)),
       '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
+      // Package aliases
+      '@ui': fileURLToPath(new URL('../../packages/ui/src', import.meta.url)),
+      '@hooks/*': fileURLToPath(new URL('../../packages/hooks/src', import.meta.url)),
+      '@types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
+      '@firebase': fileURLToPath(new URL('../../packages/firebase/src', import.meta.url)),
+      '@firebase-react': fileURLToPath(new URL('../../packages/firebase-react/src', import.meta.url)),
+      '@utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),
+      '@theme': fileURLToPath(new URL('../../packages/theme/src', import.meta.url)),
+      '@pwa': fileURLToPath(new URL('../../packages/pwa/src', import.meta.url)),
     },
   },
   plugins: [
