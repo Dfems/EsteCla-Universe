@@ -39,6 +39,13 @@ export default defineConfig({
       '@context': fileURLToPath(new URL('./src/context', import.meta.url)),
       '@features': fileURLToPath(new URL('./src/features', import.meta.url)),
       '@services': fileURLToPath(new URL('./src/services', import.meta.url)),
+      // Package aliases (avoid conflicts with firebase/* package)
+      '@estecla-ui': fileURLToPath(new URL('../../packages/ui/src', import.meta.url)),
+      '@estecla-hooks': fileURLToPath(new URL('../../packages/hooks/src', import.meta.url)),
+      '@estecla-types': fileURLToPath(new URL('../../packages/types/src', import.meta.url)),
+      '@estecla-utils': fileURLToPath(new URL('../../packages/utils/src', import.meta.url)),
+      '@estecla-theme': fileURLToPath(new URL('../../packages/theme/src', import.meta.url)),
+      '@estecla-pwa': fileURLToPath(new URL('../../packages/pwa/src', import.meta.url)),
     },
   },
   plugins: [

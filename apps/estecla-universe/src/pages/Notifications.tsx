@@ -7,7 +7,7 @@ import {
 import type { Timestamp } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 
-function NotificationsPage() {
+const NotificationsPage = () => {
   const [items, setItems] = useState<NotificationItem[]>([])
   const [cursor, setCursor] = useState<Timestamp | null>(null)
   const [loading, setLoading] = useState(false)

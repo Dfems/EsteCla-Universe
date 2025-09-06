@@ -5,10 +5,8 @@ interface TitleOnlyProps {
   children?: React.ReactNode
 }
 
-export function TitleOnly({ children }: TitleOnlyProps) {
-  return (
-    <Heading size="lg" mb={6} textAlign="left">
-      {children}
-    </Heading>
-  )
-}
+export const TitleOnly = ({ children }: TitleOnlyProps) => (
+  <Heading size="lg" mb={6} textAlign="left">
+    {children}
+  </Heading>
+)

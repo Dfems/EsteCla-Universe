@@ -30,7 +30,7 @@ interface UploadModalProps {
   onSameAsPublishChange: (v: boolean) => void
 }
 
-function UploadModal({
+const UploadModal = ({
   isOpen,
   previewUrl,
   caption,
@@ -42,7 +42,7 @@ function UploadModal({
   onImageDateChange,
   sameAsPublish,
   onSameAsPublishChange,
-}: UploadModalProps) {
+}: UploadModalProps) => {
   return (
     <Modal isOpen={isOpen} onClose={onCancel} isCentered>
       <ModalOverlay />

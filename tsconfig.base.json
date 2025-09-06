@@ -10,6 +10,14 @@
     "noImplicitAny": true,
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@estecla-ui/*": ["packages/ui/src/*"],
+      "@estecla-hooks/*": ["packages/hooks/src/*"],
+      "@estecla-types/*": ["packages/types/src/*"],
+      "@estecla-utils/*": ["packages/utils/src/*"],
+      "@estecla-theme/*": ["packages/theme/src/*"],
+      "@estecla-pwa/*": ["packages/pwa/src/*"]
+    }
   }
 }

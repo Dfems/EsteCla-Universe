@@ -25,7 +25,7 @@ interface FollowersModalProps {
   onClose: () => void
 }
 
-function FollowersModal({ uid, type, isOpen, onClose }: FollowersModalProps) {
+const FollowersModal = ({ uid, type, isOpen, onClose }: FollowersModalProps) => {
   const [items, setItems] = useState<UserInfo[]>([])
   const [loading, setLoading] = useState(false)
   const [cursor, setCursor] = useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(

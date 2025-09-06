@@ -8,12 +8,12 @@ import { useUnreadNotifications } from '@estecla/hooks'
 import { NavbarDesktop, NavbarMobile } from '@estecla/ui/navigation'
 import { useNavbarUpload } from '@hooks/useNavbarUpload'
 
-function Navbar() {
+const Navbar = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const { containerBg, borderColor, textColor } = useThemeColors()
   const bg = containerBg
-  const refresh = () => window.location.reload()
+  const refresh = () => () => window.location.reload()
   const {
     fileInputRef,
     uploading,
@@ -31,9 +31,9 @@ function Navbar() {
     setSameAsPublish,
   } = useNavbarUpload(user)
 
-  const goHome = () => navigate('/')
-  const goNotifications = () => navigate('/notifications')
-  const goProfile = () =>
+  const goHome = () => () => navigate('/')
+  const goNotifications = () => () => navigate('/notifications')
+  const goProfile = () => () =>
     user ? navigate(`/profile/${user.username || 'me'}`) : navigate('/login')
   const unread = useUnreadNotifications()
 

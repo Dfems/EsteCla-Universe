@@ -16,7 +16,7 @@ interface Props {
   bio?: string
 }
 
-function BirthdayCountdown({ birthday, fullName, bio }: Props) {
+const BirthdayCountdown = ({ birthday, fullName, bio }: Props) => {
   // Data di riferimento (solo mese/giorno dalla stringa birthday)
   const targetDate = useMemo(() => new Date(`${birthday}T00:00:00`), [birthday])
   const { colorMode } = useColorMode()
@@ -154,26 +154,24 @@ interface TimeBoxProps {
   color: string
 }
 
-function TimeBox({ value, label, bg, color }: TimeBoxProps) {
-  return (
-    <Box
-      p={4}
-      minW="100px"
-      borderRadius="lg"
-      bg={bg}
-      color={color}
-      boxShadow="md"
-      transition="all 0.3s"
-      _hover={{ transform: 'translateY(-4px)' }}
-    >
-      <Text fontSize="3xl" fontWeight="bold">
-        {value.toString().padStart(2, '0')}
-      </Text>
-      <Text fontSize="sm" mt={1}>
-        {label}
-      </Text>
-    </Box>
-  )
-}
+const TimeBox = ({ value, label, bg, color }: TimeBoxProps) => (
+  <Box
+    p={4}
+    minW="100px"
+    borderRadius="lg"
+    bg={bg}
+    color={color}
+    boxShadow="md"
+    transition="all 0.3s"
+    _hover={{ transform: 'translateY(-4px)' }}
+  >
+    <Text fontSize="3xl" fontWeight="bold">
+      {value.toString().padStart(2, '0')}
+    </Text>
+    <Text fontSize="sm" mt={1}>
+      {label}
+    </Text>
+  </Box>
+)
 
 export default BirthdayCountdown

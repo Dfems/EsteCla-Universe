@@ -13,7 +13,7 @@ import { useThemeColors } from '@estecla/hooks'
 import { ClearCacheButton } from '@estecla/ui/feedback'
 import { FaMoon, FaSun } from 'react-icons/fa'
 
-function SettingsPage() {
+const SettingsPage = () => {
   const { containerBg, textColor, borderColor } = useThemeColors()
   const { colorMode, toggleColorMode } = useColorMode()
 

@@ -6,7 +6,7 @@ import { loginWithEmailPassword, loginWithGoogleAndEnsureUser } from '@features/
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function Login() {
+const Login = () => {
   const navigate = useNavigate()
   const { containerBg, textColor } = useThemeColors()
   const [email, setEmail] = useState('')

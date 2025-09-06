@@ -6,7 +6,7 @@ import { registerWithEmailPassword } from '@features/auth/api/auth'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function Register() {
+const Register = () => {
   const navigate = useNavigate()
   const { containerBg, textColor } = useThemeColors()
   // const { toggleColorMode } = useColorMode()
@@ -75,7 +75,7 @@ function Register() {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = () => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setProfilePicFile(e.target.files[0])
     }

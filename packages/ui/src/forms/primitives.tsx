@@ -5,10 +5,8 @@ interface FieldHelpProps {
   children?: React.ReactNode
 }
 
-export function FieldHelp({ children }: FieldHelpProps) {
-  return (
-    <Text fontSize="sm" color="gray.500">
-      {children}
-    </Text>
-  )
-}
+export const FieldHelp = ({ children }: FieldHelpProps) => (
+  <Text fontSize="sm" color="gray.500">
+    {children}
+  </Text>
+)

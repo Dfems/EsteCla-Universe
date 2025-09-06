@@ -1,9 +1,10 @@
 import { getServices } from '@estecla/firebase'
-import type { UserInfo } from '@estecla/types'
-import type { User as FirebaseUser } from 'firebase/auth'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
+
+import type { UserInfo } from '@estecla/types'
+import type { User as FirebaseUser } from 'firebase/auth'
 
 export interface AuthContextValue {
   user: UserInfo | null
@@ -25,7 +26,7 @@ export interface AuthProviderProps {
   children: React.ReactNode
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<UserInfo | null>(null)
   const [loading, setLoading] = useState(true)
 
